@@ -47,21 +47,14 @@
     data: () => ({
       pipelines: null,
       status: '',
-      loading: false
+      loading: false,
+      refreshInterval: null
     }),
     mounted() {
       this.fetchPipelines();
-
-      setTimeout(() => {
-        this.refreshIntervalId = setInterval(() => {
-          if (!this.$data.loading) {
-            this.fetchPipelines();
-          }
-        }, 10000);
-      }, Math.random() * 10000);
     },
     beforeDestroy() {
-      clearInterval(this.refreshIntervalId);
+      if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
     },
     watch: {
       project() {
@@ -70,8 +63,28 @@
       pipelines(pipelines) {
         if (pipelines && pipelines.length > 0) {
           this.$data.status = pipelines[0].status;
+
+          switch (pipelines[0].status) {
+            case 'pending':
+            case 'running':
+              this.$data.refreshInterval = 5000;
+              break;
+            default:
+              this.$data.refreshInterval = 15000;
+          }
         } else {
           this.$data.status = '';
+          this.$data.refreshInterval = 60000;
+        }
+      },
+      refreshInterval(newInterval, oldInterval) {
+        if (newInterval !== oldInterval) {
+          if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
+          this.refreshIntervalId = setInterval(() => {
+            if (!this.$data.loading) {
+              this.fetchPipelines();
+            }
+          }, newInterval);
         }
       }
     },
