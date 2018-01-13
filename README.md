@@ -37,6 +37,7 @@ Name                            | Description
 `showPipelineIds`               | Don't show pipeline IDs. Default: `true`
 `showJobNames`                  | Show job names instead of status icons. Default: `false`
 `showDurations`                 | Show pipeline durations. Default: `true`
+`showUsers`                     | Show user that invoked a pipeline. Default: `false`
 
 ## Minimal example:
 

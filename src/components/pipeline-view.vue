@@ -9,6 +9,8 @@
       </div>
       <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
       <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
+      <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
+      <span v-if="showUsers" class="user">{{ pipeline.user.name }}</span>
     </div>
   </div>
 </template>
@@ -40,6 +42,9 @@
       },
       showDurations() {
         return getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true;
+      },
+      showUsers() {
+        return getQueryParameter('showUsers') !== null ? !!getQueryParameter('showUsers') : false;
       },
       durationString() {
         const duration = this.$data.duration;
@@ -139,6 +144,18 @@
         color: rgba(255, 255, 255, 0.8);
         line-height: 1;
         font-size: 14px;
+        margin-right: 6px;
+      }
+
+      .user-icon {
+        margin-right: 3px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .user {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1;
+        font-size: 12px;
       }
     }
   }
