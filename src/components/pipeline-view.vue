@@ -34,7 +34,7 @@
       jobs: [],
       loading: true,
       duration: null,
-      startedAt: null
+      updatedAt: null
     }),
     computed: {
       showPipelineIds() {
@@ -89,13 +89,13 @@
       },
       setupDurationCounter() {
         const pipeline = this.$props.pipeline;
-        const startedAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.started_at)) / 1000;
-        if (pipeline.duration !== null && Math.abs(pipeline.duration - this.$data.duration) > 5) {
+        const startedAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.updated_at)) / 1000;
+        if (pipeline.status !== 'running' && (this.$data.duration === null || Math.abs(pipeline.duration - this.$data.duration) > 5)) {
           this.$data.duration = pipeline.duration;
-        } else if (pipeline.started_at !== this.$data.startedAt || Math.abs(startedAtDiffSeconds - this.$data.startedAt) > 5) {
+        } else if (pipeline.updated_at !== this.$data.updatedAt || Math.abs(startedAtDiffSeconds - this.$data.updatedAt) > 5) {
           // Update the duration if the started_at property changed or the timer is >5 seconds off
           this.$data.duration = startedAtDiffSeconds;
-          this.$data.startedAt = pipeline.started_at;
+          this.$data.updatedAt = pipeline.updated_at;
         }
 
         if (this.$props.pipeline && this.$props.pipeline.status === 'running') {
