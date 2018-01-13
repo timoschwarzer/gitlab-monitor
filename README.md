@@ -2,7 +2,7 @@
 
 > A browser-based monitor dashboard for GitLab CI
 
-## Screenshot
+## Screenshots
 ![Screenshot 1](/../resources/screenshots/screenshot1.png?raw=true)
 ![Screenshot 2](/../resources/screenshots/screenshot2.png?raw=true)
 
