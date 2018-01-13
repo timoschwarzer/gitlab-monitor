@@ -1,19 +1,24 @@
 <template>
   <div>
     <octicon v-if="loading" name="sync" scale="1.4" spin />
-    <div v-else>
+    <div class="jobs" v-else>
+      <gitlab-icon v-if="!hidePipelineIds" class="pipeline-icon" name="hashtag" size="12" />
+      <div v-if="!hidePipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
       <job-view v-for="job in jobs" :key="job.id" :job="job" />
     </div>
   </div>
 </template>
 
 <script>
-  import Octicon from 'vue-octicon/components/Octicon';
-  import JobView from './job-view';
+  import Octicon             from 'vue-octicon/components/Octicon';
+  import {getQueryParameter} from '../util';
+  import GitlabIcon          from './gitlab-icon';
+  import JobView             from './job-view';
   import 'vue-octicon/icons/sync';
 
   export default {
     components: {
+      GitlabIcon,
       Octicon,
       JobView
     },
@@ -23,6 +28,11 @@
       jobs: [],
       loading: true
     }),
+    computed: {
+      hidePipelineIds() {
+        return !!getQueryParameter('hidePipelineIds')
+      }
+    },
     mounted() {
       this.fetchJobs();
     },
@@ -41,5 +51,20 @@
 </script>
 
 <style lang="scss" scoped>
+  .jobs {
+    display: flex;
+    align-items: center;
+    color: white;
 
+    .pipeline-icon {
+      fill: white;
+      width: 16px;
+      height: 16px;
+      margin-right: 2px;
+    }
+
+    .pipeline-id {
+      margin-right: 4px;
+    }
+  }
 </style>

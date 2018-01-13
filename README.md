@@ -34,6 +34,7 @@ Name                            | Description
 `fetchCount`                    | How many projects will be fetched from GitLab. Default: 20, Max: 100
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`
 `autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. Default: `false`
+`hidePipelineIds`               | Don't show pipeline IDs. Default: `false`
 
 ## Minimal example:
 
