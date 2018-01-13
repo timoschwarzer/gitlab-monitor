@@ -37,7 +37,7 @@ Name                            | Description
 `maxAge`                        | In hours. Projects with last activity older than this age won't be displayed. Default: 7 days
 `fetchCount`                    | How many projects will be fetched from GitLab. Default: 20, Max: 100
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`
-`autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. Default: `false`
+`autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. [Not compatible](https://caniuse.com/#feat=css-zoom) with all browsers! Default: `false`
 `showPipelineIds`               | Don't show pipeline IDs. Default: `true`
 `showJobNames`                  | Show job names instead of status icons. Default: `false`
 `showDurations`                 | Show pipeline durations. Default: `true`
