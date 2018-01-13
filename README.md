@@ -3,7 +3,7 @@
 > A browser-based monitor dashboard for GitLab CI
 
 ## Screenshot
-![Screenshot](/../screenshots/screenshot.png?raw=true)
+![Screenshot](/../resources/screenshots/screenshot.png?raw=true)
 
 ## Build Setup
 
