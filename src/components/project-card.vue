@@ -1,11 +1,11 @@
 <template>
   <div :class="['project-card', status]">
     <div class="content">
-      <div class="title small">{{ project.namespace.name }} /</div>
-      <div class="title">{{ project.name }}</div>
+      <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
+      <div class="title">{{ project !== null ? project.name : 'Loading project...' }}</div>
       <div class="branch">
         <octicon name="git-branch" scale="0.9" />
-        {{ project.default_branch }}
+        {{ project !== null ? project.default_branch : '...' }}
       </div>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelines.length === 0" class="no-pipelines">
@@ -23,7 +23,8 @@
     <div class="info">
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
-      <timeago :since="project.last_activity_at" :auto-update="1"></timeago>
+      <timeago v-if="project !== null" :since="project.last_activity_at" :auto-update="1"></timeago>
+      <time v-else>...</time>
     </div>
   </div>
 </template>
@@ -43,15 +44,16 @@
       Octicon
     },
     name: 'project-card',
-    props: ['project'],
+    props: ['project-id'],
     data: () => ({
+      project: null,
       pipelines: null,
       status: '',
       loading: false,
       refreshInterval: null
     }),
     mounted() {
-      this.fetchPipelines();
+      this.fetchProject();
     },
     beforeDestroy() {
       if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
@@ -82,17 +84,24 @@
           if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
           this.refreshIntervalId = setInterval(() => {
             if (!this.$data.loading) {
-              this.fetchPipelines();
+              this.fetchProject();
             }
           }, newInterval);
         }
       }
     },
     methods: {
+      async fetchProject() {
+        this.$data.loading = true;
+
+        this.$data.project = await this.$api(`/projects/${this.$props.projectId}`);
+
+        this.$data.loading = false;
+      },
       async fetchPipelines() {
         this.$data.loading = true;
 
-        const pipelines = await this.$api(`/projects/${this.$props.project.id}/pipelines`);
+        const pipelines = await this.$api(`/projects/${this.$props.projectId}/pipelines`);
 
         const resolvedPipelines = [];
 
@@ -110,13 +119,13 @@
             }
 
             for (const pipeline of filteredPipelines) {
-              const resolvedPipeline = await this.$api(`/projects/${this.$props.project.id}/pipelines/${pipeline.id}`);
+              const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipeline.id}`);
               resolvedPipelines.push(resolvedPipeline);
             }
 
             this.$data.pipelines = resolvedPipelines;
           } else {
-            const resolvedPipeline = await this.$api(`/projects/${this.$props.project.id}/pipelines/${pipelines[0].id}`);
+            const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipelines[0].id}`);
             this.$data.pipelines = [resolvedPipeline];
           }
         }

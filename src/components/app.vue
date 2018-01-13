@@ -1,9 +1,12 @@
 <template>
   <div class="app" @click="autoZoom()">
-    <div ref="zoomContainer" :style="{zoom}">
+    <div :style="{zoom}">
       <div class="projects">
-        <project-card v-for="project in projects" :key="project.id" :project="project" @status-changed="fetchProjects()" />
+        <project-card v-for="project in projects" :key="project.id" :project-id="project.id" @status-changed="fetchProjects()" />
       </div>
+    </div>
+    <div v-if="initialLoading" class="loader">
+      <octicon name="sync" spin scale="3" />
     </div>
   </div>
 </template>
@@ -20,7 +23,8 @@
     name: 'app',
     data: () => ({
       projects: [],
-      zoom: 1
+      zoom: 1,
+      initialLoading: true
     }),
     mounted() {
       this.fetchProjects();
@@ -58,6 +62,8 @@
         if (getQueryParameter('autoZoom')) {
           this.$nextTick(() => this.autoZoom());
         }
+
+        this.$data.initialLoading = false;
       },
       async autoZoom() {
         let step = 0.1;
@@ -98,6 +104,10 @@
     padding: 4px;
     overflow-y: hidden;
   }
+
+  svg {
+    overflow: visible;
+  }
 </style>
 
 <style lang="scss" scoped>
@@ -106,6 +116,18 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: left;
+    }
+
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: transparentize(#212121, 0.5);
     }
   }
 </style>
