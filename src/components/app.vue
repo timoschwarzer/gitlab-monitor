@@ -100,6 +100,7 @@
   body {
     margin: 0;
     padding: 4px;
+    overflow-y: hidden;
   }
 </style>
 
