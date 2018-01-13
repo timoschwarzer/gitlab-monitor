@@ -19,7 +19,8 @@
   export default {
     components: {
       Octicon,
-      ProjectCard},
+      ProjectCard
+    },
     name: 'app',
     data: () => ({
       projects: [],
@@ -32,7 +33,7 @@
       if (getQueryParameter('autoZoom')) {
         setInterval(() => {
           this.autoZoom();
-        }, 5000)
+        }, 5000);
       }
 
       this.refreshIntervalId = setInterval(async () => {
@@ -107,6 +108,14 @@
 
   svg {
     overflow: visible;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.15s
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0
   }
 </style>
 
