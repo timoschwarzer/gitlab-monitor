@@ -113,7 +113,10 @@
 
             for (const pipeline of pipelines) {
               filteredPipelines.push(pipeline);
-              if (pipeline.status !== 'pending') {
+              if (
+                pipeline.status === 'success' ||
+                pipeline.status === 'failed'
+              ) {
                 break;
               }
             }

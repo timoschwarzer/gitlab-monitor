@@ -34,7 +34,7 @@
       jobs: [],
       loading: true,
       duration: null,
-      createdAt: null
+      startedAt: null
     }),
     computed: {
       showPipelineIds() {
@@ -71,28 +71,15 @@
     },
     mounted() {
       this.fetchJobs();
-
-      this.$data.duration = this.$props.pipeline.duration || (new Date() - new Date(this.$props.pipeline.created_at)) / 1000;
-      this.$data.createdAt = this.$props.pipeline.created_at;
       this.setupDurationCounter();
     },
     watch: {
-      pipeline(pipeline) {
+      pipeline() {
         this.fetchJobs();
-        this.setupDurationCounter();
-
-        const createdAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.created_at)) / 1000;
-
-        if (pipeline.duration && Math.abs(pipeline.duration - this.$data.duration) > 5) {
-          this.$data.duration = pipeline.duration;
-        } else if (pipeline.created_at !== this.$data.createdAt || Math.abs(createdAtDiffSeconds - this.$data.createdAt) > 5) {
-          // Update the duration if the created_at property changed or the timer is >5 seconds off
-          this.$data.duration = createdAtDiffSeconds;
-          this.$data.createdAt = pipeline.created_at;
-        }
+        this.$nextTick(() => this.setupDurationCounter());
       },
       'pipeline.status'() {
-        this.setupDurationCounter();
+        this.$nextTick(() => this.setupDurationCounter());
       }
     },
     methods: {
@@ -101,6 +88,16 @@
         this.$data.loading = false;
       },
       setupDurationCounter() {
+        const pipeline = this.$props.pipeline;
+        const startedAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.started_at)) / 1000;
+        if (pipeline.duration !== null && Math.abs(pipeline.duration - this.$data.duration) > 5) {
+          this.$data.duration = pipeline.duration;
+        } else if (pipeline.started_at !== this.$data.startedAt || Math.abs(startedAtDiffSeconds - this.$data.startedAt) > 5) {
+          // Update the duration if the started_at property changed or the timer is >5 seconds off
+          this.$data.duration = startedAtDiffSeconds;
+          this.$data.startedAt = pipeline.started_at;
+        }
+
         if (this.$props.pipeline && this.$props.pipeline.status === 'running') {
           if (!this.durationCounterIntervalId) {
             this.durationCounterIntervalId = setInterval(() => {
