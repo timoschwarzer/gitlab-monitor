@@ -62,8 +62,6 @@
         }
       },
       async autoZoom() {
-        await this.$nextTick();
-
         let step = 0.1;
 
         if (this.$refs.app.clientHeight > window.innerHeight) {
