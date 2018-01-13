@@ -35,6 +35,10 @@ Name                            | Description
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`
 `autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. Default: `false`
 
+## Minimal example:
+
+`http://gitlab-monitor.local/?gitlabApi=https://gitlab.example.com/api/v4&privateToken=ABCDEF1234ABCDEF`
+
 ## Used libraries
 - [Vue](https://vuejs.org)
 - [vue-timeago](https://github.com/egoist/vue-timeago)
