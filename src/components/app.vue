@@ -1,5 +1,5 @@
 <template>
-  <div ref="app" class="app" @click="autoZoom()">
+  <div class="app" @click="autoZoom()">
     <div ref="zoomContainer" :style="{zoom}">
       <div class="projects">
         <project-card v-for="project in projects" :key="project.id" :project="project" @status-changed="fetchProjects()" />
@@ -31,13 +31,11 @@
         }, 5000)
       }
 
-      setTimeout(() => {
-        this.refreshIntervalId = setInterval(async () => {
-          if (!this.$data.loading) {
-            await this.fetchProjects();
-          }
-        }, 10000);
-      }, Math.random() * 10000);
+      this.refreshIntervalId = setInterval(async () => {
+        if (!this.$data.loading) {
+          await this.fetchProjects();
+        }
+      }, 120000);
     },
     beforeDestroy() {
       clearInterval(this.refreshIntervalId);
@@ -64,13 +62,13 @@
       async autoZoom() {
         let step = 0.1;
 
-        if (this.$refs.app.clientHeight > window.innerHeight) {
+        if (this.$el.clientHeight > window.innerHeight) {
           step = -0.1;
         }
 
         while (
-          (step > 0 && this.$refs.app.clientHeight <= window.innerHeight) ||
-          (step < 0 && this.$refs.app.clientHeight > window.innerHeight)
+          (step > 0 && this.$el.clientHeight <= window.innerHeight) ||
+          (step < 0 && this.$el.clientHeight > window.innerHeight)
         ) {
           this.$data.zoom += step;
           await this.$nextTick();
