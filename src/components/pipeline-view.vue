@@ -41,7 +41,11 @@
         return getQueryParameter('showPipelineIds') !== null ? !!getQueryParameter('showPipelineIds') : true;
       },
       showDurations() {
-        return getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true;
+        return (getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true) &&
+          this.$props.pipeline.status === 'running' ||
+          this.$props.pipeline.status === 'failed' ||
+          this.$props.pipeline.status === 'canceled' ||
+          this.$props.pipeline.status === 'success';
       },
       showUsers() {
         return getQueryParameter('showUsers') !== null ? !!getQueryParameter('showUsers') : false;
@@ -86,6 +90,9 @@
           this.$data.duration = createdAtDiffSeconds;
           this.$data.createdAt = pipeline.created_at;
         }
+      },
+      'pipeline.status'() {
+        this.setupDurationCounter();
       }
     },
     methods: {
