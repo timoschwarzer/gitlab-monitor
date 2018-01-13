@@ -1,8 +1,11 @@
 <template>
   <div class="job-view">
-    <div :class="['job-circle', job.status]">
+    <div :class="['job-circle', job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
-        <svg :key="statusIconName">
+        <div v-if="showJobNames" :key="job.status">
+          {{ job.name }}
+        </div>
+        <svg v-else :key="statusIconName">
           <use
             v-bind="{
             'href': require('../assets/icons.svg') + '#' + statusIconName,
@@ -17,6 +20,8 @@
 </template>
 
 <script>
+  import {getQueryParameter} from '../util';
+
   export default {
     name: 'job-view',
     props: ['job'],
@@ -38,6 +43,9 @@
           default:
             return 'status_not_found_borderless';
         }
+      },
+      showJobNames() {
+        return !!getQueryParameter('showJobNames')
       }
     }
   };
@@ -55,11 +63,20 @@
     }
 
     .job-circle {
-      width: 24px;
+      width: auto;
+      display: inline-block;
       height: 24px;
       border: 2px solid rgba(255, 255, 255, 0.8);
-      border-radius: 50%;
+      border-radius: 24px;
+      line-height: 24px;
+      padding: 0 6px;
+      font-size: 12px;
       transition: background-color 200ms;
+
+      &.square {
+        width: 24px;
+        padding: 0;
+      }
 
       &.success {
         background-color: #2E7D32;

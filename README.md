@@ -35,6 +35,7 @@ Name                            | Description
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`
 `autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. Default: `false`
 `hidePipelineIds`               | Don't show pipeline IDs. Default: `false`
+`showJobNames`                  | Show job names instead of status icons. Default: `false`
 
 ## Minimal example:
 
