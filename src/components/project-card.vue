@@ -215,7 +215,6 @@
 
       .calendar-icon {
         margin-right: 4px;
-        margin-bottom: 2px;
       }
     }
   }
