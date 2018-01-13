@@ -22,14 +22,15 @@
     <div class="spacer"></div>
     <div class="info">
       <div class="spacer"></div>
-      <octicon name="clock" scale="0.9" />
-      <timeago :since="project.last_activity_at"></timeago>
+      <gitlab-icon class="calendar-icon" name="calendar" size="12" />
+      <timeago :since="project.last_activity_at" :auto-update="1"></timeago>
     </div>
   </div>
 </template>
 
 <script>
   import Octicon      from 'vue-octicon/components/Octicon';
+  import GitlabIcon   from './gitlab-icon';
   import PipelineView from './pipeline-view';
   import 'vue-octicon/icons/git-branch';
   import 'vue-octicon/icons/clock';
@@ -37,6 +38,7 @@
 
   export default {
     components: {
+      GitlabIcon,
       PipelineView,
       Octicon
     },
@@ -194,9 +196,9 @@
         line-height: 1;
       }
 
-      .octicon {
+      .calendar-icon {
         margin-right: 4px;
-        vertical-align: center;
+        margin-bottom: 2px;
       }
     }
   }
