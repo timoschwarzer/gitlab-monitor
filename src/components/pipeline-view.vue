@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pipeline-view">
     <octicon v-if="loading" name="sync" scale="1.4" spin />
     <div class="jobs" v-else>
       <gitlab-icon v-if="!hidePipelineIds" class="pipeline-icon" name="hashtag" size="12" />
@@ -51,20 +51,26 @@
 </script>
 
 <style lang="scss" scoped>
-  .jobs {
-    display: flex;
-    align-items: center;
-    color: white;
-
-    .pipeline-icon {
-      fill: white;
-      width: 16px;
-      height: 16px;
-      margin-right: 2px;
+  .pipeline-view {
+    &:not(:last-child) {
+      margin-bottom: 4px;
     }
 
-    .pipeline-id {
-      margin-right: 4px;
+    .jobs {
+      display: flex;
+      align-items: center;
+      color: white;
+
+      .pipeline-icon {
+        fill: white;
+        width: 16px;
+        height: 16px;
+        margin-right: 1px;
+      }
+
+      .pipeline-id {
+        margin-right: 8px;
+      }
     }
   }
 </style>
