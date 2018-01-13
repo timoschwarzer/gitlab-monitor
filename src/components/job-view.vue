@@ -98,6 +98,10 @@
         background-color: #010101;
       }
 
+      &.skipped {
+        background-color: #4b4b4b;
+      }
+
       svg {
         width: 100%;
         height: 100%;
