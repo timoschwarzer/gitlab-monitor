@@ -1,10 +1,14 @@
 <template>
   <div class="pipeline-view">
     <octicon v-if="loading" name="sync" scale="1.4" spin />
-    <div class="jobs" v-else>
-      <gitlab-icon v-if="!hidePipelineIds" class="pipeline-icon" name="hashtag" size="12" />
-      <div v-if="!hidePipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
-      <job-view v-for="job in jobs" :key="job.id" :job="job" />
+    <div class="pipeline" v-else>
+      <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
+      <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
+      <div class="jobs">
+        <job-view v-for="job in jobs" :key="job.id" :job="job" />
+      </div>
+      <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
+      <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
     </div>
   </div>
 </template>
@@ -26,25 +30,74 @@
     props: ['pipeline', 'project-id'],
     data: () => ({
       jobs: [],
-      loading: true
+      loading: true,
+      duration: null,
+      createdAt: null
     }),
     computed: {
-      hidePipelineIds() {
-        return !!getQueryParameter('hidePipelineIds')
+      showPipelineIds() {
+        return getQueryParameter('showPipelineIds') !== null ? !!getQueryParameter('showPipelineIds') : true;
+      },
+      showDurations() {
+        return getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true;
+      },
+      durationString() {
+        const duration = this.$data.duration;
+        const hrs = ~~(duration / 3600);
+        const mins = ~~((duration % 3600) / 60);
+        const secs = Math.trunc(duration % 60);
+
+        // Output like "1:01" or "4:03:59" or "123:03:59"
+        let timeString = "";
+
+        if (hrs > 0) {
+          timeString += "" + hrs + ":" + (mins < 10 ? "0" : "");
+        }
+
+        timeString += mins + ":" + (secs < 10 ? "0" : "");
+        timeString += secs;
+
+        return timeString;
       }
     },
     mounted() {
       this.fetchJobs();
+
+      this.$data.duration = this.$props.pipeline.duration || (new Date() - new Date(this.$props.pipeline.created_at)) / 1000;
+      this.$data.createdAt = this.$props.pipeline.created_at;
+      this.setupDurationCounter();
     },
     watch: {
-      pipeline() {
+      pipeline(pipeline) {
         this.fetchJobs();
+        this.setupDurationCounter();
+
+        const createdAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.created_at)) / 1000;
+
+        if (pipeline.duration && Math.abs(pipeline.duration - this.$data.duration) > 5) {
+          this.$data.duration = pipeline.duration;
+        } else if (pipeline.created_at !== this.$data.createdAt || Math.abs(createdAtDiffSeconds - this.$data.createdAt) > 5) {
+          // Update the duration if the created_at property changed or the timer is >5 seconds off
+          this.$data.duration = createdAtDiffSeconds;
+          this.$data.createdAt = pipeline.created_at;
+        }
       }
     },
     methods: {
       async fetchJobs() {
         this.$data.jobs = await this.$api(`/projects/${this.$props.projectId}/pipelines/${this.$props.pipeline.id}/jobs`);
         this.$data.loading = false;
+      },
+      setupDurationCounter() {
+        if (this.$props.pipeline && this.$props.pipeline.status === 'running') {
+          if (!this.durationCounterIntervalId) {
+            this.durationCounterIntervalId = setInterval(() => {
+              this.$data.duration++;
+            }, 1000);
+          }
+        } else {
+          if (this.durationCounterIntervalId) clearInterval(this.durationCounterIntervalId);
+        }
       }
     }
   };
@@ -56,20 +109,36 @@
       margin-bottom: 4px;
     }
 
-    .jobs {
+    .pipeline {
       display: flex;
       align-items: center;
       color: white;
 
       .pipeline-icon {
-        fill: white;
         width: 16px;
         height: 16px;
         margin-right: 1px;
+        color: rgba(255, 255, 255, 0.8);
       }
 
       .pipeline-id {
         margin-right: 8px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .jobs {
+        margin-right: 8px;
+      }
+
+      .clock-icon {
+        margin-right: 3px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .duration {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1;
+        font-size: 14px;
       }
     }
   }
