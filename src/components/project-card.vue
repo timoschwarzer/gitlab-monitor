@@ -13,7 +13,7 @@
         </em>
         <div v-else-if="pipelines !== null && pipelines.length > 0">
           <div v-for="pipeline in pipelines">
-            <pipeline-view :pipeline="pipeline" :project-id="project.id" />
+            <pipeline-view :pipeline="pipeline" :project="project" />
           </div>
         </div>
         <octicon v-else name="sync" scale="1.4" spin />

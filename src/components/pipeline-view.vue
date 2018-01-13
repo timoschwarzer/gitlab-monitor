@@ -5,7 +5,7 @@
       <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
       <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
       <div class="jobs">
-        <job-view v-for="job in jobs" :key="job.id" :job="job" />
+        <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
       </div>
       <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
       <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
@@ -29,7 +29,7 @@
       JobView
     },
     name: 'pipeline-view',
-    props: ['pipeline', 'project-id'],
+    props: ['pipeline', 'project'],
     data: () => ({
       jobs: [],
       loading: true,
@@ -90,7 +90,7 @@
     },
     methods: {
       async fetchJobs() {
-        this.$data.jobs = await this.$api(`/projects/${this.$props.projectId}/pipelines/${this.$props.pipeline.id}/jobs`);
+        this.$data.jobs = await this.$api(`/projects/${this.$props.project.id}/pipelines/${this.$props.pipeline.id}/jobs`);
         this.$data.loading = false;
       },
       setupDurationCounter() {

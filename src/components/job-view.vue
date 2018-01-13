@@ -1,5 +1,5 @@
 <template>
-  <div class="job-view">
+  <a class="job-view" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
     <div :class="['job-circle', job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
         <div v-if="showJobNames" :key="job.status">
@@ -16,7 +16,7 @@
       </transition>
     </div>
     <div class="pipe"></div>
-  </div>
+  </a>
 </template>
 
 <script>
@@ -24,7 +24,7 @@
 
   export default {
     name: 'job-view',
-    props: ['job'],
+    props: ['job', 'project'],
     computed: {
       statusIconName() {
         switch (this.$props.job.status) {
