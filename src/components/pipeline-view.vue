@@ -105,7 +105,10 @@
             }, 1000);
           }
         } else {
-          if (this.durationCounterIntervalId) clearInterval(this.durationCounterIntervalId);
+          if (this.durationCounterIntervalId) {
+            clearInterval(this.durationCounterIntervalId);
+            this.durationCounterIntervalId = null;
+          }
         }
       }
     }
