@@ -1,0 +1,19 @@
+image: node:latest
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+- build
+
+build:
+  stage: build
+  only:
+    - master
+  artifacts:
+    paths:
+      - dist
+  script:
+  - yarn install --check-files --non-interactive
+  - yarn run build
