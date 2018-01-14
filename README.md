@@ -1,4 +1,6 @@
-# gitlab-monitor
+# GitLab Monitor
+
+![Logo](/logo.svg)
 
 > A browser-based monitor dashboard for GitLab CI
 
