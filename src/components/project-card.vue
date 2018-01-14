@@ -101,6 +101,7 @@
         this.$data.loading = true;
 
         this.$data.project = await this.$api(`/projects/${this.$props.projectId}`);
+        this.$emit('input', this.$data.project.last_activity_at);
 
         this.$data.loading = false;
       },

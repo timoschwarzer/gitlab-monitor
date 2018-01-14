@@ -2,7 +2,7 @@
   <div class="app" @click="autoZoom()">
     <div :style="{zoom}">
       <div class="projects">
-        <project-card v-for="project in sortedProjects" :key="project.id" :project-id="project.id" @status-changed="fetchProjects()" />
+        <project-card v-for="project in sortedProjects" :key="project.id" :project-id="project.id" v-model="project.last_activity_at" />
       </div>
     </div>
     <div v-if="initialLoading" class="loader">
