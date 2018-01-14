@@ -42,10 +42,12 @@
       },
       showDurations() {
         return (getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true) &&
-          this.$props.pipeline.status === 'running' ||
-          this.$props.pipeline.status === 'failed' ||
-          this.$props.pipeline.status === 'canceled' ||
-          this.$props.pipeline.status === 'success';
+          (
+            this.$props.pipeline.status === 'running' ||
+            this.$props.pipeline.status === 'failed' ||
+            this.$props.pipeline.status === 'canceled' ||
+            this.$props.pipeline.status === 'success'
+          );
       },
       showUsers() {
         return getQueryParameter('showUsers') !== null ? !!getQueryParameter('showUsers') : false;
@@ -89,10 +91,12 @@
       },
       setupDurationCounter() {
         const pipeline = this.$props.pipeline;
-        const startedAtDiffSeconds = (new Date() - new Date(this.$props.pipeline.updated_at)) / 1000;
-        if (pipeline.status !== 'running' && (this.$data.duration === null || Math.abs(pipeline.duration - this.$data.duration) > 5)) {
+
+        const startedAtDiffSeconds = ((pipeline.finished_at !== null ? new Date(pipeline.finished_at) : new Date()) - new Date(pipeline.started_at !== null ? pipeline.started_at : pipeline.created_at)) / 1000;
+
+        if (pipeline.status !== 'running' && pipeline.duration !== null && (this.$data.duration === null || Math.abs(pipeline.duration - this.$data.duration) > 5)) {
           this.$data.duration = pipeline.duration;
-        } else if (pipeline.updated_at !== this.$data.updatedAt || Math.abs(startedAtDiffSeconds - this.$data.updatedAt) > 5) {
+        } else if (this.$data.duration === null || pipeline.updated_at !== this.$data.updatedAt || Math.abs(startedAtDiffSeconds - this.$data.updatedAt) > 5) {
           // Update the duration if the started_at property changed or the timer is >5 seconds off
           this.$data.duration = startedAtDiffSeconds;
           this.$data.updatedAt = pipeline.updated_at;
