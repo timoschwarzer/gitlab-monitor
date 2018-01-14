@@ -1,5 +1,5 @@
 <template>
-  <div :class="['project-card', status]">
+  <div v-if="showPipelinesOnly ? (pipelines !== null && pipelines.length > 0) : true" :class="['project-card', status]">
     <div class="content">
       <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
       <div class="title">{{ project !== null ? project.name : 'Loading project...' }}</div>
@@ -30,9 +30,10 @@
 </template>
 
 <script>
-  import Octicon      from 'vue-octicon/components/Octicon';
-  import GitlabIcon   from './gitlab-icon';
-  import PipelineView from './pipeline-view';
+  import Octicon             from 'vue-octicon/components/Octicon';
+  import {getQueryParameter} from '../util';
+  import GitlabIcon          from './gitlab-icon';
+  import PipelineView        from './pipeline-view';
   import 'vue-octicon/icons/git-branch';
   import 'vue-octicon/icons/clock';
   import 'vue-octicon/icons/sync';
@@ -52,6 +53,11 @@
       loading: false,
       refreshInterval: null
     }),
+    computed: {
+      showPipelinesOnly() {
+        return getQueryParameter('pipelinesOnly') !== null ? getQueryParameter('pipelinesOnly') : false;
+      }
+    },
     mounted() {
       this.fetchProject();
     },
