@@ -2,7 +2,7 @@
   <div class="app" @click="autoZoom()">
     <div :style="{zoom}">
       <div class="projects">
-        <project-card v-for="project in projects" :key="project.id" :project-id="project.id" @status-changed="fetchProjects()" />
+        <project-card v-for="project in sortedProjects" :key="project.id" :project-id="project.id" @status-changed="fetchProjects()" />
       </div>
     </div>
     <div v-if="initialLoading" class="loader">
@@ -27,6 +27,11 @@
       zoom: 1,
       initialLoading: true
     }),
+    computed: {
+      sortedProjects() {
+        return this.$data.projects.sort((a, b) => a.last_activity_at < b.last_activity_at);
+      }
+    },
     mounted() {
       this.fetchProjects();
 
