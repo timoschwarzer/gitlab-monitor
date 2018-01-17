@@ -1,4 +1,4 @@
-image: node:latest
+image: web-ci
 
 cache:
   paths:
