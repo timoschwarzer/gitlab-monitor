@@ -54,6 +54,7 @@
       async fetchProjects() {
         const projects = await this.$api('/projects', {
           order_by: 'last_activity_at',
+          visibility: getQueryParameter('projectVisibility') || 'internal',
           per_page: getQueryParameter('fetchCount') || 20
         });
 

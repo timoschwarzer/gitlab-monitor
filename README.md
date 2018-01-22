@@ -44,6 +44,7 @@ Name                            | Description
 `showJobNames`                  | Show job names instead of status icons. Default: `false`
 `showDurations`                 | Show pipeline durations. Default: `true`
 `showUsers`                     | Show user that invoked a pipeline. Default: `false`
+`projectVisibility`             | Limit projects by visibility. Default: `internal`, Can be: `public`, `internal` or `private`
 
 ## Minimal example:
 
