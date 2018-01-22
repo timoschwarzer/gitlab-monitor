@@ -143,6 +143,7 @@
       }
 
       .jobs {
+        white-space: nowrap;
         margin-right: 8px;
       }
 
