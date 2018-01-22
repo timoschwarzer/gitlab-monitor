@@ -4,7 +4,18 @@
 
 > A browser-based monitor dashboard for GitLab CI
 
-## Download
+## Use & Download
+
+If you don't want to setup your own server, you can always
+use the latest version of GitLab Monitor I upload here:
+
+https://timoschwarzer.com/gitlab-monitor
+
+Don't worry, I don't save access tokens or anything else.
+Additionally, this version has a manifest.json attached which
+makes it easy to pin it to your Android home screen and open
+it as a full screen app.
+
 [Go to releases](https://github.com/timoschwarzer/gitlab-monitor/releases)
 
 ## Screenshots
