@@ -115,17 +115,12 @@
         if (pipelines.length === 0) {
           this.$data.pipelines = [];
         } else {
-          if (pipelines[0].status === 'pending') {
             const filteredPipelines = [];
 
             for (const pipeline of pipelines) {
-              filteredPipelines.push(pipeline);
-              if (
-                pipeline.status === 'success' ||
-                pipeline.status === 'failed'
-              ) {
-                break;
-              }
+                if (pipeline.status == 'pending' || pipeline.status == 'running') {
+                    filteredPipelines.push(pipeline);
+                }
             }
 
             for (const pipeline of filteredPipelines) {
@@ -133,11 +128,12 @@
               resolvedPipelines.push(resolvedPipeline);
             }
 
-            this.$data.pipelines = resolvedPipelines;
-          } else {
-            const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipelines[0].id}`);
-            this.$data.pipelines = [resolvedPipeline];
-          }
+            if (pipelines.length >= 1 && filteredPipelines.length == 0) {
+                const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipelines[0].id}`);
+                this.$data.pipelines = [resolvedPipeline];
+            } else {
+                this.$data.pipelines = resolvedPipelines;
+            }
         }
 
         this.$data.loading = false;
