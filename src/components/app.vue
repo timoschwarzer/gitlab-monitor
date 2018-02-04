@@ -87,8 +87,8 @@
         }
 
         while (
-          (step > 0 && this.$el.clientHeight <= window.innerHeight) ||
-          (step < 0 && this.$el.clientHeight > window.innerHeight)
+          (step > 0 && (this.$el.clientHeight <= window.innerHeight || this.$el.clientWidth <= window.innerWidth)) ||
+          (step < 0 && (this.$el.clientHeight > window.innerHeight || this.$el.clientWidth > window.innerWidth))
         ) {
           this.$data.zoom += step;
           await this.$nextTick();
