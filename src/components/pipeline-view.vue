@@ -86,7 +86,7 @@
     },
     methods: {
       async fetchJobs() {
-        this.$data.jobs = await this.$api(`/projects/${this.$props.project.id}/pipelines/${this.$props.pipeline.id}/jobs`);
+        this.$data.jobs = await this.$api(`/projects/${this.$props.project.id}/repository/commits/${this.$props.pipeline.sha}/statuses`);
         this.$data.loading = false;
       },
       setupDurationCounter() {

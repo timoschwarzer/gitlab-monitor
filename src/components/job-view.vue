@@ -1,6 +1,6 @@
 <template>
   <a class="job-view" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
-    <div :class="['job-circle', job.status, {square: !showJobNames}]">
+    <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
         <div v-if="showJobNames" :key="job.status">
           {{ job.name }}
@@ -31,7 +31,9 @@
           case 'canceled':
             return 'status_canceled_borderless';
           case 'failed':
-            return 'status_failed_borderless';
+            return this.$props.job.allow_failure ?
+              'status_warning_borderless' :
+              'status_failed_borderless';
           case 'pending':
             return 'status_pending_borderless';
           case 'running':
@@ -86,7 +88,7 @@
         background-color: #1565C0;
       }
 
-      &.pending {
+      &.pending, &.warning {
         background-color: #EF6C00;
       }
 
