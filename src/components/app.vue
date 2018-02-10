@@ -52,10 +52,13 @@
     },
     methods: {
       async fetchProjects() {
+        const fetchCount = getQueryParameter('fetchCount') || 20;
         const gitlabApiParams = {
           order_by: 'last_activity_at',
-          per_page: getQueryParameter('fetchCount') || 20
+          // GitLab per_page max is 100. We use > 100 values as next page follow trigger
+          per_page: fetchCount > 100 ? 100 : fetchCount
         };
+
         const visibility = getQueryParameter('projectVisibility') || 'any';
         // Only add the visibility attribute to the params if filtering is required
         // (if visiblity is not specified, Gitlab will return all projects)
@@ -63,7 +66,7 @@
           gitlabApiParams.visibility = visibility;
         }
 
-        const projects = await this.$api('/projects', gitlabApiParams);
+        const projects = await this.$api('/projects', gitlabApiParams, {follow_next_page_links: fetchCount > 100});
 
         // Only show projects that have jobs enabled
         const maxAge = (getQueryParameter('maxAge') !== null ? getQueryParameter('maxAge') : 24 * 7);
