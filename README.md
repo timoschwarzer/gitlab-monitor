@@ -9,7 +9,7 @@
 If you don't want to setup your own server, you can always
 use the latest version of GitLab Monitor I upload here:
 
-https://timoschwarzer.com/gitlab-monitor
+<https://timoschwarzer.com/gitlab-monitor>
 
 Don't worry, I don't save access tokens or anything else.
 Additionally, this version has a manifest.json attached which
@@ -19,6 +19,7 @@ it as a full screen app.
 [Go to releases](https://github.com/timoschwarzer/gitlab-monitor/releases)
 
 ## Screenshots
+
 ![Screenshot 1](/../resources/screenshots/screenshot1.png?raw=true)
 ![Screenshot 2](/../resources/screenshots/screenshot2.png?raw=true)
 
@@ -57,11 +58,12 @@ Name                            | Description
 `showUsers`                     | Show user that invoked a pipeline. Default: `false`
 `projectVisibility`             | Limit projects by visibility. Default: `any`, Can be: `any`, `public`, `internal` or `private`
 
-## Minimal example:
+## Minimal example
 
 `http://gitlab-monitor.local/?gitlabApi=https://gitlab.example.com/api/v4&privateToken=ABCDEF1234ABCDEF`
 
 ## Used libraries
+
 - [Vue](https://vuejs.org)
 - [vue-timeago](https://github.com/egoist/vue-timeago)
 - [vue-octicon](https://github.com/Justineo/vue-octicon)
