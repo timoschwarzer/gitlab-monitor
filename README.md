@@ -9,7 +9,7 @@
 If you don't want to setup your own server, you can always
 use the latest version of GitLab Monitor I upload here:
 
-https://timoschwarzer.com/gitlab-monitor
+<https://timoschwarzer.com/gitlab-monitor>
 
 Don't worry, I don't save access tokens or anything else.
 Additionally, this version has a manifest.json attached which
@@ -19,6 +19,7 @@ it as a full screen app.
 [Go to releases](https://github.com/timoschwarzer/gitlab-monitor/releases)
 
 ## Screenshots
+
 ![Screenshot 1](/../resources/screenshots/screenshot1.png?raw=true)
 ![Screenshot 2](/../resources/screenshots/screenshot2.png?raw=true)
 
@@ -47,7 +48,7 @@ Name                            | Description
 --------------------------------|--------------------------------------------
 `gitlabApi` (required)          | URL to your GitLab API. (e.g. `https://gitlab.example.com/api/v4`)
 `privateToken` (required)       | Private token to access the GitLab API
-`maxAge`                        | In hours. Projects with last activity older than this age won't be displayed. Default: 7 days
+`maxAge`                        | In hours. Projects with last activity older than this age won't be displayed. If set to 0, no filter will be applied. Default: 168 (i.e. 7 days)
 `fetchCount`                    | How many projects will be fetched from GitLab. If set to greater than 100, then all available projects will be retrieved (in batches of 100). Default: 20
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`
 `autoZoom`                      | Zooms the dashboard to fill the screen with all displayed projects. [Not compatible](https://caniuse.com/#feat=css-zoom) with all browsers! Default: `false`
@@ -57,11 +58,12 @@ Name                            | Description
 `showUsers`                     | Show user that invoked a pipeline. Default: `false`
 `projectVisibility`             | Limit projects by visibility. Default: `any`, Can be: `any`, `public`, `internal` or `private`
 
-## Minimal example:
+## Minimal example
 
 `http://gitlab-monitor.local/?gitlabApi=https://gitlab.example.com/api/v4&privateToken=ABCDEF1234ABCDEF`
 
 ## Used libraries
+
 - [Vue](https://vuejs.org)
 - [vue-timeago](https://github.com/egoist/vue-timeago)
 - [vue-octicon](https://github.com/Justineo/vue-octicon)
