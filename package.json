@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "parse-link-header":"^1.0.1",
+    "parse-link-header": "^1.0.1",
+    "query-string": "^6.0.0",
     "vue": "^2.5.11",
     "vue-octicon": "^2.1.1",
     "vue-timeago": "^3.4.2"
