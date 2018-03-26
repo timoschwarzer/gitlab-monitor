@@ -40,6 +40,8 @@
             return 'status_running_borderless';
           case 'skipped':
             return 'status_skipped_borderless';
+          case 'manual':
+            return 'status_manual_borderless';
           case 'success':
             return 'status_success_borderless';
           default:
