@@ -71,9 +71,26 @@
         // Only show projects that have jobs enabled
         const maxAge = (getQueryParameter('maxAge') !== null ? getQueryParameter('maxAge') : 24 * 7);
 
+        // Only include projects from specific groups
+        let includeGroups = (getQueryParameter('groups') !== null ? getQueryParameter('groups') : '');
+        if (typeof includeGroups === 'string') {
+          includeGroups = includeGroups.split(',');
+        }
+
+        // Only include specific projects
+        let includeProjects = (getQueryParameter('projects') !== null ? getQueryParameter('projects') : '');
+        if (typeof includeProjects === 'string') {
+          includeProjects = includeProjects.split(',');
+        }
+
         this.$data.projects = projects.filter((project) => {
           return project.jobs_enabled &&
-            maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge);
+            (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
+            (
+              (includeGroups[0] === '' && includeProjects[0] === '') ||
+              (includeGroups.some((group) => group === project.namespace.name)) ||
+              (includeProjects.some((group) => group === project.name_with_namespace))
+            );
         });
 
         if (getQueryParameter('autoZoom')) {
