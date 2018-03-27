@@ -102,7 +102,7 @@
         background-color: #010101;
       }
 
-      &.skipped {
+      &.skipped, &.manual {
         background-color: #4b4b4b;
       }
 
