@@ -40,6 +40,8 @@
             return 'status_running_borderless';
           case 'skipped':
             return 'status_skipped_borderless';
+          case 'manual':
+            return 'status_manual_borderless';
           case 'success':
             return 'status_success_borderless';
           default:
@@ -100,7 +102,7 @@
         background-color: #010101;
       }
 
-      &.skipped {
+      &.skipped, &.manual {
         background-color: #4b4b4b;
       }
 
