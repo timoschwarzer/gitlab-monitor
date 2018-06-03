@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var VueLoaderPlugin = require('vue-loader').VueLoaderPlugin;
 
 module.exports = {
   entry: './src/main.js',
@@ -97,15 +98,10 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
+    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.template.html',
       chunksSortMode: 'dependency',

@@ -12,9 +12,9 @@ Vue.use(GitLabApi, {
 
 Vue.use(VueTimeago, {
   name: 'timeago', // component name, `timeago` by default
-  locale: 'en-US',
+  locale: 'en',
   locales: {
-    'en-US': require('vue-timeago/locales/en-US.json')
+    'en': require('date-fns/locale/en')
   }
 });
 
