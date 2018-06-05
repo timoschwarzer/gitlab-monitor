@@ -85,8 +85,12 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  plugins: [
+      new VueLoaderPlugin(),
+  ]
 };
+
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map';
@@ -101,7 +105,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
-    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.template.html',
       chunksSortMode: 'dependency',
