@@ -1,16 +1,24 @@
 <template>
   <div class="pipeline-view">
     <octicon v-if="loading" name="sync" scale="1.4" spin />
-    <div class="pipeline" v-else>
-      <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
-      <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
-      <div class="jobs">
-        <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
+
+    <div v-else>
+      <div class="branch">
+        <octicon name="git-branch" scale="0.9" />
+        {{ pipeline.ref }}
       </div>
-      <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
-      <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
-      <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
-      <span v-if="showUsers" class="user">{{ pipeline.user.name }}</span>
+
+      <div class="pipeline">
+        <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
+        <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
+        <div class="jobs">
+          <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
+        </div>
+        <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
+        <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
+        <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
+        <span v-if="showUsers" class="user">{{ pipeline.user.name }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -123,6 +131,18 @@
   .pipeline-view {
     &:not(:last-child) {
       margin-bottom: 4px;
+    }
+
+    .branch {
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      padding: 0 0 2px 0;
+
+      .octicon {
+        margin-right: 4px;
+      }
     }
 
     .pipeline {

@@ -3,10 +3,6 @@
     <div class="content">
       <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
       <div class="title">{{ project !== null ? project.name : 'Loading project...' }}</div>
-      <div class="branch">
-        <octicon name="git-branch" scale="0.9" />
-        {{ project !== null ? project.default_branch : '...' }}
-      </div>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelines.length === 0" class="no-pipelines">
           No recent pipelines
@@ -188,17 +184,6 @@
         &.small {
           font-size: 12px;
           line-height: 0.6;
-        }
-      }
-
-      .branch {
-        color: rgba(255, 255, 255, 0.5);
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-
-        .octicon {
-          margin-right: 4px;
         }
       }
 
