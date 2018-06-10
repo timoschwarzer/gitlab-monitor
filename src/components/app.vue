@@ -29,7 +29,7 @@
     }),
     computed: {
       sortedProjects() {
-        return this.$data.projects.sort((a, b) => a.last_activity_at < b.last_activity_at);
+        return this.$data.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime());
       }
     },
     mounted() {
