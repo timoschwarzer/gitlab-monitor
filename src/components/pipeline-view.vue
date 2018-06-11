@@ -3,10 +3,10 @@
     <octicon v-if="loading" name="sync" scale="1.4" spin />
 
     <div v-else>
-      <div class="branch">
+      <a class="branch" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/tree/' + pipeline.ref">
         <octicon name="git-branch" scale="0.9" />
         {{ pipeline.ref }}
-      </div>
+      </a>
 
       <div class="pipeline">
        <a class="pipeline-id-link" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/pipelines/' + pipeline.id">
@@ -141,6 +141,7 @@
       align-items: center;
       font-size: 14px;
       padding: 0 0 2px 0;
+      text-decoration: none;
 
       .octicon {
         margin-right: 4px;
