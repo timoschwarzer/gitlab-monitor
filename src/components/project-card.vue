@@ -2,7 +2,9 @@
   <div v-if="showPipelinesOnly ? (pipelines !== null && pipelines.length > 0) : true" :class="['project-card', status]">
     <div class="content">
       <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
-      <div class="title">{{ project !== null ? project.name : 'Loading project...' }}</div>
+      <a class="title" target="_blank" rel="noopener noreferrer" :href="project.web_url">
+        {{ project !== null ? project.name : 'Loading project...' }}
+      </a>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelines.length === 0" class="no-pipelines">
           No recent pipelines
@@ -180,6 +182,8 @@
         font-size: 16px;
         font-weight: bold;
         text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        color: inherit;
 
         &.small {
           font-size: 12px;
