@@ -9,8 +9,10 @@
       </div>
 
       <div class="pipeline">
-        <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
+       <a class="pipeline-id-link" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/pipelines/' + pipeline.id">
+          <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
         <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
+       </a>
         <div class="jobs">
           <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
         </div>
@@ -149,6 +151,12 @@
       display: flex;
       align-items: center;
       color: white;
+
+      .pipeline-id-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
 
       .pipeline-icon {
         width: 16px;
