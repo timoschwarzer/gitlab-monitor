@@ -57,8 +57,11 @@ Name                            | Description
 `showDurations`                 | Show pipeline durations. Default: `true`
 `showUsers`                     | Show user that invoked a pipeline. Default: `false`
 `projectVisibility`             | Limit projects by visibility. Default: `any`, Can be: `any`, `public`, `internal` or `private`
-`groups`                        | List of project groups that are included. Multiple groups can be provided comma-separated or in multiple `groups` values. Note that `groups` and `projects` are combined together if both are provided.
-`projects`                      | List of projects that are included. Multiple projects can be provided comma-separated or in multiple `projects` values. Note that `groups` and `projects` are combined together if both are provided.
+`groups`                        | List of project groups that are included. Multiple groups can be provided comma-separated or in multiple `groups` values.
+`projects`                      | List of projects that are included. Multiple projects can be provided comma-separated or in multiple `projects` values.
+`paths`                         | List of project paths that are included. Multiple paths can be provided comma-separated or in multiple `paths` values.
+
+Note that `groups`, `projects` and `paths` are combined together if more then one are provided.
 
 ## Minimal example
 
