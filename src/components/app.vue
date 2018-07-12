@@ -83,11 +83,17 @@
           includeProjects = includeProjects.split(',');
         }
 
+        let includePaths = (getQueryParameter('paths') !== null ? getQueryParameter('paths') : '');
+        if (typeof includePaths === 'string') {
+          includePaths = includePaths.split(',');
+        }
+
         this.$data.projects = projects.filter((project) => {
           return project.jobs_enabled &&
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (
-              (includeGroups[0] === '' && includeProjects[0] === '') ||
+              (includeGroups[0] === '' && includeProjects[0] === '' && includePaths[0] === '') ||
+              (includePaths.some((path) => project.path_with_namespace.startsWith(path))) ||
               (includeGroups.some((group) => group === project.namespace.name)) ||
               (includeProjects.some((group) => group === project.name_with_namespace))
             );
