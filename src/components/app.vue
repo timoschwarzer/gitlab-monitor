@@ -93,9 +93,9 @@
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (
               (includeGroups[0] === '' && includeProjects[0] === '' && includePaths[0] === '') ||
-              (includePaths.some((path) => project.path_with_namespace.startsWith(path))) ||
-              (includeGroups.some((group) => group === project.namespace.name)) ||
-              (includeProjects.some((group) => group === project.name_with_namespace))
+              (includePaths[0] !== '' && includePaths.some((path) => project.path_with_namespace.startsWith(path))) ||
+              (includeGroups[0] !== '' && includeGroups.some((group) => group === project.namespace.name)) ||
+              (includeProjects[0] !== '' && includeProjects.some((group) => group === project.name_with_namespace))
             );
         });
 
