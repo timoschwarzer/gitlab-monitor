@@ -2,7 +2,7 @@
   <div v-if="showPipelinesOnly ? (pipelines !== null && pipelines.length > 0) : true" :class="['project-card', status]">
     <div class="content">
       <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
-      <a class="title" target="_blank" rel="noopener noreferrer" :href="project.web_url">
+      <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url : '#'">
         {{ project !== null ? project.name : 'Loading project...' }}
       </a>
       <div class="pipeline-container">
