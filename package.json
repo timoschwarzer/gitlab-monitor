@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "date-fns": "^1.29.0",
+    "http-server": "^0.11.1",
     "parse-link-header": "^1.0.1",
     "query-string": "^6.1.0",
     "vue": "^2.5.16",
