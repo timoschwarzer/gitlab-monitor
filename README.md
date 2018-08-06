@@ -46,8 +46,8 @@ http://gitlab-monitor.local/<params>
 
 Name                            | Description
 --------------------------------|--------------------------------------------
-`gitlabApi` (required)          | URL to your GitLab API. (e.g. `https://gitlab.example.com/api/v4`)
-`privateToken` (required)       | Private token to access the GitLab API
+`gitlabApi` (required)          | URL to your GitLab API. (e.g. `https://gitlab.example.com/api/v4`) or set the env var GITLAB_API
+`privateToken` (required)       | Private token to access the GitLab API or set GITLAB_PRIVATE_TOKEN
 `maxAge`                        | In hours. Projects with last activity older than this age won't be displayed. If set to 0, no filter will be applied. Default: 168 (i.e. 7 days)
 `fetchCount`                    | How many projects will be fetched from GitLab. If set to greater than 100, then all available projects will be retrieved (in batches of 100). Default: 20
 `pipelinesOnly`                 | Show only projects with recent pipelines. Default: `false`

@@ -6,8 +6,8 @@ import VueTimeago          from 'vue-timeago';
 import {getQueryParameter} from './util';
 
 Vue.use(GitLabApi, {
-  gitlab_api_url: getQueryParameter('gitlabApi'),
-  private_token: getQueryParameter('privateToken')
+  gitlab_api_url: getQueryParameter('gitlabApi') || process.env.GITLAB_API,
+  private_token: getQueryParameter('privateToken') || process.env.GITLAB_PRIVATE_TOKEN
 });
 
 Vue.use(VueTimeago, {
