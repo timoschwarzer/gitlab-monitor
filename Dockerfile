@@ -1,6 +1,12 @@
-FROM node:alpine
-ADD . /
+#Stage 1
+FROM node:10.8-alpine as yarnbuild
+
+WORKDIR /usr/src/app
+COPY . ./
 RUN yarn install
 RUN yarn build
-EXPOSE 8080
-CMD yarn run serve
+
+# Stage 2
+FROM nginx:1.14-alpine
+COPY --from=yarnbuild /usr/src/app/dist /usr/share/nginx/html
+EXPOSE 80

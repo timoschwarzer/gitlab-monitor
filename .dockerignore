@@ -1,0 +1,6 @@
+Dockerfile
+.git
+.gitignore
+.gitlab-ci.yml
+.editorconfig
+.markdownlint.json
