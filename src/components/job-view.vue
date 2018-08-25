@@ -27,11 +27,11 @@
     props: ['job', 'project'],
     computed: {
       statusIconName() {
-        switch (this.$props.job.status) {
+        switch (this.job.status) {
           case 'canceled':
             return 'status_canceled_borderless';
           case 'failed':
-            return this.$props.job.allow_failure ?
+            return this.job.allow_failure ?
               'status_warning_borderless' :
               'status_failed_borderless';
           case 'pending':

@@ -29,7 +29,7 @@
     }),
     computed: {
       sortedProjects() {
-        return this.$data.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime());
+        return this.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime());
       }
     },
     mounted() {
@@ -42,7 +42,7 @@
       }
 
       this.refreshIntervalId = setInterval(async () => {
-        if (!this.$data.loading) {
+        if (!this.loading) {
           await this.fetchProjects();
         }
       }, 120000);
@@ -88,7 +88,7 @@
           includePaths = includePaths.split(',');
         }
 
-        this.$data.projects = projects.filter((project) => {
+        this.projects = projects.filter((project) => {
           return project.jobs_enabled &&
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (
@@ -103,7 +103,7 @@
           this.$nextTick(() => this.autoZoom());
         }
 
-        this.$data.initialLoading = false;
+        this.initialLoading = false;
       },
       async autoZoom() {
         let step = 0.1;
@@ -116,17 +116,17 @@
           (step > 0 && this.$el.clientHeight <= window.innerHeight) ||
           (step < 0 && this.$el.clientHeight > window.innerHeight)
         ) {
-          this.$data.zoom += step;
+          this.zoom += step;
           await this.$nextTick();
 
-          if (this.$data.zoom > 20 || this.$data.zoom < 0) {
+          if (this.zoom > 20 || this.zoom < 0) {
             // The browser likely doesn't support CSS zoom
-            this.$data.zoom = 0;
+            this.zoom = 0;
             return;
           }
         }
 
-        if (step > 0) this.$data.zoom -= step;
+        if (step > 0) this.zoom -= step;
       }
     }
   };

@@ -68,26 +68,26 @@
       },
       pipelines(pipelines) {
         if (pipelines && pipelines.length > 0) {
-          this.$data.status = pipelines[0].status;
+          this.status = pipelines[0].status;
 
           switch (pipelines[0].status) {
             case 'pending':
             case 'running':
-              this.$data.refreshInterval = 5000;
+              this.refreshInterval = 5000;
               break;
             default:
-              this.$data.refreshInterval = 15000;
+              this.refreshInterval = 15000;
           }
         } else {
-          this.$data.status = '';
-          this.$data.refreshInterval = 60000;
+          this.status = '';
+          this.refreshInterval = 60000;
         }
       },
       refreshInterval(newInterval, oldInterval) {
         if (newInterval !== oldInterval) {
           if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
           this.refreshIntervalId = setInterval(() => {
-            if (!this.$data.loading) {
+            if (!this.loading) {
               this.fetchProject();
             }
           }, newInterval);
@@ -96,45 +96,45 @@
     },
     methods: {
       async fetchProject() {
-        this.$data.loading = true;
+        this.loading = true;
 
-        this.$data.project = await this.$api(`/projects/${this.$props.projectId}`);
-        this.$emit('input', this.$data.project.last_activity_at);
+        this.project = await this.$api(`/projects/${this.projectId}`);
+        this.$emit('input', this.project.last_activity_at);
 
-        this.$data.loading = false;
+        this.loading = false;
       },
       async fetchPipelines() {
-        this.$data.loading = true;
+        this.loading = true;
 
-        const pipelines = await this.$api(`/projects/${this.$props.projectId}/pipelines`);
+        const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`);
 
         const resolvedPipelines = [];
 
         if (pipelines.length === 0) {
-          this.$data.pipelines = [];
+          this.pipelines = [];
         } else {
             const filteredPipelines = [];
 
             for (const pipeline of pipelines) {
-                if (pipeline.status == 'pending' || pipeline.status == 'running') {
+                if (pipeline.status === 'pending' || pipeline.status === 'running') {
                     filteredPipelines.push(pipeline);
                 }
             }
 
             for (const pipeline of filteredPipelines) {
-              const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipeline.id}`);
+              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`);
               resolvedPipelines.push(resolvedPipeline);
             }
 
-            if (pipelines.length >= 1 && filteredPipelines.length == 0) {
-                const resolvedPipeline = await this.$api(`/projects/${this.$props.projectId}/pipelines/${pipelines[0].id}`);
-                this.$data.pipelines = [resolvedPipeline];
+            if (pipelines.length >= 1 && filteredPipelines.length === 0) {
+                const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`);
+                this.pipelines = [resolvedPipeline];
             } else {
-                this.$data.pipelines = resolvedPipelines;
+                this.pipelines = resolvedPipelines;
             }
         }
 
-        this.$data.loading = false;
+        this.loading = false;
       }
     }
   };

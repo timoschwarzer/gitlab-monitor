@@ -2,9 +2,10 @@
   <svg :style="{width: size + 'px', height: size + 'px'}">
     <use
       v-bind="{
-            'href': require('../assets/icons.svg') + '#' + name,
-            'xlink:href': require('../assets/icons.svg') + '#' + name
-          }">
+        'href': require('../assets/icons.svg') + '#' + name,
+        'xlink:href': require('../assets/icons.svg') + '#' + name
+      }"
+    >
     </use>
   </svg>
 </template>

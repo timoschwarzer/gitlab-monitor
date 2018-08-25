@@ -53,17 +53,17 @@
       showDurations() {
         return (getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true) &&
           (
-            this.$props.pipeline.status === 'running' ||
-            this.$props.pipeline.status === 'failed' ||
-            this.$props.pipeline.status === 'canceled' ||
-            this.$props.pipeline.status === 'success'
+            this.pipeline.status === 'running' ||
+            this.pipeline.status === 'failed' ||
+            this.pipeline.status === 'canceled' ||
+            this.pipeline.status === 'success'
           );
       },
       showUsers() {
         return getQueryParameter('showUsers') !== null ? !!getQueryParameter('showUsers') : false;
       },
       durationString() {
-        const duration = this.$data.duration;
+        const duration = this.duration;
         const hrs = ~~(duration / 3600);
         const mins = ~~((duration % 3600) / 60);
         const secs = Math.trunc(duration % 60);
@@ -96,26 +96,26 @@
     },
     methods: {
       async fetchJobs() {
-        this.$data.jobs = await this.$api(`/projects/${this.$props.project.id}/repository/commits/${this.$props.pipeline.sha}/statuses`);
-        this.$data.loading = false;
+        this.jobs = await this.$api(`/projects/${this.project.id}/repository/commits/${this.pipeline.sha}/statuses`);
+        this.loading = false;
       },
       setupDurationCounter() {
-        const pipeline = this.$props.pipeline;
+        const pipeline = this.pipeline;
 
         const startedAtDiffSeconds = ((pipeline.finished_at !== null ? new Date(pipeline.finished_at) : new Date()) - new Date(pipeline.started_at !== null ? pipeline.started_at : pipeline.created_at)) / 1000;
 
-        if (pipeline.status !== 'running' && pipeline.duration !== null && (this.$data.duration === null || Math.abs(pipeline.duration - this.$data.duration) > 5)) {
-          this.$data.duration = pipeline.duration;
-        } else if (this.$data.duration === null || pipeline.updated_at !== this.$data.updatedAt || Math.abs(startedAtDiffSeconds - this.$data.updatedAt) > 5) {
+        if (pipeline.status !== 'running' && pipeline.duration !== null && (this.duration === null || Math.abs(pipeline.duration - this.duration) > 5)) {
+          this.duration = pipeline.duration;
+        } else if (this.duration === null || pipeline.updated_at !== this.updatedAt || Math.abs(startedAtDiffSeconds - this.updatedAt) > 5) {
           // Update the duration if the started_at property changed or the timer is >5 seconds off
-          this.$data.duration = startedAtDiffSeconds;
-          this.$data.updatedAt = pipeline.updated_at;
+          this.duration = startedAtDiffSeconds;
+          this.updatedAt = pipeline.updated_at;
         }
 
-        if (this.$props.pipeline && this.$props.pipeline.status === 'running') {
+        if (this.pipeline && this.pipeline.status === 'running') {
           if (!this.durationCounterIntervalId) {
             this.durationCounterIntervalId = setInterval(() => {
-              this.$data.duration++;
+              this.duration++;
             }, 1000);
           }
         } else {
