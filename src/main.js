@@ -1,14 +1,15 @@
 import 'babel-polyfill';
-import Vue                 from 'vue';
-import App                 from './components/app.vue';
-import GitLabApi           from './GitLabApi';
-import VueTimeago          from 'vue-timeago';
-import {getQueryParameter} from './util';
+import Vue              from 'vue';
+import VueTimeago       from 'vue-timeago';
+import App              from './components/app.vue';
+import Config           from './Config';
+import { configureApi } from './GitLabApi';
 
-Vue.use(GitLabApi, {
-  gitlab_api_url: getQueryParameter('gitlabApi') || prompt("GitLab API Url?"),
-  private_token: getQueryParameter('privateToken') || prompt("GitLab private token?")
-});
+Config.load();
+
+if (Config.isConfigured) {
+  configureApi();
+}
 
 Vue.use(VueTimeago, {
   name: 'timeago', // component name, `timeago` by default

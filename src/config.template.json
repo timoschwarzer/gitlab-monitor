@@ -1,0 +1,4 @@
+{
+  "gitlabApi": "https://gitlab.example.com/api/v4",
+  "privateToken": "ABCDEF1234"
+}

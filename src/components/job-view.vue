@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import {getQueryParameter} from '../util';
+  import { getQueryParameter } from '../util';
 
   export default {
     name: 'job-view',

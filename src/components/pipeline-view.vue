@@ -3,7 +3,7 @@
     <octicon v-if="loading" name="sync" scale="1.4" spin />
 
     <div v-else>
-      <a class="branch" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/tree/' + pipeline.ref">
+      <a v-if="showBranch" class="branch" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/tree/' + pipeline.ref">
         <octicon name="git-branch" scale="0.9" />
         {{ pipeline.ref }}
       </a>
@@ -26,11 +26,11 @@
 </template>
 
 <script>
-  import Octicon             from 'vue-octicon/components/Octicon';
-  import {getQueryParameter} from '../util';
-  import GitlabIcon          from './gitlab-icon';
-  import JobView             from './job-view';
+  import Octicon    from 'vue-octicon/components/Octicon';
   import 'vue-octicon/icons/sync';
+  import Config     from '../Config';
+  import GitlabIcon from './gitlab-icon';
+  import JobView    from './job-view';
 
   export default {
     components: {
@@ -39,7 +39,7 @@
       JobView
     },
     name: 'pipeline-view',
-    props: ['pipeline', 'project'],
+    props: ['pipeline', 'project', 'showBranch'],
     data: () => ({
       jobs: [],
       loading: true,
@@ -48,10 +48,10 @@
     }),
     computed: {
       showPipelineIds() {
-        return getQueryParameter('showPipelineIds') !== null ? !!getQueryParameter('showPipelineIds') : true;
+        return Config.root.showPipelineIds
       },
       showDurations() {
-        return (getQueryParameter('showDurations') !== null ? !!getQueryParameter('showDurations') : true) &&
+        return (Config.root.showDurations) &&
           (
             this.pipeline.status === 'running' ||
             this.pipeline.status === 'failed' ||
@@ -60,7 +60,7 @@
           );
       },
       showUsers() {
-        return getQueryParameter('showUsers') !== null ? !!getQueryParameter('showUsers') : false;
+        return Config.root.showUsers;
       },
       durationString() {
         const duration = this.duration;
@@ -96,7 +96,7 @@
     },
     methods: {
       async fetchJobs() {
-        this.jobs = await this.$api(`/projects/${this.project.id}/repository/commits/${this.pipeline.sha}/statuses`);
+        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs`);
         this.loading = false;
       },
       setupDurationCounter() {

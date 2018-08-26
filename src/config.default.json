@@ -1,0 +1,24 @@
+{
+  "gitlabApi": "https://gitlab.example.com/api/v4",
+  "privateToken": "ABCDEF123456",
+  "maxAge": 168,
+  "fetchCount": 20,
+  "pipelinesOnly": false,
+  "autoZoom": false,
+  "showPipelineIds": true,
+  "showJobNames": false,
+  "showDurations": true,
+  "showUsers": false,
+  "projectVisibility": "any",
+  "filter": {
+    "include": ".*",
+    "exclude": null
+  },
+  "projectFilter": {
+    "*": {
+      "include": ".*",
+      "exclude": null,
+      "default": null
+    }
+  }
+}
