@@ -130,15 +130,19 @@
       async fetchPipelines() {
         this.loading = true;
 
+        const maxAge = Config.root.maxAge;
+        const showMerged = Config.root.showMerged;
+
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`);
-        const branchNames = branches.map(branch => branch.name).filter(branchName => {
+        const branchNames = branches.filter(branch => showMerged ? true : !branch.merged)
+                                    .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
+                                    .map(branch => branch.name)
+                                    .filter(branchName => {
           let filter = Config.root.projectFilter['*'];
 
           if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
             filter = Config.root.projectFilter[this.project.path_with_namespace];
           }
-
-          console.log(filter);
 
           return !!branchName.match(new RegExp(filter.include)) &&
             (!filter.exclude || !branchName.match(new RegExp(filter.exclude)));
@@ -164,13 +168,17 @@
 
             for (const pipeline of filteredPipelines) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`);
-              resolvedPipelines.push(resolvedPipeline);
+              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
+                resolvedPipelines.push(resolvedPipeline);
+              }
             }
 
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`);
-              newPipelines[branchName] = [resolvedPipeline];
-              count++;
+              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
+                newPipelines[branchName] = [resolvedPipeline];
+                count++;
+              }
             } else {
               newPipelines[branchName] = resolvedPipelines;
               count += resolvedPipelines.length;

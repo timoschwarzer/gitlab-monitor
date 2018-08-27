@@ -19,7 +19,7 @@
         <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
         <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
         <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
-        <span v-if="showUsers" class="user">{{ pipeline.user.name }}</span>
+        <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
     </div>
   </div>

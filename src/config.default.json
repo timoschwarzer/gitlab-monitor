@@ -8,6 +8,7 @@
   "showPipelineIds": true,
   "showJobNames": false,
   "showDurations": true,
+  "showMerged": true,
   "showUsers": false,
   "projectVisibility": "any",
   "filter": {
