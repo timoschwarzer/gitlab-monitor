@@ -56,6 +56,13 @@
       refreshInterval: null
     }),
     computed: {
+      showMerged() {
+        let configuredShowMerged = Config.root.projectFilter['*'].showMerged;
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged;
+        }
+        return configuredShowMerged;
+      },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly;
       }
@@ -131,7 +138,7 @@
         this.loading = true;
 
         const maxAge = Config.root.maxAge;
-        const showMerged = Config.root.showMerged;
+        const showMerged = this.showMerged;
         const fetchCount = Config.root.fetchCount;
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
