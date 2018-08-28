@@ -72,7 +72,10 @@ Your configuration overrides the default configuration, which can be found
       
       // Override default branch (used for the card background color)
       // If null, it uses the default branch of the project
-      "default": null
+      "default": null,
+
+      // Whether to show pipelines of merged branches
+      "showMerged": true
     },
     
     // Specific per-project filters

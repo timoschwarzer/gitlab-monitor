@@ -56,6 +56,13 @@
       refreshInterval: null
     }),
     computed: {
+      showMerged() {
+        let configuredShowMerged = Config.root.projectFilter['*'].showMerged;
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged;
+        }
+        return configuredShowMerged;
+      },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly;
       }
@@ -130,15 +137,22 @@
       async fetchPipelines() {
         this.loading = true;
 
-        const branches = await this.$api(`/projects/${this.projectId}/repository/branches`);
-        const branchNames = branches.map(branch => branch.name).filter(branchName => {
+        const maxAge = Config.root.maxAge;
+        const showMerged = this.showMerged;
+        const fetchCount = Config.root.fetchCount;
+
+        const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
+            per_page: fetchCount > 100 ? 100 : fetchCount
+          }, {follow_next_page_links: fetchCount > 100});
+        const branchNames = branches.filter(branch => showMerged ? true : !branch.merged)
+                                    .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
+                                    .map(branch => branch.name)
+                                    .filter(branchName => {
           let filter = Config.root.projectFilter['*'];
 
           if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
             filter = Config.root.projectFilter[this.project.path_with_namespace];
           }
-
-          console.log(filter);
 
           return !!branchName.match(new RegExp(filter.include)) &&
             (!filter.exclude || !branchName.match(new RegExp(filter.exclude)));
@@ -148,8 +162,9 @@
 
         for (const branchName of branchNames) {
           const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
-            ref: branchName
-          });
+            ref: branchName,
+            per_page: fetchCount > 100 ? 100 : fetchCount
+          }, {follow_next_page_links: fetchCount > 100});
 
           const resolvedPipelines = [];
 
@@ -164,13 +179,17 @@
 
             for (const pipeline of filteredPipelines) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`);
-              resolvedPipelines.push(resolvedPipeline);
+              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
+                resolvedPipelines.push(resolvedPipeline);
+              }
             }
 
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`);
-              newPipelines[branchName] = [resolvedPipeline];
-              count++;
+              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
+                newPipelines[branchName] = [resolvedPipeline];
+                count++;
+              }
             } else {
               newPipelines[branchName] = resolvedPipelines;
               count += resolvedPipelines.length;

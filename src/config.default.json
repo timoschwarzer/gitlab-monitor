@@ -18,7 +18,8 @@
     "*": {
       "include": ".*",
       "exclude": null,
-      "default": null
+      "default": null,
+      "showMerged": true
     }
   }
 }
