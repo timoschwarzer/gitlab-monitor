@@ -75,7 +75,10 @@ Your configuration overrides the default configuration, which can be found
       "default": null,
 
       // Whether to show pipelines of merged branches
-      "showMerged": true
+      "showMerged": true,
+
+      // Whether to show pipelines of tags
+      "showTags": true
     },
     
     // Specific per-project filters

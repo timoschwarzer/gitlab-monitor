@@ -19,7 +19,8 @@
       "include": ".*",
       "exclude": null,
       "default": null,
-      "showMerged": true
+      "showMerged": true,
+      "showTags": true
     }
   }
 }
