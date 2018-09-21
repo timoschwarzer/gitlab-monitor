@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import { getQueryParameter } from '../util';
+  import Config from '../Config';
 
   export default {
     name: 'job-view',
@@ -49,7 +49,7 @@
         }
       },
       showJobNames() {
-        return !!getQueryParameter('showJobNames')
+        return Config.root.showJobNames
       }
     }
   };
@@ -59,6 +59,8 @@
   .job-view {
     display: inline-flex;
     align-items: center;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
 
     &:last-child {
       .pipe {
