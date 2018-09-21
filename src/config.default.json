@@ -6,7 +6,7 @@
   "pipelinesOnly": false,
   "autoZoom": false,
   "showPipelineIds": true,
-  "showJobNames": false,
+  "showJobs": "icon",
   "showDurations": true,
   "showUsers": false,
   "projectVisibility": "any",

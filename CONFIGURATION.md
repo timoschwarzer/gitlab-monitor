@@ -32,9 +32,10 @@ Your configuration overrides the default configuration, which can be found
   // Whether to show pipeline IDs or not
   "showPipelineIds": true,
   
-  // Whether to show job names or not
-  "showJobNames": false,
-  
+  // Control how to show job names and icons
+  // Can be: 'icon', 'name', 'iconAndName'
+  "showJobs": "icon",
+
   // Whether to show pipeline durations or not
   "showDurations": true,
   

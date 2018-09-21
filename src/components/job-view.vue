@@ -2,10 +2,7 @@
   <a class="job-view" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
     <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
-        <div v-if="showJobNames" :key="job.status">
-          {{ job.name }}
-        </div>
-        <svg v-else :key="statusIconName">
+        <svg v-if="showJobIcons" :key="statusIconName">
           <use
             v-bind="{
             'href': require('../assets/icons.svg') + '#' + statusIconName,
@@ -14,6 +11,10 @@
           </use>
         </svg>
       </transition>
+
+      <span v-if="showJobNames" :key="job.name">
+        {{ job.name }}
+      </span>
     </div>
     <div class="pipe"></div>
   </a>
@@ -49,7 +50,10 @@
         }
       },
       showJobNames() {
-        return Config.root.showJobNames
+        return Config.root.showJobs == "name" || Config.root.showJobs == "iconAndName"
+      },
+      showJobIcons() {
+        return Config.root.showJobs == "icon" || Config.root.showJobs == "iconAndName"
       }
     }
   };
@@ -70,7 +74,7 @@
 
     .job-circle {
       width: auto;
-      display: inline-block;
+      display: inline-flex;
       height: 24px;
       border: 2px solid rgba(255, 255, 255, 0.8);
       border-radius: 24px;
@@ -109,8 +113,8 @@
       }
 
       svg {
-        width: 100%;
-        height: 100%;
+        width: 24px;
+        height: 24px;
         fill: rgba(255, 255, 255, 0.8);
       }
     }
