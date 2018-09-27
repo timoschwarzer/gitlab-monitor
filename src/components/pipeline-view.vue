@@ -96,7 +96,7 @@
     },
     methods: {
       async fetchJobs() {
-        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs`);
+        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`);
         this.loading = false;
       },
       setupDurationCounter() {
