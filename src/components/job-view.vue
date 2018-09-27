@@ -1,5 +1,5 @@
 <template>
-  <a class="job-view" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
+  <a class="job-view" target="_blank" :title="job.name" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
     <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
         <svg v-if="showJobIcons" :key="statusIconName">
