@@ -5,21 +5,38 @@ import App              from './components/app.vue';
 import Config           from './Config';
 import { configureApi } from './GitLabApi';
 
-Config.load();
-
-if (Config.isConfigured) {
-  configureApi();
+const finish = () => {
+  if (Config.isConfigured) {
+    configureApi();
+  }
+  
+  Vue.use(VueTimeago, {
+    name: 'timeago', // component name, `timeago` by default
+    locale: 'en',
+    locales: {
+      'en': require('date-fns/locale/en')
+    }
+  });
+  
+  new Vue({
+    el: '#app',
+    render: h => h(App)
+  });
 }
 
-Vue.use(VueTimeago, {
-  name: 'timeago', // component name, `timeago` by default
-  locale: 'en',
-  locales: {
-    'en': require('date-fns/locale/en')
+// Load bundled config, if present.
+fetch("/config.json").then(response => {
+  if (response.ok) {
+    response.json(j => {
+      Config.load(j);
+      finish();
+    }).catch(e => {
+      Config.load();
+      finish();
+    });
+  } else {
+    Config.load();
+    finish();
   }
 });
 
-new Vue({
-  el: '#app',
-  render: h => h(App)
-});
