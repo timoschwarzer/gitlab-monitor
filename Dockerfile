@@ -9,4 +9,6 @@ RUN yarn build
 # Stage 2
 FROM nginx:1.14-alpine
 COPY --from=yarnbuild /usr/src/app/dist /usr/share/nginx/html
+COPY scripts/wrapper.sh /wrapper.sh
+CMD ["/wrapper.sh"]
 EXPOSE 80
