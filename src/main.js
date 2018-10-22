@@ -27,7 +27,7 @@ const finish = () => {
 // Load bundled config, if present.
 fetch("/config.json").then(response => {
   if (response.ok) {
-    response.json(j => {
+    response.json().then(j => {
       Config.load(j);
       finish();
     }).catch(e => {
