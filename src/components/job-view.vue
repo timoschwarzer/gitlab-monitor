@@ -57,7 +57,12 @@
         }
       },
       showJobNames() {
-        return Config.root.showJobs === 'name' || Config.root.showJobs === 'iconAndName'
+        let showJobName =  Config.root.showJobs == "name" || Config.root.showJobs == "iconAndName"
+        const showJobsNameOnlyOn = Config.root.showJobsNameOnlyOn
+        if (showJobsNameOnlyOn && showJobsNameOnlyOn.length) {
+            showJobName = showJobsNameOnlyOn.indexOf(this.job.status) > -1
+        }
+        return showJobName
       },
       showJobIcons() {
         return Config.root.showJobs === 'icon' || Config.root.showJobs === 'iconAndName'

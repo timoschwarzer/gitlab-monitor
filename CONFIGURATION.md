@@ -36,6 +36,18 @@ Your configuration overrides the default configuration, which can be found
   // Can be: 'icon', 'name', 'iconAndName'
   "showJobs": "icon",
 
+  // Only show job names for specific job statuses.
+  // Valid values are: 'created', 'pending', 'running', 'failed', 'success', 'canceled', 'skipped' or 'manual'.
+  // This is an example that shows job names only for jobs with a non-success status:
+  "showJobsNameOnlyOn": [
+    "canceled",
+    "failed",
+    "pending",
+    "running",
+    "skipped",
+    "manual"
+  ],
+
   // Whether to show pipeline durations or not
   "showDurations": true,
   
