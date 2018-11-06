@@ -83,6 +83,12 @@
           gitlabApiParams.visibility = visibility;
         }
 
+        const membership = Config.root.membership;
+        if(typeof membership === "boolean")
+        {
+          gitlabApiParams.membership = membership;
+        }
+
         const projects = await this.$api('/projects', gitlabApiParams, {follow_next_page_links: fetchCount > 100});
 
         // Only show projects that have jobs enabled
