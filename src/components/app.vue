@@ -85,7 +85,7 @@
 
         // Only add the membership flag if it has been defined and is a valid type.
         const membership = Config.root.membership;
-        if(typeof membership === "boolean")
+        if (typeof membership === "boolean")
         {
           gitlabApiParams.membership = membership;
         }
