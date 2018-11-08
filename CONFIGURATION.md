@@ -45,6 +45,10 @@ Your configuration overrides the default configuration, which can be found
   // Limit projects by visibility
   // Can be: 'any', 'public', 'internal' or 'private'
   "projectVisibility": "any",
+
+  // Limit by projects that the current user is a member of
+  // Can be: true, false
+  "membership": false
   
   // Filter projects
   // The filter is applied to the path with namespace
