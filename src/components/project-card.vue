@@ -10,8 +10,8 @@
           No recent pipelines
         </em>
         <div v-else-if="pipelines !== null">
-          <template v-for="branchName in branchNames">
-            <div v-for="(pipeline, index) in pipelines[branchName]" :key="pipeline.id">
+          <template v-for="refName in refNames">
+            <div v-for="(pipeline, index) in pipelines[refName]" :key="pipeline.id">
               <pipeline-view :pipeline="pipeline" :project="project" :show-branch="index === 0" />
             </div>
           </template>
@@ -50,7 +50,7 @@
       project: null,
       pipelines: null,
       pipelineCount: 0,
-      branchNames: [],
+      refNames: [],
       status: '',
       loading: false,
       refreshInterval: null
@@ -62,6 +62,13 @@
           configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged;
         }
         return configuredShowMerged;
+      },
+      showTags() {
+        let configuredShowTags = Config.root.projectFilter['*'].showTags;
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          configuredShowTags = Config.root.projectFilter[this.project.path_with_namespace].showTags;
+        }
+        return configuredShowTags;
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly;
@@ -139,6 +146,7 @@
 
         const maxAge = Config.root.maxAge;
         const showMerged = this.showMerged;
+        const showTags = this.showTags;
         const fetchCount = Config.root.fetchCount;
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
@@ -157,12 +165,19 @@
           return !!branchName.match(new RegExp(filter.include)) &&
             (!filter.exclude || !branchName.match(new RegExp(filter.exclude)));
         });
+        let tags = [];
+        if (showTags) {
+          tags = await this.$api(`/projects/${this.projectId}/repository/tags`, {
+              per_page: fetchCount > 100 ? 100 : fetchCount
+            }, {follow_next_page_links: fetchCount > 100});
+        }
+        const tagNames = tags.map((tag) => tag.name)
         const newPipelines = {};
         let count = 0;
-
-        for (const branchName of branchNames) {
+        const refNames = branchNames.concat(tagNames)
+        for (const refName of refNames) {
           const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
-            ref: branchName,
+            ref: refName,
             per_page: fetchCount > 100 ? 100 : fetchCount
           }, {follow_next_page_links: fetchCount > 100});
 
@@ -187,18 +202,18 @@
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`);
               if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
-                newPipelines[branchName] = [resolvedPipeline];
+                newPipelines[refName] = [resolvedPipeline];
                 count++;
               }
             } else {
-              newPipelines[branchName] = resolvedPipelines;
+              newPipelines[refName] = resolvedPipelines;
               count += resolvedPipelines.length;
             }
           }
         }
 
         this.pipelines = newPipelines;
-        this.branchNames = branchNames;
+        this.refNames = refNames;
         this.pipelineCount = count;
         this.loading = false;
       }
