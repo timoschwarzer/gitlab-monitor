@@ -10,6 +10,7 @@
   "showDurations": true,
   "showUsers": false,
   "projectVisibility": "any",
+  "linkToFailureSound": null ,
   "filter": {
     "include": ".*",
     "exclude": null

@@ -105,6 +105,16 @@
             !!pipelines[configuredDefaultBranch] &&
             pipelines[configuredDefaultBranch].length > 0
           ) {
+
+            if( //Play sound alert if default branch status changes to failed
+              Config.root.linkToFailureSound != null &&
+              !(this.status === 'failed') && !(this.status === '') && 
+              pipelines[configuredDefaultBranch][0].status === 'failed'
+            ) {
+              const alarmSound = new Audio(Config.root.linkToFailureSound);
+              alarmSound.play();
+            }
+
             this.status = pipelines[configuredDefaultBranch][0].status;
 
             switch (pipelines[configuredDefaultBranch][0].status) {
