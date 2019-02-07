@@ -1,4 +1,4 @@
-#Stage 1
+# Stage 1
 FROM node:10.8-alpine as yarnbuild
 
 WORKDIR /usr/src/app

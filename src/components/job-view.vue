@@ -1,5 +1,11 @@
 <template>
-  <a class="job-view" target="_blank" :title="job.name" rel="noopener noreferrer" :href="project.web_url + '/-/jobs/' + job.id">
+  <a
+    class="job-view"
+    target="_blank"
+    :title="job.name"
+    rel="noopener noreferrer"
+    :href="project.web_url + '/-/jobs/' + job.id"
+  >
     <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
       <transition name="fade" mode="out-in">
         <svg v-if="showJobIcons" :key="statusIconName">
@@ -7,7 +13,8 @@
             v-bind="{
             'href': require('../assets/icons.svg') + '#' + statusIconName,
             'xlink:href': require('../assets/icons.svg') + '#' + statusIconName
-          }">
+          }"
+          >
           </use>
         </svg>
       </transition>
@@ -21,7 +28,7 @@
 </template>
 
 <script>
-  import Config from '../Config';
+  import Config from '../Config'
 
   export default {
     name: 'job-view',
@@ -30,33 +37,33 @@
       statusIconName() {
         switch (this.job.status) {
           case 'canceled':
-            return 'status_canceled_borderless';
+            return 'status_canceled_borderless'
           case 'failed':
             return this.job.allow_failure ?
               'status_warning_borderless' :
-              'status_failed_borderless';
+              'status_failed_borderless'
           case 'pending':
-            return 'status_pending_borderless';
+            return 'status_pending_borderless'
           case 'running':
-            return 'status_running_borderless';
+            return 'status_running_borderless'
           case 'skipped':
-            return 'status_skipped_borderless';
+            return 'status_skipped_borderless'
           case 'manual':
-            return 'status_manual_borderless';
+            return 'status_manual_borderless'
           case 'success':
-            return 'status_success_borderless';
+            return 'status_success_borderless'
           default:
-            return 'status_not_found_borderless';
+            return 'status_not_found_borderless'
         }
       },
       showJobNames() {
-        return Config.root.showJobs == "name" || Config.root.showJobs == "iconAndName"
+        return Config.root.showJobs === 'name' || Config.root.showJobs === 'iconAndName'
       },
       showJobIcons() {
-        return Config.root.showJobs == "icon" || Config.root.showJobs == "iconAndName"
+        return Config.root.showJobs === 'icon' || Config.root.showJobs === 'iconAndName'
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss" scoped>
