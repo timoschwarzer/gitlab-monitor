@@ -23,7 +23,7 @@
     <div class="info">
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
-      <timeago v-if="project !== null" :since="project.last_activity_at" :auto-update="1"></timeago>
+      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1"></timeago>
       <time v-else>...</time>
     </div>
   </div>
