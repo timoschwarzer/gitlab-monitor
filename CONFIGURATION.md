@@ -48,7 +48,7 @@ Your configuration overrides the default configuration, which can be found
 
   // Limit by projects that the current user is a member of
   // Can be: true, false
-  "membership": false
+  "membership": false,
   
   // Filter projects
   // The filter is applied to the path with namespace
