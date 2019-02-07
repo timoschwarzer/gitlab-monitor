@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <div v-if="loaded && configured" :style="{zoom}">
+      <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
       <div class="projects">
         <project-card v-for="project in sortedProjects" :key="project.id" :project-id="project.id" v-model="project.last_activity_at" />
       </div>
@@ -136,6 +137,8 @@
         if (step > 0) this.zoom -= step;
       },
       reloadConfig() {
+        this.$forceUpdate();
+
         if (!this.configured && Config.isConfigured) {
           configureApi();
 
@@ -175,6 +178,9 @@
       saveConfig() {
         Config.load(JSON.parse(this.config));
         this.reloadConfig();
+      },
+      getTitle() {
+        return Config.root.title || null;
       }
     }
   };
@@ -207,6 +213,12 @@
 
 <style lang="scss" scoped>
   .app {
+    .title {
+      text-align: center;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
     .projects {
       display: flex;
       flex-wrap: wrap;
