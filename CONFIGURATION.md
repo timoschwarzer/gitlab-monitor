@@ -61,8 +61,14 @@ Your configuration overrides the default configuration, which can be found
     // Include projects that match this RegExp
     "include": ".*",
     
+    // Include projects that have tags matching this RegExp
+    "includeTags": ".*",
+    
     // Exclude projects of included projects that match this RegExp
-    "exclude": null
+    "exclude": null,
+    
+    // Exclude projects of included projects that have tags matching this RegExp
+    "excludeTags": null
   },
   
   // Filter project branches

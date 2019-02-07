@@ -104,9 +104,21 @@
           return project.jobs_enabled &&
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (
-              project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
-                Config.root.filter.exclude === null ||
-                !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
+              // Include rules
+              (
+                project.path_with_namespace.match(new RegExp(Config.root.filter.include)) ||
+                project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+              )
+
+              // Exclude rules
+              && (
+                (
+                  Config.root.filter.exclude === null ||
+                  !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
+                ) && (
+                  Config.root.filter.excludeTags === null ||
+                  project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.excludeTags)))
+                )
               )
             )
         })

@@ -13,7 +13,9 @@
   "title": null,
   "filter": {
     "include": ".*",
-    "exclude": null
+    "includeTags": ".*",
+    "exclude": null,
+    "excludeTags": null
   },
   "projectFilter": {
     "*": {
