@@ -4,6 +4,7 @@ import VueTimeago       from 'vue-timeago'
 import App              from './components/app.vue'
 import Config           from './Config'
 import { configureApi } from './GitLabApi'
+import axios from 'axios'
 
 const finish = () => {
   if (Config.isConfigured) {
@@ -25,18 +26,14 @@ const finish = () => {
 }
 
 // Load bundled config, if present.
-fetch('/config.json').then(response => {
-  if (response.ok) {
-    response.json().then(j => {
-      Config.load(j)
-      finish()
-    }).catch(e => {
-      Config.load()
-      finish()
-    })
-  } else {
+;(async () => {
+  try {
+    const { data } = await axios.get('/config.json')
+    Config.load(data)
+  } catch (e) {
     Config.load()
     finish()
+  } finally {
+    finish()
   }
-})
-
+})()
