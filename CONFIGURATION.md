@@ -42,6 +42,9 @@ Your configuration overrides the default configuration, which can be found
   // Whether to show the user that invoked the pipeline or not
   "showUsers": false,
   
+  // The page title, or null to hide
+  "title": null,
+  
   // Limit projects by visibility
   // Can be: 'any', 'public', 'internal' or 'private'
   "projectVisibility": "any",
