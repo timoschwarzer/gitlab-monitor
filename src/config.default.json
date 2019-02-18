@@ -23,7 +23,8 @@
       "exclude": null,
       "default": null,
       "showMerged": true,
-      "showTags": true
+      "showTags": true,
+      "maxPipelines": 0
     }
   }
 }

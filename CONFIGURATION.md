@@ -92,7 +92,11 @@ Your configuration overrides the default configuration, which can be found
       "showMerged": true,
 
       // Whether to show pipelines of tags
-      "showTags": true
+      "showTags": true,
+      
+      // Maximum number of pipelines to display for this filter.
+      // 0 for infinite
+      "maxPipelines": 0,
     },
     
     // Specific per-project filters

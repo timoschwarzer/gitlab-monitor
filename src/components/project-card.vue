@@ -72,6 +72,15 @@
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly
+      },
+      filter() {
+        let filter = Config.root.projectFilter['*']
+
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          filter = Config.root.projectFilter[this.project.path_with_namespace]
+        }
+
+        return filter
       }
     },
     mounted() {
@@ -156,14 +165,8 @@
           .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
           .map(branch => branch.name)
           .filter(branchName => {
-            let filter = Config.root.projectFilter['*']
-
-            if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-              filter = Config.root.projectFilter[this.project.path_with_namespace]
-            }
-
-            return !!branchName.match(new RegExp(filter.include)) &&
-              (!filter.exclude || !branchName.match(new RegExp(filter.exclude)))
+            return !!branchName.match(new RegExp(this.filter.include)) &&
+              (!this.filter.exclude || !branchName.match(new RegExp(this.filter.exclude)))
           })
         let tags = []
         if (showTags) {
@@ -175,6 +178,8 @@
         const newPipelines = {}
         let count = 0
         const refNames = branchNames.concat(tagNames)
+
+        refLoop:
         for (const refName of refNames) {
           const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
             ref: refName,
@@ -206,8 +211,20 @@
                 count++
               }
             } else {
-              newPipelines[refName] = resolvedPipelines
-              count += resolvedPipelines.length
+              newPipelines[refName] = []
+
+              for (const resolvedPipeline of resolvedPipelines) {
+                newPipelines[refName].push(resolvedPipeline)
+                count++
+
+                if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+                  break refLoop
+                }
+              }
+            }
+
+            if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+              break
             }
           }
         }
