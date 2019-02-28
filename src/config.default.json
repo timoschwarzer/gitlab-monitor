@@ -11,6 +11,7 @@
   "showUsers": false,
   "projectVisibility": "any",
   "title": null,
+  "pollingIntervalMultiplier": 1.0,
   "filter": {
     "include": ".*",
     "includeTags": ".*",

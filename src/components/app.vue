@@ -182,7 +182,7 @@
             if (!this.loading) {
               await this.fetchProjects()
             }
-          }, 120000)
+          }, 120000 * Config.root.pollingIntervalMultiplier)
         }
 
         this.configured = Config.isConfigured

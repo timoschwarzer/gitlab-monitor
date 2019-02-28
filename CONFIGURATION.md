@@ -45,6 +45,10 @@ Your configuration overrides the default configuration, which can be found
   // The page title, or null to hide
   "title": null,
   
+  // Multiply all polling intervals by this amount
+  // (e.g. 0.5 will make gitlab-monitor poll twice as often)
+  "pollingIntervalMultiplier": 1.0,
+  
   // Limit projects by visibility
   // Can be: 'any', 'public', 'internal' or 'private'
   "projectVisibility": "any",

@@ -137,7 +137,7 @@
             if (!this.loading) {
               this.fetchProject()
             }
-          }, newInterval)
+          }, newInterval * Config.root.pollingIntervalMultiplier)
         }
       }
     },
