@@ -1,5 +1,4 @@
 # GitLab Monitor
-[![Become a patron](https://timoschwarzer.com/become_a_patron.png)](https://www.patreon.com/timoschwarzer)
 
 ![Logo](/logo.svg)
 
@@ -23,7 +22,11 @@ Additionally, this version has a manifest.json attached which
 makes it easy to pin it to your Android home screen and open
 it as a full screen app.
 
+[**Support me on Patreon**](https://www.patreon.com/timoschwarzer)
+
 ### Docker
+
+[![dockeri.co](https://dockeri.co/image/timoschwarzer/gitlab-monitor)](https://hub.docker.com/r/timoschwarzer/gitlab-monitor)
 
 There's an official docker image available on [Dockerhub](https://hub.docker.com/r/timoschwarzer/gitlab-monitor/):
 ```
