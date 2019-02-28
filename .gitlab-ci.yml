@@ -1,4 +1,4 @@
-image: uni-ci
+image: node:11-alpine
 
 cache:
   paths:
