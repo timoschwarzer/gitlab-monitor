@@ -1,0 +1,7 @@
+{
+  "name": "GitLab Monitor",
+  "icons": [],
+  "theme_color": "#ffffff",
+  "background_color": "#212121",
+  "display": "standalone"
+}

@@ -11,9 +11,13 @@
   "showUsers": false,
   "projectVisibility": "any",
   "linkToFailureSound": null ,
+  "title": null,
+  "pollingIntervalMultiplier": 1.0,
   "filter": {
     "include": ".*",
-    "exclude": null
+    "includeTags": ".*",
+    "exclude": null,
+    "excludeTags": null
   },
   "projectFilter": {
     "*": {
@@ -21,7 +25,8 @@
       "exclude": null,
       "default": null,
       "showMerged": true,
-      "showTags": true
+      "showTags": true,
+      "maxPipelines": 0
     }
   }
 }

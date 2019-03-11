@@ -23,20 +23,20 @@
     <div class="info">
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
-      <timeago v-if="project !== null" :since="project.last_activity_at" :auto-update="1"></timeago>
+      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1"></timeago>
       <time v-else>...</time>
     </div>
   </div>
 </template>
 
 <script>
-  import Octicon      from 'vue-octicon/components/Octicon';
-  import 'vue-octicon/icons/clock';
-  import 'vue-octicon/icons/git-branch';
-  import 'vue-octicon/icons/sync';
-  import Config       from '../Config';
-  import GitlabIcon   from './gitlab-icon';
-  import PipelineView from './pipeline-view';
+  import Octicon      from 'vue-octicon/components/Octicon'
+  import 'vue-octicon/icons/clock'
+  import 'vue-octicon/icons/git-branch'
+  import 'vue-octicon/icons/sync'
+  import Config       from '../Config'
+  import GitlabIcon   from './gitlab-icon'
+  import PipelineView from './pipeline-view'
 
   export default {
     components: {
@@ -57,46 +57,55 @@
     }),
     computed: {
       showMerged() {
-        let configuredShowMerged = Config.root.projectFilter['*'].showMerged;
+        let configuredShowMerged = Config.root.projectFilter['*'].showMerged
         if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged;
+          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged
         }
-        return configuredShowMerged;
+        return configuredShowMerged
       },
       showTags() {
-        let configuredShowTags = Config.root.projectFilter['*'].showTags;
+        let configuredShowTags = Config.root.projectFilter['*'].showTags
         if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowTags = Config.root.projectFilter[this.project.path_with_namespace].showTags;
+          configuredShowTags = Config.root.projectFilter[this.project.path_with_namespace].showTags
         }
-        return configuredShowTags;
+        return configuredShowTags
       },
       showPipelinesOnly() {
-        return Config.root.pipelinesOnly;
+        return Config.root.pipelinesOnly
+      },
+      filter() {
+        let filter = Config.root.projectFilter['*']
+
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          filter = Config.root.projectFilter[this.project.path_with_namespace]
+        }
+
+        return filter
       }
     },
     mounted() {
-      this.fetchProject();
+      this.fetchProject()
     },
     beforeDestroy() {
-      if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
+      if (this.refreshIntervalId) clearInterval(this.refreshIntervalId)
     },
     watch: {
       project() {
-        this.fetchPipelines();
+        this.fetchPipelines()
       },
       pipelines: {
         deep: true,
         handler(pipelines) {
           if (!this.project) {
-            this.status = '';
-            this.refreshInterval = 60000;
-            return;
+            this.status = ''
+            this.refreshInterval = 60000
+            return
           }
 
-          let configuredDefaultBranch = Config.root.projectFilter['*'].default || this.project.default_branch;
+          let configuredDefaultBranch = Config.root.projectFilter['*'].default || this.project.default_branch
 
           if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-            configuredDefaultBranch = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch;
+            configuredDefaultBranch = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch
           }
 
           if (
@@ -111,124 +120,132 @@
               !(this.status === 'failed') && !(this.status === '') && 
               pipelines[configuredDefaultBranch][0].status === 'failed'
             ) {
-              const alarmSound = new Audio(Config.root.linkToFailureSound);
-              alarmSound.play();
+              const alarmSound = new Audio(Config.root.linkToFailureSound)
+              alarmSound.play()
             }
 
-            this.status = pipelines[configuredDefaultBranch][0].status;
+            this.status = pipelines[configuredDefaultBranch][0].status
 
             switch (pipelines[configuredDefaultBranch][0].status) {
               case 'pending':
               case 'running':
-                this.refreshInterval = 5000;
-                break;
+                this.refreshInterval = 5000
+                break
               default:
-                this.refreshInterval = 15000;
+                this.refreshInterval = 15000
             }
           } else {
-            this.status = '';
-            this.refreshInterval = 60000;
+            this.status = ''
+            this.refreshInterval = 60000
           }
         }
       },
       refreshInterval(newInterval, oldInterval) {
         if (newInterval !== oldInterval) {
-          if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
+          if (this.refreshIntervalId) clearInterval(this.refreshIntervalId)
           this.refreshIntervalId = setInterval(() => {
             if (!this.loading) {
-              this.fetchProject();
+              this.fetchProject()
             }
-          }, newInterval);
+          }, newInterval * Config.root.pollingIntervalMultiplier)
         }
       }
     },
     methods: {
       async fetchProject() {
-        this.loading = true;
+        this.loading = true
 
-        this.project = await this.$api(`/projects/${this.projectId}`);
-        this.$emit('input', this.project.last_activity_at);
+        this.project = await this.$api(`/projects/${this.projectId}`)
+        this.$emit('input', this.project.last_activity_at)
 
-        this.loading = false;
+        this.loading = false
       },
       async fetchPipelines() {
-        this.loading = true;
+        this.loading = true
 
-        const maxAge = Config.root.maxAge;
-        const showMerged = this.showMerged;
-        const showTags = this.showTags;
-        const fetchCount = Config.root.fetchCount;
+        const maxAge = Config.root.maxAge
+        const showMerged = this.showMerged
+        const showTags = this.showTags
+        const fetchCount = Config.root.fetchCount
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
-            per_page: fetchCount > 100 ? 100 : fetchCount
-          }, {follow_next_page_links: fetchCount > 100});
+          per_page: fetchCount > 100 ? 100 : fetchCount
+        }, { follow_next_page_links: fetchCount > 100 })
         const branchNames = branches.filter(branch => showMerged ? true : !branch.merged)
-                                    .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
-                                    .map(branch => branch.name)
-                                    .filter(branchName => {
-          let filter = Config.root.projectFilter['*'];
-
-          if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-            filter = Config.root.projectFilter[this.project.path_with_namespace];
-          }
-
-          return !!branchName.match(new RegExp(filter.include)) &&
-            (!filter.exclude || !branchName.match(new RegExp(filter.exclude)));
-        });
-        let tags = [];
+          .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
+          .map(branch => branch.name)
+          .filter(branchName => {
+            return !!branchName.match(new RegExp(this.filter.include)) &&
+              (!this.filter.exclude || !branchName.match(new RegExp(this.filter.exclude)))
+          })
+        let tags = []
         if (showTags) {
           tags = await this.$api(`/projects/${this.projectId}/repository/tags`, {
-              per_page: fetchCount > 100 ? 100 : fetchCount
-            }, {follow_next_page_links: fetchCount > 100});
+            per_page: fetchCount > 100 ? 100 : fetchCount
+          }, { follow_next_page_links: fetchCount > 100 })
         }
         const tagNames = tags.map((tag) => tag.name)
-        const newPipelines = {};
-        let count = 0;
+        const newPipelines = {}
+        let count = 0
         const refNames = branchNames.concat(tagNames)
+
+        refLoop:
         for (const refName of refNames) {
           const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
             ref: refName,
             per_page: fetchCount > 100 ? 100 : fetchCount
-          }, {follow_next_page_links: fetchCount > 100});
+          }, { follow_next_page_links: fetchCount > 100 })
 
-          const resolvedPipelines = [];
+          const resolvedPipelines = []
 
           if (pipelines.length > 0) {
-            const filteredPipelines = [];
+            const filteredPipelines = []
 
             for (const pipeline of pipelines) {
               if (pipeline.status === 'pending' || pipeline.status === 'running') {
-                filteredPipelines.push(pipeline);
+                filteredPipelines.push(pipeline)
               }
             }
 
             for (const pipeline of filteredPipelines) {
-              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`);
+              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`)
               if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
-                resolvedPipelines.push(resolvedPipeline);
+                resolvedPipelines.push(resolvedPipeline)
               }
             }
 
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
-              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`);
+              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`)
               if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
-                newPipelines[refName] = [resolvedPipeline];
-                count++;
+                newPipelines[refName] = [resolvedPipeline]
+                count++
               }
             } else {
-              newPipelines[refName] = resolvedPipelines;
-              count += resolvedPipelines.length;
+              newPipelines[refName] = []
+
+              for (const resolvedPipeline of resolvedPipelines) {
+                newPipelines[refName].push(resolvedPipeline)
+                count++
+
+                if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+                  break refLoop
+                }
+              }
+            }
+
+            if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+              break
             }
           }
         }
 
-        this.pipelines = newPipelines;
-        this.refNames = refNames;
-        this.pipelineCount = count;
-        this.loading = false;
+        this.pipelines = newPipelines
+        this.refNames = refNames
+        this.pipelineCount = count
+        this.loading = false
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss" scoped>

@@ -1,0 +1,18 @@
+version: '3'
+
+networks:
+  web:
+    external: true
+
+services:
+  ui:
+    image: timoschwarzer/gitlab-monitor
+    networks:
+      - web
+    expose:
+      - 80
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:gitlab-monitor.timoschwarzer.com"
+      - "traefik.port=80"

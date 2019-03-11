@@ -1,8 +1,14 @@
 <template>
   <div class="app">
     <div v-if="loaded && configured" :style="{zoom}">
+      <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
       <div class="projects">
-        <project-card v-for="project in sortedProjects" :key="project.id" :project-id="project.id" v-model="project.last_activity_at" />
+        <project-card
+          v-for="project in sortedProjects"
+          :key="project.id"
+          :project-id="project.id"
+          v-model="project.last_activity_at"
+        />
       </div>
     </div>
     <div v-else-if="!configured" class="container">
@@ -28,10 +34,10 @@
 </template>
 
 <script>
-  import Octicon          from 'vue-octicon/components/Octicon';
-  import Config           from '../Config';
-  import { configureApi } from '../GitLabApi';
-  import ProjectCard      from './project-card';
+  import Octicon from 'vue-octicon/components/Octicon'
+  import Config from '../Config'
+  import { configureApi } from '../GitLabApi'
+  import ProjectCard from './project-card'
 
   export default {
     components: {
@@ -48,136 +54,154 @@
     }),
     computed: {
       sortedProjects() {
-        return this.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime());
+        return this.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime())
       },
       configIsValid() {
         try {
-          JSON.parse(this.config);
+          JSON.parse(this.config)
         } catch (e) {
-          return false;
+          return false
         }
-        return true;
+        return true
       }
     },
     beforeMount() {
-      this.reloadConfig();
+      this.reloadConfig()
 
-      console.log(Config.root);
+      console.log(Config.root)
     },
     beforeDestroy() {
-      clearInterval(this.refreshIntervalId);
+      clearInterval(this.refreshIntervalId)
     },
     methods: {
       async fetchProjects() {
-        const fetchCount = Config.root.fetchCount;
+        const fetchCount = Config.root.fetchCount
         const gitlabApiParams = {
           order_by: 'last_activity_at',
           // GitLab per_page max is 100. We use > 100 values as next page follow trigger
           per_page: fetchCount > 100 ? 100 : fetchCount
-        };
+        }
 
-        const visibility = Config.root.projectVisibility;
+        const visibility = Config.root.projectVisibility
         // Only add the visibility attribute to the params if filtering is required
         // (if visiblity is not specified, Gitlab will return all projects)
         if (visibility !== 'any') {
-          gitlabApiParams.visibility = visibility;
+          gitlabApiParams.visibility = visibility
         }
 
         // Only add the membership flag if it has been defined and is a valid type.
-        const membership = Config.root.membership;
-        if (typeof membership === "boolean")
-        {
-          gitlabApiParams.membership = membership;
+        const membership = Config.root.membership
+        if (typeof membership === 'boolean') {
+          gitlabApiParams.membership = membership
         }
 
-        const projects = await this.$api('/projects', gitlabApiParams, {follow_next_page_links: fetchCount > 100});
+        const projects = await this.$api('/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 })
 
         // Only show projects that have jobs enabled
-        const maxAge = Config.root.maxAge;
+        const maxAge = Config.root.maxAge
 
         this.projects = projects.filter(project => {
           return project.jobs_enabled &&
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (
-              project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
-                Config.root.filter.exclude === null ||
-                !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
+              // Include rules
+              (
+                project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
+                  project.tag_list.length === 0 ||
+                  project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                )
               )
-            );
-        });
+
+              // Exclude rules
+              && (
+                (
+                  Config.root.filter.exclude === null ||
+                  !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
+                ) && (
+                  Config.root.filter.excludeTags === null ||
+                  project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.excludeTags)))
+                )
+              )
+            )
+        })
 
         if (Config.root.autoZoom) {
-          this.$nextTick(() => this.autoZoom());
+          this.$nextTick(() => this.autoZoom())
         }
 
-        this.loaded = true;
+        this.loaded = true
       },
       async autoZoom() {
-        let step = 0.1;
+        let step = 0.1
 
         if (this.$el.clientHeight > window.innerHeight) {
-          step = -0.1;
+          step = -0.1
         }
 
         while (
           (step > 0 && this.$el.clientHeight <= window.innerHeight) ||
           (step < 0 && this.$el.clientHeight > window.innerHeight)
-        ) {
-          this.zoom += step;
-          await this.$nextTick();
+          ) {
+          this.zoom += step
+          await this.$nextTick()
 
           if (this.zoom > 20 || this.zoom < 0) {
             // The browser likely doesn't support CSS zoom
-            this.zoom = 0;
-            return;
+            this.zoom = 0
+            return
           }
         }
 
-        if (step > 0) this.zoom -= step;
+        if (step > 0) this.zoom -= step
       },
       reloadConfig() {
-        if (!this.configured && Config.isConfigured) {
-          configureApi();
+        this.$forceUpdate()
 
-          this.loaded = false;
-          this.projects = [];
-          this.fetchProjects();
+        if (!this.configured && Config.isConfigured) {
+          configureApi()
+
+          this.loaded = false
+          this.projects = []
+          this.fetchProjects()
 
           if (Config.root.autoZoom) {
             if (this.autoZoomIntervalId) {
-              clearInterval(this.autoZoomIntervalId);
+              clearInterval(this.autoZoomIntervalId)
             }
 
             this.autoZoomIntervalId = setInterval(() => {
-              this.autoZoom();
-            }, 5000);
+              this.autoZoom()
+            }, 5000)
           }
 
           if (this.refreshIntervalId) {
-            clearInterval(this.refreshIntervalId);
+            clearInterval(this.refreshIntervalId)
           }
 
           this.refreshIntervalId = setInterval(async () => {
             if (!this.loading) {
-              await this.fetchProjects();
+              await this.fetchProjects()
             }
-          }, 120000);
+          }, 120000 * Config.root.pollingIntervalMultiplier)
         }
 
-        this.configured = Config.isConfigured;
+        this.configured = Config.isConfigured
 
         if (this.configured) {
-          this.config = JSON.stringify(Config.local, null, 2);
+          this.config = JSON.stringify(Config.local, null, 2)
         } else {
-          this.config = JSON.stringify(require('../config.template'), null, 2);
+          this.config = JSON.stringify(require('../config.template'), null, 2)
         }
       },
       saveConfig() {
-        Config.load(JSON.parse(this.config));
-        this.reloadConfig();
+        Config.load(JSON.parse(this.config))
+        this.reloadConfig()
+      },
+      getTitle() {
+        return Config.root.title || null
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss">
@@ -207,6 +231,12 @@
 
 <style lang="scss" scoped>
   .app {
+    .title {
+      text-align: center;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
     .projects {
       display: flex;
       flex-wrap: wrap;

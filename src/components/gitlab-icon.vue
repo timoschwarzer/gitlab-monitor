@@ -19,7 +19,7 @@
         default: 16
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss" scoped>

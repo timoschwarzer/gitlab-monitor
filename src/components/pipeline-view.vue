@@ -3,16 +3,27 @@
     <octicon v-if="loading" name="sync" scale="1.4" spin />
 
     <div v-else>
-      <a v-if="showBranch" class="branch" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/tree/' + pipeline.ref">
+      <a
+        v-if="showBranch"
+        class="branch"
+        target="_blank"
+        rel="noopener noreferrer"
+        :href="project.web_url + '/tree/' + pipeline.ref"
+      >
         <octicon name="git-branch" scale="0.9" />
         {{ pipeline.ref }}
       </a>
 
       <div class="pipeline">
-       <a class="pipeline-id-link" target="_blank" rel="noopener noreferrer" :href="project.web_url + '/pipelines/' + pipeline.id">
+        <a
+          class="pipeline-id-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          :href="project.web_url + '/pipelines/' + pipeline.id"
+        >
           <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
-        <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
-       </a>
+          <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
+        </a>
         <div class="jobs">
           <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
         </div>
@@ -26,11 +37,11 @@
 </template>
 
 <script>
-  import Octicon    from 'vue-octicon/components/Octicon';
-  import 'vue-octicon/icons/sync';
-  import Config     from '../Config';
-  import GitlabIcon from './gitlab-icon';
-  import JobView    from './job-view';
+  import Octicon from 'vue-octicon/components/Octicon'
+  import 'vue-octicon/icons/sync'
+  import Config from '../Config'
+  import GitlabIcon from './gitlab-icon'
+  import JobView from './job-view'
 
   export default {
     components: {
@@ -57,76 +68,76 @@
             this.pipeline.status === 'failed' ||
             this.pipeline.status === 'canceled' ||
             this.pipeline.status === 'success'
-          );
+          )
       },
       showUsers() {
-        return Config.root.showUsers;
+        return Config.root.showUsers
       },
       durationString() {
-        const duration = this.duration;
-        const hrs = ~~(duration / 3600);
-        const mins = ~~((duration % 3600) / 60);
-        const secs = Math.trunc(duration % 60);
+        const duration = this.duration
+        const hrs = ~~(duration / 3600)
+        const mins = ~~((duration % 3600) / 60)
+        const secs = Math.trunc(duration % 60)
 
         // Output like "1:01" or "4:03:59" or "123:03:59"
-        let timeString = "";
+        let timeString = ''
 
         if (hrs > 0) {
-          timeString += "" + hrs + ":" + (mins < 10 ? "0" : "");
+          timeString += '' + hrs + ':' + (mins < 10 ? '0' : '')
         }
 
-        timeString += mins + ":" + (secs < 10 ? "0" : "");
-        timeString += secs;
+        timeString += mins + ':' + (secs < 10 ? '0' : '')
+        timeString += secs
 
-        return timeString;
+        return timeString
       }
     },
     mounted() {
-      this.fetchJobs();
-      this.setupDurationCounter();
+      this.fetchJobs()
+      this.setupDurationCounter()
     },
     watch: {
       pipeline() {
-        this.fetchJobs();
-        this.$nextTick(() => this.setupDurationCounter());
+        this.fetchJobs()
+        this.$nextTick(() => this.setupDurationCounter())
       },
       'pipeline.status'() {
-        this.$nextTick(() => this.setupDurationCounter());
+        this.$nextTick(() => this.setupDurationCounter())
       }
     },
     methods: {
       async fetchJobs() {
-        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`);
-        this.loading = false;
+        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
+        this.loading = false
       },
       setupDurationCounter() {
-        const pipeline = this.pipeline;
+        const pipeline = this.pipeline
 
-        const startedAtDiffSeconds = ((pipeline.finished_at !== null ? new Date(pipeline.finished_at) : new Date()) - new Date(pipeline.started_at !== null ? pipeline.started_at : pipeline.created_at)) / 1000;
+        const startedAtDiffSeconds = ((pipeline.finished_at !== null ? new Date(pipeline.finished_at) : new Date()) - new Date(pipeline.started_at !== null ? pipeline.started_at : pipeline.created_at)) / 1000
 
         if (pipeline.status !== 'running' && pipeline.duration !== null && (this.duration === null || Math.abs(pipeline.duration - this.duration) > 5)) {
-          this.duration = pipeline.duration;
+          this.duration = pipeline.duration
         } else if (this.duration === null || pipeline.updated_at !== this.updatedAt || Math.abs(startedAtDiffSeconds - this.updatedAt) > 5) {
           // Update the duration if the started_at property changed or the timer is >5 seconds off
-          this.duration = startedAtDiffSeconds;
-          this.updatedAt = pipeline.updated_at;
+          this.duration = startedAtDiffSeconds
+          this.updatedAt = pipeline.updated_at
         }
 
         if (this.pipeline && this.pipeline.status === 'running') {
           if (!this.durationCounterIntervalId) {
             this.durationCounterIntervalId = setInterval(() => {
-              this.duration++;
-            }, 1000);
+              this.duration++
+            }, 1000)
           }
         } else {
           if (this.durationCounterIntervalId) {
-            clearInterval(this.durationCounterIntervalId);
-            this.durationCounterIntervalId = null;
+            clearInterval(this.durationCounterIntervalId)
+            this.durationCounterIntervalId = null
           }
         }
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss" scoped>

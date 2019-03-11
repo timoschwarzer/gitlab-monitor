@@ -42,6 +42,13 @@ Your configuration overrides the default configuration, which can be found
   // Whether to show the user that invoked the pipeline or not
   "showUsers": false,
   
+  // The page title, or null to hide
+  "title": null,
+  
+  // Multiply all polling intervals by this amount
+  // (e.g. 0.5 will make gitlab-monitor poll twice as often)
+  "pollingIntervalMultiplier": 1.0,
+  
   // Limit projects by visibility
   // Can be: 'any', 'public', 'internal' or 'private'
   "projectVisibility": "any",
@@ -65,8 +72,14 @@ Your configuration overrides the default configuration, which can be found
     // Include projects that match this RegExp
     "include": ".*",
     
+    // Include projects that have tags matching this RegExp
+    "includeTags": ".*",
+    
     // Exclude projects of included projects that match this RegExp
-    "exclude": null
+    "exclude": null,
+    
+    // Exclude projects of included projects that have tags matching this RegExp
+    "excludeTags": null
   },
   
   // Filter project branches
@@ -90,7 +103,11 @@ Your configuration overrides the default configuration, which can be found
       "showMerged": true,
 
       // Whether to show pipelines of tags
-      "showTags": true
+      "showTags": true,
+      
+      // Maximum number of pipelines to display for this filter.
+      // 0 for infinite
+      "maxPipelines": 0,
     },
     
     // Specific per-project filters
