@@ -45,7 +45,14 @@ Your configuration overrides the default configuration, which can be found
   // Limit projects by visibility
   // Can be: 'any', 'public', 'internal' or 'private'
   "projectVisibility": "any",
-
+  
+  // Play sound notification when default pipeline fails.
+  // Replace null with URL to sound file.
+  // IMPORTANT! Due to Chromes autoplay policy you need to set Autoplay
+  // chrome://flags to "No user gesture is required" otherwise
+  // autoplaying sound will be blocked without user input.
+  "linkToFailureSound": null,
+  
   // Limit by projects that the current user is a member of
   // Can be: true, false
   "membership": false,
