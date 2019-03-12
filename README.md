@@ -33,6 +33,14 @@ There's an official docker image available on [Dockerhub](https://hub.docker.com
 docker pull timoschwarzer/gitlab-monitor
 ```
 
+You can run it via
+
+```
+docker run -p 8081:8081 timoschwarzer/gitlab-monitor
+```
+or directly deploy it to your OpenShift
+
+
 ### Host it yourself
 
 [Go to releases](https://github.com/timoschwarzer/gitlab-monitor/releases)
