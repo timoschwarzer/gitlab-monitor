@@ -1,0 +1,58 @@
+# Default values for node.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  pullPolicy: Always
+  repository: timoschwarzer/gitlab-monitor
+  tag: latest
+service:
+  name: node
+  type: LoadBalancer
+  externalPort: 80
+  internalPort: 80
+  nodePort: 31148
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+ingress:
+  enabled: false
+basedomain: gitlab-monitor.example.com
+config: |
+  {
+    "gitlabApi": "https://gitlab.example.com/api/v4",
+    "privateToken": "ABCDEF123456",
+    "maxAge": 168,
+    "fetchCount": 20,
+    "pipelinesOnly": false,
+    "autoZoom": false,
+    "showPipelineIds": true,
+    "showJobs": "iconAndName",
+    "showDurations": true,
+    "showUsers": false,
+    "projectVisibility": "any",
+    "linkToFailureSound": null ,
+    "title": null,
+    "pollingIntervalMultiplier": 10,
+    "filter": {
+      "include": ".*",
+      "includeTags": ".*",
+      "exclude": null,
+      "excludeTags": null
+    },
+    "projectFilter": {
+      "*": {
+        "include": ".*",
+        "exclude": null,
+        "default": null,
+        "showMerged": false,
+        "showTags": true,
+        "maxPipelines": 10
+      }
+    }
+  }
+
