@@ -21,8 +21,8 @@
     </div>
     <div class="spacer"></div>
     <div class="info">
-      <div class="container-badges">
-        <a class="badge" v-for="badge in badges" :href="badge.link_url">
+      <div class="badge-container">
+        <a v-for="badge in badges" :href="badge.link_url">
           <img :key="badge.id" :src="badge.image_url" />
         </a>
       </div>
@@ -56,7 +56,7 @@
       pipelines: null,
       pipelineCount: 0,
       refNames: [],
-      badges:[],
+      badges: [],
       status: '',
       loading: false,
       refreshInterval: null
@@ -97,8 +97,8 @@
     },
     watch: {
       project() {
-        this.fetchPipelines();
-        if(Config.root.badges) this.fetchBadges();
+        this.fetchPipelines()
+        if(Config.root.badges) this.fetchBadges()
       },
       pipelines: {
         deep: true,
@@ -252,8 +252,8 @@
         this.loading = false
       },
       async fetchBadges() {
-        const badges = await this.$api(`/projects/${this.projectId}/badges`);
-        this.badges = badges;
+        const badges = await this.$api(`/projects/${this.projectId}/badges`)
+        this.badges = badges
       }
     }
   }
@@ -341,20 +341,20 @@
       }
     }
 
-    .container-badges {
+    .badge-container {
       max-width:80%;
-    }
 
-    .badge {
-      margin-right: 8px;
-        transition: background-color 100ms linear, color 100ms linear, border 100ms linear;
-      
-      img {
-        opacity: 0.9;
-      }
+      a {
+        margin-right: 8px;
+          transition: background-color 100ms linear, color 100ms linear, border 100ms linear;
+        
+        img {
+          opacity: 0.9;
 
-      img:hover {
-        opacity: 1;
+          &:hover {
+            opacity: 1;
+          }
+        }
       }
     }
   }
