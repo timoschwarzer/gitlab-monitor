@@ -13,6 +13,7 @@
   "linkToFailureSound": null ,
   "title": null,
   "pollingIntervalMultiplier": 1.0,
+  "badges": true,
   "filter": {
     "include": ".*",
     "includeTags": ".*",
