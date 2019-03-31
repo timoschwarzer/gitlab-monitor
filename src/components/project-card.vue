@@ -98,7 +98,7 @@
     watch: {
       project() {
         this.fetchPipelines()
-        if(Config.root.badges) this.fetchBadges()
+        if (Config.root.badges) this.fetchBadges()
       },
       pipelines: {
         deep: true,
@@ -346,7 +346,7 @@
 
       a {
         margin-right: 8px;
-          transition: background-color 100ms linear, color 100ms linear, border 100ms linear;
+        transition: background-color 100ms, color 100ms, border 100ms;
         
         img {
           opacity: 0.9;
