@@ -21,6 +21,11 @@
     </div>
     <div class="spacer"></div>
     <div class="info">
+      <div class="badge-container">
+        <a v-for="badge in badges" :href="badge.link_url">
+          <img :key="badge.id" :src="badge.image_url" />
+        </a>
+      </div>
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
       <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1"></timeago>
@@ -51,6 +56,7 @@
       pipelines: null,
       pipelineCount: 0,
       refNames: [],
+      badges: [],
       status: '',
       loading: false,
       refreshInterval: null
@@ -92,6 +98,7 @@
     watch: {
       project() {
         this.fetchPipelines()
+        if (Config.root.badges) this.fetchBadges()
       },
       pipelines: {
         deep: true,
@@ -243,6 +250,10 @@
         this.refNames = refNames
         this.pipelineCount = count
         this.loading = false
+      },
+      async fetchBadges() {
+        const badges = await this.$api(`/projects/${this.projectId}/badges`)
+        this.badges = badges
       }
     }
   }
@@ -327,6 +338,23 @@
 
       .calendar-icon {
         margin-right: 4px;
+      }
+    }
+
+    .badge-container {
+      max-width:80%;
+
+      a {
+        margin-right: 8px;
+        transition: background-color 100ms, color 100ms, border 100ms;
+        
+        img {
+          opacity: 0.9;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
       }
     }
   }

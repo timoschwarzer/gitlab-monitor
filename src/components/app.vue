@@ -67,8 +67,6 @@
     },
     beforeMount() {
       this.reloadConfig()
-
-      console.log(Config.root)
     },
     beforeDestroy() {
       clearInterval(this.refreshIntervalId)

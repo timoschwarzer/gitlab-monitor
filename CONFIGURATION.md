@@ -64,6 +64,10 @@ Your configuration overrides the default configuration, which can be found
   // Can be: true, false
   "membership": false,
   
+  // Show all badges by project
+  // Can be: true, false
+  "badges": false,
+  
   // Filter projects
   // The filter is applied to the path with namespace
   // (e.g. 'my-group/my-project'
