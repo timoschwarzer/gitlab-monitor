@@ -61,12 +61,10 @@ Your configuration overrides the default configuration, which can be found
   "linkToFailureSound": null,
   
   // Limit by projects that the current user is a member of
-  // Can be: true, false
   "membership": false,
   
-  // Show all badges by project
-  // Can be: true, false
-  "badges": false,
+  // Whether to show project badges or not
+  "badges": true,
   
   // Filter projects
   // The filter is applied to the path with namespace
