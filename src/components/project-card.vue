@@ -23,7 +23,7 @@
     <div class="info">
       <div class="badge-container">
         <a target="_blank" rel="noopener noreferrer" v-for="badge in badges" :href="badge.link_url">
-          <img :key="badge.id" :src="badge.image_url" />
+          <img :key="badge.id" :src="badge.rendered_image_url" />
         </a>
       </div>
       <div class="spacer"></div>
