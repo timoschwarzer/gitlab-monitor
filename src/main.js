@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import Vue              from 'vue'
 import VueTimeago       from 'vue-timeago'
 import App              from './components/app.vue'

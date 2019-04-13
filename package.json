@@ -30,7 +30,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
-    "babel-polyfill": "^6.26.0",
+    "@babel/polyfill": "^7.4.3",
     "file-loader": "^3.0.1",
     "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0",
