@@ -81,7 +81,10 @@ Your configuration overrides the default configuration, which can be found
     "exclude": null,
     
     // Exclude projects of included projects that have tags matching this RegExp
-    "excludeTags": null
+    "excludeTags": null,
+        
+    // Exclude projects of included projects that don't have any tags
+    "excludeUntagged": false
   },
   
   // Filter project branches

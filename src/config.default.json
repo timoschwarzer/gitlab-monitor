@@ -18,7 +18,8 @@
     "include": ".*",
     "includeTags": ".*",
     "exclude": null,
-    "excludeTags": null
+    "excludeTags": null,
+    "excludeUntagged": false
   },
   "projectFilter": {
     "*": {

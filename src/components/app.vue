@@ -105,8 +105,14 @@
               // Include rules
               (
                 project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
-                  project.tag_list.length === 0 ||
-                  project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                  // "Exclude untagged" rule
+                  (
+                    project.tag_list.length > 0 ||
+                    !Config.root.filter.excludeUntagged
+                  ) && (
+                    project.tag_list.length === 0 ||
+                    project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                  )
                 )
               )
 
