@@ -124,7 +124,7 @@
 
             if ( // Play sound alert if default branch status changes to failed
               Config.root.linkToFailureSound != null &&
-              this.status !== 'failed' && !!this.status && 
+              this.status !== 'failed' && !!this.status &&
               pipelines[configuredDefaultBranch][0].status === 'failed'
             ) {
               const alarmSound = new Audio(Config.root.linkToFailureSound)
@@ -196,6 +196,11 @@
         let count = 0
         const refNames = branchNames.concat(tagNames)
 
+        let hideSkippedPipelines = Config.root.projectFilter['*'].hideSkippedPipelines
+        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+          hideSkippedPipelines = Config.root.projectFilter[this.project.path_with_namespace].hideSkippedPipelines
+        }
+
         refLoop:
         for (const refName of refNames) {
           const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
@@ -216,23 +221,45 @@
 
             for (const pipeline of filteredPipelines) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`)
-              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
+              if (
+                (maxAge === 0 ||
+                  ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge)
+                ) && (
+                  !hideSkippedPipelines ||
+                  resolvedPipeline.status !== 'skipped'
+                )
+              ) {
                 resolvedPipelines.push(resolvedPipeline)
               }
             }
 
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
-              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[0].id}`)
-              if ((maxAge === 0 || ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge))) {
-                newPipelines[refName] = [resolvedPipeline]
-                count++
+              for (let i = 0; i < pipelines.length; i++) {
+                const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[i].id}`)
+                if (
+                  (maxAge === 0 ||
+                    ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge)
+                  ) && (
+                    !hideSkippedPipelines ||
+                    resolvedPipeline.status !== 'skipped'
+                  )
+                ) {
+                  newPipelines[refName] = [resolvedPipeline]
+                  count++
+                  break
+                }
               }
             } else {
               newPipelines[refName] = []
 
               for (const resolvedPipeline of resolvedPipelines) {
-                newPipelines[refName].push(resolvedPipeline)
-                count++
+                if (
+                  !hideSkippedPipelines ||
+                  resolvedPipeline.status !== 'skipped'
+                ) {
+                  newPipelines[refName].push(resolvedPipeline)
+                  count++
+                }
 
                 if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
                   break refLoop
@@ -347,7 +374,7 @@
       a {
         margin-right: 8px;
         transition: background-color 100ms, color 100ms, border 100ms;
-        
+
         img {
           opacity: 0.9;
 

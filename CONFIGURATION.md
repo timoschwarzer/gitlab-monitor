@@ -113,6 +113,9 @@ Your configuration overrides the default configuration, which can be found
       // Maximum number of pipelines to display for this filter.
       // 0 for infinite
       "maxPipelines": 0,
+      
+      // Hide skipped pipelines
+      "hideSkippedPipelines": false,
     },
     
     // Specific per-project filters

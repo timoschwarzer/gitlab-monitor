@@ -26,6 +26,10 @@
         </a>
         <div class="jobs">
           <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
+          <div class="skipped" v-if="pipeline.status === 'skipped'">
+            <gitlab-icon class="pipeline-icon" name="status_skipped_borderless" size="24" />
+            Pipeline skipped
+          </div>
         </div>
         <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
         <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
@@ -208,6 +212,15 @@
         color: rgba(255, 255, 255, 0.8);
         line-height: 1;
         font-size: 12px;
+      }
+
+      .skipped {
+        display: flex;
+        align-items: center;
+        border: 2px solid white;
+        padding: 1px 9px 1px 1px;
+        border-radius: 8px;
+        font-size: smaller;
       }
     }
   }
