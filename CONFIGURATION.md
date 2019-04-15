@@ -1,6 +1,6 @@
 # Configuration
 
-GitLab is configured with a JSON-encoded configuration file.
+GitLab Monitor is configured with a JSON-encoded configuration file.
 Your configuration overrides the default configuration, which can be found
 [here](./src/config.default.json)
 
