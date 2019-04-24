@@ -93,7 +93,15 @@
           gitlabApiParams.membership = membership
         }
 
-        const projects = await this.$api('/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 })
+        // Only use main level projects API if tighter scope not defined
+        const scope = Config.root.projectScope
+        const scopeId = Config.root.projectScopeId
+        let urlPrefix = ''
+        if ((scope === 'users' || scope === 'groups') && scopeId !== null) {
+          urlPrefix = '/' + scope + '/' + scopeId
+        }
+
+        const projects = await this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 })
 
         // Only show projects that have jobs enabled
         const maxAge = Config.root.maxAge

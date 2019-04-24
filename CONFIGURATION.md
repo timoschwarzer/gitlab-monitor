@@ -122,7 +122,15 @@ Your configuration overrides the default configuration, which can be found
     "my-project/my-group": {
       // see above...
     }
-  }
+  },
+
+  // Search projects from given API route.
+  // Allowed values "groups" and "users"
+  "projectScope": null,
+  
+  // ID to use in query with "projectScope" parameter
+  // For example 123 with "projectScope": "groups" would query /groups/123/projects
+  "projectScopeId": null
 }
 ```
 

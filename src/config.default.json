@@ -31,5 +31,7 @@
       "maxPipelines": 0,
       "hideSkippedPipelines":  false
     }
-  }
+  },
+  "projectScope": null,
+  "projectScopeId": null
 }
