@@ -11,6 +11,12 @@ Your configuration overrides the default configuration, which can be found
   // Required
   "gitlabApi": "https://gitlab.example.com/api/v4",
   
+  // Optional, defaults shown below for rate limiting API calls towards gitlab
+  "rateLimit": {
+    "maxRequests": 8,
+    "perMilliseconds": 1500
+  },
+
   // Required
   "privateToken": "ABCDEF123456",
   

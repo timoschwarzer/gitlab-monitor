@@ -2,12 +2,16 @@ import axios  from 'axios'
 import parse  from 'parse-link-header'
 import Vue    from 'vue'
 import Config from './Config'
+import rateLimit from 'axios-rate-limit'
 
 const GitLabApi = {}
 
 GitLabApi.install = (Vue, options) => {
+  const rateLimitOptions = Config.root.rateLimit || { maxRequests: 8, perMilliseconds: 1500}
+  const http = rateLimit(axios.create(), rateLimitOptions)
+
   Vue.prototype.$api = async (path, params = {}, behaviour = {}) => {
-    const response = await axios.get(path, {
+    const response = await http.get(path, {
       baseURL: Config.root.gitlabApi,
       params,
       headers: { 'Private-Token': Config.root.privateToken }
