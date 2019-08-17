@@ -14,7 +14,7 @@
         {{ pipeline.ref }}
       </a>
 
-      <div class="pipeline">
+      <div :class="'pipeline' + (showStagesNames ? ' with-stages-names' : '')">
         <a
           class="pipeline-id-link"
           target="_blank"
@@ -24,8 +24,8 @@
           <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
           <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
         </a>
-        <div class="jobs">
-          <job-view v-for="job in jobs" :key="job.id" :job="job" :project="project" />
+        <div class="stages">
+          <stage-view v-for="stage in stages" :key="stage.name" :stage="stage" :project="project" />
           <div class="skipped" v-if="pipeline.status === 'skipped'">
             <gitlab-icon class="pipeline-icon" name="status_skipped_borderless" size="24" />
             Pipeline skipped
@@ -45,13 +45,13 @@
   import 'vue-octicon/icons/sync'
   import Config from '../Config'
   import GitlabIcon from './gitlab-icon'
-  import JobView from './job-view'
+  import StageView from './stage-view'
 
   export default {
     components: {
       GitlabIcon,
       Octicon,
-      JobView
+      StageView
     },
     name: 'pipeline-view',
     props: ['pipeline', 'project', 'showBranch'],
@@ -76,6 +76,9 @@
       },
       showUsers() {
         return Config.root.showUsers
+      },
+      showStagesNames() {
+        return Config.root.showStagesNames;
       },
       durationString() {
         const duration = this.duration
@@ -112,6 +115,16 @@
     methods: {
       async fetchJobs() {
         this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
+        this.stages = this.jobs.reduce(function(stages, job) {
+          const stage_name = job["stage"]
+          var stage_id = stages.findIndex(s => s["name"] === stage_name)
+          if (!~stage_id) {
+            stage_id = stages.length;
+            stages.push({"name": stage_name, "jobs": []});
+          }
+          stages[stage_id]["jobs"].push(job)
+          return stages
+        }, [])
         this.loading = false
       },
       setupDurationCounter() {
@@ -167,6 +180,11 @@
       display: flex;
       align-items: center;
       color: white;
+      height: 30px;
+
+      &.with-stages-names {
+        padding-bottom: 20px;
+      }
 
       .pipeline-id-link {
         display: inline-flex;
@@ -186,9 +204,10 @@
         color: rgba(255, 255, 255, 0.8);
       }
 
-      .jobs {
+      .stages {
         white-space: nowrap;
         margin-right: 8px;
+        align-self: start;
       }
 
       .clock-icon {

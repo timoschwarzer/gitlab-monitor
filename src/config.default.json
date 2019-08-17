@@ -8,6 +8,7 @@
   "showPipelineIds": true,
   "showJobs": "icon",
   "showJobsNameOnlyOn": [],
+  "showStagesNames": false,
   "showDurations": true,
   "showUsers": false,
   "projectVisibility": "any",
