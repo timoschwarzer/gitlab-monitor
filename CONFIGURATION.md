@@ -48,6 +48,9 @@ Your configuration overrides the default configuration, which can be found
     "manual"
   ],
 
+  // Whether to show stages names
+  "showStagesNames": false,
+
   // Whether to show pipeline durations or not
   "showDurations": true,
   
