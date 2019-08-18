@@ -14,7 +14,7 @@
         {{ pipeline.ref }}
       </a>
 
-      <div :class="'pipeline' + (showStagesNames ? ' with-stages-names' : '')">
+      <div :class="['pipeline', {'with-stages-names': showStagesNames}]">
         <a
           class="pipeline-id-link"
           target="_blank"

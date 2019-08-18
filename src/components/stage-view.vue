@@ -1,5 +1,5 @@
 <template>
-  <div :class="'stage-view' + (showStagesNames ? ' with-name' : '')">
+  <div :class="['stage-view', {'with-name': showStagesNames}]">
     <div class="jobs-queue">
       <div class="pipe before"></div>
       <div class="jobs">
