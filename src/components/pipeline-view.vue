@@ -115,6 +115,9 @@
     methods: {
       async fetchJobs() {
         this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
+        if (!Config.root.showRestartedJobs) {
+          this.excludeRestartedJobs();
+        }
         this.stages = this.jobs.reduce(function(stages, job) {
           const stage_name = job["stage"]
           var stage_id = stages.findIndex(s => s["name"] === stage_name)
@@ -126,6 +129,30 @@
           return stages
         }, [])
         this.loading = false
+      },
+      excludeRestartedJobs() {
+        // Job restarts appear at the end of the list and break pipeline view.
+        // We sort jobs to place restarts on the positions of the restarted ones.
+        // This array contains list of jobs names as they was originally enqueued.
+        var jobs_order = [];
+
+        // This dictionary contains id of the latest job for each job name
+        var jobs_id_by_name = {};
+
+        for (let job of this.jobs) {
+          jobs_id_by_name[job["name"]] = job["id"];
+          if (!~jobs_order.indexOf(job["name"])) {
+            jobs_order.push(job["name"]);
+          }
+        }
+
+        // Skip filtering and sorting if there is no restarted jobs
+        if (this.jobs.length === jobs_order.length) {
+          return;
+        }
+
+        this.jobs = this.jobs.filter(job => jobs_id_by_name[job["name"]] === job["id"]);
+        this.jobs = this.jobs.sort((j1, j2) => (jobs_order.indexOf(j1["name"]) - jobs_order.indexOf(j2["name"])));
       },
       setupDurationCounter() {
         const pipeline = this.pipeline

@@ -48,6 +48,9 @@ Your configuration overrides the default configuration, which can be found
     "manual"
   ],
 
+  // Whether to show jobs that was restarted
+  "showRestartedJobs": true,
+
   // Whether to show stages names
   "showStagesNames": false,
 
