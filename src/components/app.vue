@@ -15,12 +15,12 @@
       <h1>Configuration</h1>
       <p>
         Hi! Before you can use GitLab Monitor, it has to be configured.<br>
-        Configuration is done by supplying a JSON object containing the configuration.<br>
+        Configuration is done by supplying YAML formatted configuration.<br>
         Your configuration is being persisted in this browser.
       </p>
       <textarea class="config" v-model="config"></textarea>
       <p class="error" v-if="!configIsValid">
-        JSON is invalid!
+        YAML is invalid!
       </p>
       <button :disabled="!configIsValid" @click="saveConfig">Save</button>
     </div>
@@ -38,6 +38,7 @@
   import Config from '../Config'
   import { configureApi } from '../GitLabApi'
   import ProjectCard from './project-card'
+  import YAML from 'yaml'
 
   export default {
     components: {
@@ -58,7 +59,7 @@
       },
       configIsValid() {
         try {
-          JSON.parse(this.config)
+          YAML.parse(this.config)
         } catch (e) {
           return false
         }
@@ -200,13 +201,13 @@
         this.configured = Config.isConfigured
 
         if (this.configured) {
-          this.config = JSON.stringify(Config.local, null, 2)
+          this.config = YAML.stringify(Config.local, null, 2)
         } else {
-          this.config = JSON.stringify(require('../config.template'), null, 2)
+          this.config = YAML.stringify(require('../config.template'), null, 2)
         }
       },
       saveConfig() {
-        Config.load(JSON.parse(this.config))
+        Config.load(YAML.parse(this.config))
         this.reloadConfig()
       },
       getTitle() {

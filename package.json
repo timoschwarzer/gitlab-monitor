@@ -20,7 +20,8 @@
     "query-string": "^6.2.0",
     "vue": "^2.6.3",
     "vue-octicon": "^2.1.1",
-    "vue-timeago": "^5.0.0"
+    "vue-timeago": "^5.0.0",
+    "yaml": "^1.6.0"
   },
   "browserslist": [
     "> 1%",
