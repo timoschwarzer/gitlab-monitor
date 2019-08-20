@@ -147,11 +147,11 @@
         }
 
         // Skip filtering and sorting if there is no restarted jobs
-        if (this.jobs.length == jobs_order.length) {
+        if (this.jobs.length === jobs_order.length) {
           return;
         }
 
-        this.jobs = this.jobs.filter(job => jobs_id_by_name[job["name"]] == job["id"]);
+        this.jobs = this.jobs.filter(job => jobs_id_by_name[job["name"]] === job["id"]);
         this.jobs = this.jobs.sort((j1, j2) => (jobs_order.indexOf(j1["name"]) - jobs_order.indexOf(j2["name"])));
       },
       setupDurationCounter() {
