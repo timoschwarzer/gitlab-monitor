@@ -91,7 +91,7 @@
       border: 2px solid rgba(255, 255, 255, 0.8);
       border-radius: 24px;
       line-height: 24px;
-      padding: 0 6px;
+      padding: 0 9px 0 0;
       font-size: 12px;
       transition: background-color 200ms;
 
