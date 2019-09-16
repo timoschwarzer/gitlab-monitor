@@ -6,6 +6,7 @@
   "pipelinesOnly": false,
   "autoZoom": false,
   "showPipelineIds": true,
+  "showOpenMergeRequestCount": false,
   "showJobs": "icon",
   "showJobsNameOnlyOn": [],
   "showRestartedJobs": true,

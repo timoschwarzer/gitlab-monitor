@@ -5,6 +5,11 @@
       <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url : '#'">
         {{ project !== null ? project.name : 'Loading project...' }}
       </a>
+      <div style="float: right">
+      <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url + '/merge_requests' : '#'">
+        <font color=yellow>{{ openMergeRequestCount !== 0 ? "Open Merge Requests: " + openMergeRequestCount : '' }}</font>
+      </a>
+      </div>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelineCount === 0" class="no-pipelines">
           No recent pipelines
@@ -55,6 +60,7 @@
       project: null,
       pipelines: null,
       pipelineCount: 0,
+      openMergeRequestCount: 0,
       refNames: [],
       badges: [],
       status: '',
@@ -78,6 +84,9 @@
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly
+      },
+      showOpenMergeRequestCount() {
+        return Config.root.showOpenMergeRequestCount
       },
       filter() {
         let filter = Config.root.projectFilter['*']
@@ -163,6 +172,14 @@
         this.loading = true
 
         this.project = await this.$api(`/projects/${this.projectId}`)
+
+        const showOpenMergeRequestCount = this.showOpenMergeRequestCount
+        if (showOpenMergeRequestCount) {
+          const mergeRequests = await this.$api(`/projects/${this.projectId}/merge_requests?state=opened`)
+          this.openMergeRequestCount = mergeRequests.length
+        } else {
+          this.openMergeRequestCount = 0
+        }
         this.$emit('input', this.project.last_activity_at)
 
         this.loading = false

@@ -31,6 +31,7 @@ config: |
     "pipelinesOnly": false,
     "autoZoom": false,
     "showPipelineIds": true,
+    "showOpenMergeRequestCount": false,
     "showJobs": "iconAndName",
     "showDurations": true,
     "showUsers": false,

@@ -25,6 +25,9 @@ Your configuration overrides the default configuration, which can be found
   // Show only projects with recent pipelines
   "pipelinesOnly": false,
   
+  // Show open merge request count on project card
+  "showOpenMergeRequestCount": false,
+
   // Zooms the dashboard to fill the screen with all displayed projects.
   // Not compatible with all browsers! See https://caniuse.com/#feat=css-zoom
   "autoZoom": false,
