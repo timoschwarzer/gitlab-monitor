@@ -22,6 +22,7 @@ resources:
 ingress:
   enabled: false
   domain: gitlab-monitor.example.com
+  tls: {}
 config: |
   {
     "gitlabApi": "https://gitlab.example.com/api/v4",
