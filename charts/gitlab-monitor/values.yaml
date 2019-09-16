@@ -21,7 +21,8 @@ resources:
     memory: 128Mi
 ingress:
   enabled: false
-basedomain: gitlab-monitor.example.com
+  domain: gitlab-monitor.example.com
+  tls: {}
 config: |
   {
     "gitlabApi": "https://gitlab.example.com/api/v4",
