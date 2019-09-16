@@ -95,12 +95,8 @@
 
         // Only use main level projects API if tighter scope not defined
         const scopeType = Config.root.projectScope
-        var scopeId = Config.root.projectScopeId
-
-        if (typeof scopeId === "string") {
-          scopeId = [scopeId]
-        }
-        console.log(scopeId)
+        // Reformat the variable as a flat list of Ids
+        const scopeId = [Config.root.projectScopeId].flat()
 
         var apiPromises = []
         for (let scope of scopeId) {
