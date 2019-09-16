@@ -94,14 +94,25 @@
         }
 
         // Only use main level projects API if tighter scope not defined
-        const scope = Config.root.projectScope
-        const scopeId = Config.root.projectScopeId
-        let urlPrefix = ''
-        if ((scope === 'users' || scope === 'groups') && scopeId !== null) {
-          urlPrefix = '/' + scope + '/' + scopeId
+        const scopeType = Config.root.projectScope
+        var scopeId = Config.root.projectScopeId
+
+        if (typeof scopeId === "string") {
+          scopeId = [scopeId]
+        }
+        console.log(scopeId)
+
+        var apiPromises = []
+        for (let scope of scopeId) {
+          let urlPrefix = ''
+          if ((scopeType === 'users' || scopeType === 'groups') && scope !== null) {
+            urlPrefix = '/' + scopeType + '/' + scope
+          }
+
+          apiPromises.push(this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
         }
 
-        const projects = await this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 })
+        const projects = (await Promise.all(apiPromises)).flat()
 
         // Only show projects that have jobs enabled
         const maxAge = Config.root.maxAge
