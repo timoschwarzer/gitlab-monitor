@@ -1,4 +1,4 @@
 apiVersion: v1
 description: A Helm chart for Kubernetes
 name: gitlab-monitor
-version: v0.1.0
+version: v0.1.1
