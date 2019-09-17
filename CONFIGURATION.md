@@ -148,6 +148,7 @@ Your configuration overrides the default configuration, which can be found
   
   // ID to use in query with "projectScope" parameter
   // For example 123 with "projectScope": "groups" would query /groups/123/projects
+  // Cloud also be a list : [123, 4762, 8726]
   "projectScopeId": null
 }
 ```
