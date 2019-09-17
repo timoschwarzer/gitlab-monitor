@@ -98,7 +98,7 @@
         // Reformat the variable as a flat list of Ids
         const scopeId = [Config.root.projectScopeId].flat()
 
-        var apiPromises = []
+        const apiPromises = []
         for (let scope of scopeId) {
           let urlPrefix = ''
           if ((scopeType === 'users' || scopeType === 'groups') && scope !== null) {
