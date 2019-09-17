@@ -7,11 +7,15 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   rules:
-  - host: {{ .Release.Name }}.{{ .Values.basedomain }}
+  - host: {{ .Values.ingress.domain }}
     http:
       paths:
       - path: /
         backend:
           serviceName: {{ template "fullname" . }}
           servicePort: {{ .Values.service.externalPort }}
+{{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+{{- end }}
 {{- end -}}

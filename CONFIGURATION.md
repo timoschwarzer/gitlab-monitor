@@ -140,8 +140,9 @@ projectFilter:
 # Allowed values "groups" and "users"
 projectScope: null
 
-# ID to use in query with "projectScope" parameter
+# ID or IDs to use in query with "projectScope" parameter
 # For example 123 with "projectScope": "groups" would query /groups/123/projects
+# Specify an array if you with to include multiple scope IDs.
 projectScopeId: null
 ```
 
