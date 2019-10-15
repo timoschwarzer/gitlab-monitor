@@ -327,7 +327,6 @@
         white-space: nowrap;
         font-size: 16px;
         font-weight: bold;
-        text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         color: inherit;
 
