@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa:500&display=swap" rel="stylesheet">
     <div v-if="loaded && configured" :style="{zoom}">
       <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
       <div class="projects">
@@ -226,9 +227,9 @@
 
 <style lang="scss">
   html {
-    background-image: url("https://images.wallpaperscraft.ru/image/gora_vershina_zasnezhennyj_149124_1920x1080.jpg");
+    background: url("https://images.wallpaperscraft.ru/image/robot_igrushka_mehanizm_svet_44503_1920x1080.jpg");
+    font-family: 'Comfortaa', cursive;
     color: #dddddd;
-    font-family: Roboto, sans-serif;
   }
 
   body {

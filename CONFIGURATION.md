@@ -136,6 +136,9 @@ projectFilter:
   my-project/my-group":
     # see above...
 
+# List of listening branches for failure sound
+listenBranches: null
+
 # Search projects from given API route.
 # Allowed values "groups" and "users"
 projectScope: null
