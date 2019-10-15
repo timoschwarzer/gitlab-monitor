@@ -226,7 +226,7 @@
 
 <style lang="scss">
   html {
-    background-color: #212121;
+    background-image: url("https://images.wallpaperscraft.ru/image/gora_vershina_zasnezhennyj_149124_1920x1080.jpg");
     color: #dddddd;
     font-family: Roboto, sans-serif;
   }
