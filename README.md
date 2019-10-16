@@ -1,6 +1,6 @@
 # GitLab Monitor
 
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=SiarheiFrunchak_gitlab-monitor)](https://sonarcloud.io/dashboard?id=SiarheiFrunchak_gitlab-monitor)
+![Logo](/logo.svg)
 
 > A browser-based monitor dashboard for GitLab CI
 
