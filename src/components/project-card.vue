@@ -388,6 +388,7 @@
       align-items: center;
       font-size: 12px;
       color: rgba(255, 255, 255, 0.3);
+
       time {
         line-height: 1;
       }
@@ -399,11 +400,14 @@
 
     .badge-container {
       max-width:80%;
+
       a {
         margin-right: 8px;
         transition: background-color 100ms, color 100ms, border 100ms;
+
         img {
           opacity: 0.9;
+
           &:hover {
             opacity: 1;
           }
