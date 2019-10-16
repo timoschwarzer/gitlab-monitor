@@ -230,16 +230,20 @@
     color: #dddddd;
     font-family: Roboto, sans-serif;
   }
+
   body {
     margin: 0;
     padding: 4px;
   }
+
   svg {
     overflow: visible;
   }
+
   .fade-enter-active, .fade-leave-active {
     transition: opacity 0.15s
   }
+
   .fade-enter, .fade-leave-to {
     opacity: 0
   }
@@ -252,11 +256,13 @@
       margin-left: 8px;
       margin-right: 8px;
     }
+
     .projects {
       display: flex;
       flex-wrap: wrap;
       justify-content: left;
     }
+
     .loader {
       display: flex;
       justify-content: center;
@@ -268,10 +274,12 @@
       bottom: 0;
       background-color: transparentize(#212121, 0.5);
     }
+
     .container {
       padding: 0 16px;
       height: 100%;
     }
+
     .config {
       font-family: "Fira Code", "Fira Mono", "DejaVu Sans Mono", "Consolas", monospace;
       background: transparentize(black, 0.7);
@@ -282,6 +290,7 @@
       flex-grow: 1;
       margin-bottom: 8px;
     }
+
     .configure {
       position: fixed;
       bottom: 0;
@@ -297,6 +306,7 @@
         opacity: 1;
       }
     }
+    
     .error {
       color: red;
       font-weight: bold;
