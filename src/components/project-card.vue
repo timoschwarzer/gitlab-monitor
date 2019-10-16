@@ -42,7 +42,7 @@
   import Config       from '../Config'
   import GitlabIcon   from './gitlab-icon'
   import PipelineView from './pipeline-view'
-  let memory = []
+  let failedPipelines = []
 
   export default {
     components: {
@@ -125,14 +125,14 @@
                   status !== 'failed' && !!status &&
                   pipelines[element][0].status === 'failed'
                 ) {
-                  if(!memory.includes(pipelines[element][0].id)){
+                  if(!failedPipelines.includes(pipelines[element][0].id)){
                     console.log(pipelines[element][0].id)
                     const alarmSound = new Audio(Config.root.linkToFailureSound)
                     const soundPromise = alarmSound.play()
                     if (soundPromise !== null){
                         soundPromise.catch(() => { alarmSound.play(); })
                     }
-                    memory.push(pipelines[element][0].id)
+                    failedPipelines.push(pipelines[element][0].id)
                   }
                 }
               }
