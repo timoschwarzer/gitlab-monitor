@@ -35,6 +35,7 @@
       "hideSkippedPipelines":  false
     }
   },
+  "listenBranches": null,
   "projectScope": null,
   "projectScopeId": null
 }
