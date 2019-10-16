@@ -42,6 +42,7 @@
   import Config       from '../Config'
   import GitlabIcon   from './gitlab-icon'
   import PipelineView from './pipeline-view'
+  let memory = []
 
   export default {
     components: {
@@ -108,6 +109,38 @@
             this.refreshInterval = 60000
             return
           }
+          let branchesList = Config.root.listenBranches
+          if (branchesList != null){
+            let listenBranches = branchesList.split(',')
+
+            console.log(memory)
+
+            listenBranches.forEach(function(element, project=this.project, status=this.status){
+              if (
+                pipelines &&
+                project &&
+                !!pipelines[element] &&
+                pipelines[element].length > 0
+              ){
+                if ( // Play sound alert if default branch status changes to failed
+                  Config.root.linkToFailureSound != null &&
+                  status !== 'failed' && !!status &&
+                  pipelines[element][0].status === 'failed'
+                ) {
+                  if(!memory.includes(pipelines[element][0].id)){
+                    console.log(pipelines[element][0].id)
+                    const alarmSound = new Audio(Config.root.linkToFailureSound)
+                    const soundPromise = alarmSound.play()
+                    if (soundPromise !== null){
+                        soundPromise.catch(() => { alarmSound.play(); })
+                    }
+                    memory.push(pipelines[element][0].id)
+                  }
+                }
+              }
+            })
+          }
+
 
           let configuredDefaultBranch = Config.root.projectFilter['*'].default || this.project.default_branch
 
@@ -122,14 +155,14 @@
             pipelines[configuredDefaultBranch].length > 0
           ) {
 
-            if ( // Play sound alert if default branch status changes to failed
-              Config.root.linkToFailureSound != null &&
-              this.status !== 'failed' && !!this.status &&
-              pipelines[configuredDefaultBranch][0].status === 'failed'
-            ) {
-              const alarmSound = new Audio(Config.root.linkToFailureSound)
-              alarmSound.play()
-            }
+            // if ( // Play sound alert if default branch status changes to failed
+            //   Config.root.linkToFailureSound != null &&
+            //   this.status !== 'failed' && !!this.status &&
+            //   pipelines[configuredDefaultBranch][0].status === 'failed'
+            // ) {
+            //   const alarmSound = new Audio(Config.root.linkToFailureSound)
+            //   alarmSound.play()
+            // }
 
             this.status = pipelines[configuredDefaultBranch][0].status
 
@@ -297,7 +330,7 @@
     transition: background-color 200ms;
 
     &.success {
-      background-color: #2E7D32;
+      background-color: #006505
     }
 
     &.running {
@@ -309,7 +342,7 @@
     }
 
     &.failed {
-      background-color: #C62828;
+      background-color: rgb(153, 21, 21);
     }
 
     &.canceled {
@@ -317,7 +350,7 @@
     }
 
     &.skipped {
-      background-color: #4b4b4b;
+      background-color: #000000;
     }
 
     .content {
@@ -327,7 +360,6 @@
         white-space: nowrap;
         font-size: 16px;
         font-weight: bold;
-        text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         color: inherit;
 

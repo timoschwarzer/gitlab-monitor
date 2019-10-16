@@ -54,6 +54,7 @@ config: |
         "showTags": true,
         "maxPipelines": 10
       }
-    }
+    },
+    "listenBranches": null
   }
 

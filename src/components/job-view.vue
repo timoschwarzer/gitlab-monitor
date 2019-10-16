@@ -121,7 +121,7 @@
       }
 
       &.skipped, &.manual {
-        background-color: #4b4b4b;
+        background-color: #777777;
       }
 
       svg {
