@@ -302,11 +302,12 @@
       border-right: 2px solid white;
       opacity: 0;
       cursor: pointer;
+
       &:hover {
         opacity: 1;
       }
     }
-    
+
     .error {
       color: red;
       font-weight: bold;

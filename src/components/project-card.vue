@@ -327,24 +327,31 @@
     display: flex;
     flex-direction: column;
     transition: background-color 200ms;
+
     &.success {
       background-color: #2E7D32;
     }
+
     &.running {
       background-color: #1565C0;
     }
+
     &.pending {
       background-color: #A93F00;
     }
+
     &.failed {
       background-color: #C62828;
     }
+
     &.canceled {
       background-color: #010101;
     }
+
     &.skipped {
       background-color: #4b4b4b;
     }
+
     .content {
       padding: 12px;
       .title {
@@ -359,17 +366,21 @@
           line-height: 0.6;
         }
       }
+
       .pipeline-container {
         padding: 8px 0 0 0;
       }
+
       .no-pipelines {
         color: rgba(255, 255, 255, 0.5);
         font-size: 10px;
       }
     }
+
     .spacer {
       flex-grow: 1;
     }
+
     .info {
       padding: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -380,10 +391,12 @@
       time {
         line-height: 1;
       }
+
       .calendar-icon {
         margin-right: 4px;
       }
     }
+
     .badge-container {
       max-width:80%;
       a {
