@@ -1,6 +1,5 @@
 <template>
   <div class="app">
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa:500&display=swap" rel="stylesheet">
     <div v-if="loaded && configured" :style="{zoom}">
       <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
       <div class="projects">
