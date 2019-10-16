@@ -23,7 +23,7 @@
     <div class="info">
       <div class="badge-container">
         <a target="_blank" rel="noopener noreferrer" v-for="badge in badges" :href="badge.link_url">
-          <img :key="badge.id" :src="badge.rendered_image_url" />
+          <img :key="badge.id" :src="badge.rendered_image_url" alt="badge image"/>
         </a>
       </div>
       <div class="spacer"></div>
@@ -113,8 +113,6 @@
           if (branchesList != null){
             let listenBranches = branchesList.split(',')
 
-            console.log(memory)
-
             listenBranches.forEach(function(element, project=this.project, status=this.status){
               if (
                 pipelines &&
@@ -155,14 +153,15 @@
             pipelines[configuredDefaultBranch].length > 0
           ) {
 
-            // if ( // Play sound alert if default branch status changes to failed
-            //   Config.root.linkToFailureSound != null &&
-            //   this.status !== 'failed' && !!this.status &&
-            //   pipelines[configuredDefaultBranch][0].status === 'failed'
-            // ) {
-            //   const alarmSound = new Audio(Config.root.linkToFailureSound)
-            //   alarmSound.play()
-            // }
+            if ( // Play sound alert if default branch status changes to failed
+              Config.root.listenBranches === null &&
+              Config.root.linkToFailureSound != null &&
+              this.status !== 'failed' && !!this.status &&
+              pipelines[configuredDefaultBranch][0].status === 'failed'
+            ) {
+              const alarmSound = new Audio(Config.root.linkToFailureSound)
+              alarmSound.play()
+            }
 
             this.status = pipelines[configuredDefaultBranch][0].status
 
@@ -328,61 +327,49 @@
     display: flex;
     flex-direction: column;
     transition: background-color 200ms;
-
     &.success {
-      background-color: #006505
+      background-color: #2E7D32;
     }
-
     &.running {
       background-color: #1565C0;
     }
-
     &.pending {
       background-color: #A93F00;
     }
-
     &.failed {
-      background-color: rgb(153, 21, 21);
+      background-color: #C62828;
     }
-
     &.canceled {
       background-color: #010101;
     }
-
     &.skipped {
-      background-color: #000000;
+      background-color: #4b4b4b;
     }
-
     .content {
       padding: 12px;
-
       .title {
         white-space: nowrap;
         font-size: 16px;
         font-weight: bold;
+        text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         color: inherit;
-
         &.small {
           font-size: 12px;
           line-height: 0.6;
         }
       }
-
       .pipeline-container {
         padding: 8px 0 0 0;
       }
-
       .no-pipelines {
         color: rgba(255, 255, 255, 0.5);
         font-size: 10px;
       }
     }
-
     .spacer {
       flex-grow: 1;
     }
-
     .info {
       padding: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -390,26 +377,20 @@
       align-items: center;
       font-size: 12px;
       color: rgba(255, 255, 255, 0.3);
-
       time {
         line-height: 1;
       }
-
       .calendar-icon {
         margin-right: 4px;
       }
     }
-
     .badge-container {
       max-width:80%;
-
       a {
         margin-right: 8px;
         transition: background-color 100ms, color 100ms, border 100ms;
-
         img {
           opacity: 0.9;
-
           &:hover {
             opacity: 1;
           }
