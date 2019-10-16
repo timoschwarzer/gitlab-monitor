@@ -354,6 +354,7 @@
 
     .content {
       padding: 12px;
+
       .title {
         white-space: nowrap;
         font-size: 16px;
@@ -361,6 +362,7 @@
         text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         color: inherit;
+        
         &.small {
           font-size: 12px;
           line-height: 0.6;
