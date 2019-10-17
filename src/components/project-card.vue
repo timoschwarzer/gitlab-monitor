@@ -42,7 +42,7 @@
   import Config       from '../Config'
   import GitlabIcon   from './gitlab-icon'
   import PipelineView from './pipeline-view'
-  let failedPipelines = []
+  //let failedPipelines = []
 
   export default {
     components: {
@@ -60,7 +60,8 @@
       badges: [],
       status: '',
       loading: false,
-      refreshInterval: null
+      refreshInterval: null,
+      failedPipelines: []
     }),
     computed: {
       showMerged() {
@@ -109,34 +110,36 @@
             this.refreshInterval = 60000
             return
           }
+
           let branchesList = Config.root.listenBranches
-          if (branchesList != null){
+
+          if (branchesList != null) {
+
             let listenBranches = branchesList.split(',')
 
-            listenBranches.forEach(function(element, project=this.project, status=this.status){
+            for (let value of listenBranches) {
               if (
                 pipelines &&
-                project &&
-                !!pipelines[element] &&
-                pipelines[element].length > 0
-              ){
-                if ( // Play sound alert if default branch status changes to failed
-                  Config.root.linkToFailureSound != null &&
-                  status !== 'failed' && !!status &&
-                  pipelines[element][0].status === 'failed'
+                this.project &&
+                !!pipelines[value] &&
+                pipelines[value].length > 0
+              ) {
+                if (
+                  Config.root.linkToFailureSound !== null &&
+                  this.status !== 'failed' && !!this.status &&
+                  pipelines[value][0].status === 'failed'
                 ) {
-                  if(!failedPipelines.includes(pipelines[element][0].id)){
-                    console.log(pipelines[element][0].id)
+                  if (!this.failedPipelines.includes(pipelines[value][0].id)) {
+                    this.failedPipelines.push(pipelines[value][0].id)
                     const alarmSound = new Audio(Config.root.linkToFailureSound)
                     const soundPromise = alarmSound.play()
                     if (soundPromise !== null){
-                        soundPromise.catch(() => { alarmSound.play(); })
+                        soundPromise.catch(async () => { await alarmSound.play(); })
                     }
-                    failedPipelines.push(pipelines[element][0].id)
                   }
                 }
               }
-            })
+            }
           }
 
 
