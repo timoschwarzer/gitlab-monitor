@@ -61,7 +61,8 @@
       status: '',
       loading: false,
       refreshInterval: null,
-      failedPipelines: []
+      failedPipelines: [],
+      audio: Config.root.linkToFailureSound
     }),
     computed: {
       showMerged() {
@@ -111,74 +112,54 @@
             return
           }
 
-          let branchesList = Config.root.listenBranches
+          let branchesList = Config.root.listenBranches || this.project.default_branch
+          
+          if (branchesList === null) {
+            branchesList = Config.root.projectFilter['*'].default || this.project.default_branch
+          }
+          if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
+            branchesList = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch
+          }
 
-          if (branchesList != null) {
-
-            let listenBranches = branchesList.split(',')
-
-            for (let value of listenBranches) {
+          let listenBranches = branchesList.split(',')
+          
+          console.log(listenBranches)
+          for (let value of listenBranches) {
+            if (
+              pipelines &&
+              this.project &&
+              !!pipelines[value] &&
+              pipelines[value].length > 0
+            ) {
               if (
-                pipelines &&
-                this.project &&
-                !!pipelines[value] &&
-                pipelines[value].length > 0
+                Config.root.linkToFailureSound !== null &&
+                this.status !== 'failed' && !!this.status &&
+                pipelines[value][0].status === 'failed'
               ) {
-                if (
-                  Config.root.linkToFailureSound !== null &&
-                  this.status !== 'failed' && !!this.status &&
-                  pipelines[value][0].status === 'failed'
-                ) {
-                  if (!this.failedPipelines.includes(pipelines[value][0].id)) {
-                    this.failedPipelines.push(pipelines[value][0].id)
-                    const alarmSound = new Audio(Config.root.linkToFailureSound)
-                    const soundPromise = alarmSound.play()
-                    if (soundPromise !== null){
-                        soundPromise.catch(async () => { await alarmSound.play(); })
-                    }
-                  }
+                if (!this.failedPipelines.includes(pipelines[value][0].id)) {
+                  //this.playSound(Config.root.linkToFailureSound)
+                  var soundAlert = new Audio(this.audio)
+                  soundAlert.play()
+                  this.pushFailedPiplineId(pipelines[value][0].id)
+                  console.log(pipelines[value][0].id)
+                  console.log(this.failedPipelines)
                 }
               }
+
+              this.status = pipelines[value][0].status
+
+              switch (pipelines[value][0].status) {
+                case 'pending':
+                case 'running':
+                  this.refreshInterval = 5000
+                  break
+                default:
+                  this.refreshInterval = 15000
+              }
+            } else {
+              this.status = ''
+              this.refreshInterval = 6000
             }
-          }
-
-
-          let configuredDefaultBranch = Config.root.projectFilter['*'].default || this.project.default_branch
-
-          if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-            configuredDefaultBranch = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch
-          }
-
-          if (
-            pipelines &&
-            this.project &&
-            !!pipelines[configuredDefaultBranch] &&
-            pipelines[configuredDefaultBranch].length > 0
-          ) {
-
-            if ( // Play sound alert if default branch status changes to failed
-              Config.root.listenBranches === null &&
-              Config.root.linkToFailureSound != null &&
-              this.status !== 'failed' && !!this.status &&
-              pipelines[configuredDefaultBranch][0].status === 'failed'
-            ) {
-              const alarmSound = new Audio(Config.root.linkToFailureSound)
-              alarmSound.play()
-            }
-
-            this.status = pipelines[configuredDefaultBranch][0].status
-
-            switch (pipelines[configuredDefaultBranch][0].status) {
-              case 'pending':
-              case 'running':
-                this.refreshInterval = 5000
-                break
-              default:
-                this.refreshInterval = 15000
-            }
-          } else {
-            this.status = ''
-            this.refreshInterval = 60000
           }
         }
       },
@@ -194,6 +175,22 @@
       }
     },
     methods: {
+      async pushFailedPiplineId(id) {
+        await this.failedPipelines.push(id)
+      },
+      async playSound (sound) {
+        let audio = await new Audio(sound)
+        let playPromise = await audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(async _ => {
+            await audio.pause();
+            await audio.play();
+          })
+          .catch(error => {
+            console.log(error)
+          });
+        }
+      },
       async fetchProject() {
         this.loading = true
 
