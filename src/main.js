@@ -31,7 +31,6 @@ const finish = () => {
     Config.load(data)
   } catch (e) {
     Config.load()
-    finish()
   } finally {
     finish()
   }

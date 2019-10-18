@@ -13,7 +13,6 @@
   "showDurations": true,
   "showUsers": false,
   "projectVisibility": "any",
-  "linkToFailureSound": null ,
   "title": null,
   "pollingIntervalMultiplier": 1.0,
   "badges": false,
@@ -33,7 +32,11 @@
       "showTags": true,
       "maxPipelines": 0,
       "hideSkippedPipelines":  false,
-      "notifyFailureOn": null
+      "soundAlerts": {
+        "soundUrl": null,
+        "include": ".*",
+        "exclude": null
+      }
     }
   },
   "projectScope": null,
