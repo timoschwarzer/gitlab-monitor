@@ -112,7 +112,7 @@
             return
           }
 
-          let branchesList = Config.root.listenBranches || this.project.default_branch
+          let branchesList = Config.root.notifyFailureOn || this.project.default_branch
           
           if (branchesList === null) {
             branchesList = Config.root.projectFilter['*'].default || this.project.default_branch
@@ -123,7 +123,6 @@
 
           let listenBranches = branchesList.split(',')
           
-          console.log(listenBranches)
           for (let value of listenBranches) {
             if (
               pipelines &&
@@ -137,13 +136,10 @@
                 pipelines[value][0].status === 'failed'
               ) {
                 if (!this.failedPipelines.includes(pipelines[value][0].id)) {
-                  //this.playSound(Config.root.linkToFailureSound)
-                  var soundAlert = new Audio(this.audio)
-                  soundAlert.play()
-                  this.pushFailedPiplineId(pipelines[value][0].id)
-                  console.log(pipelines[value][0].id)
-                  console.log(this.failedPipelines)
+                  this.playSound(this.audio)
+                  return this.pushFailedPiplineId(pipelines[value][0].id)
                 }
+                console.log(this.failedPipelines)
               }
 
               this.status = pipelines[value][0].status
