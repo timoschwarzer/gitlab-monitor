@@ -23,7 +23,7 @@
     "excludeTags": null,
     "excludeUntagged": false
   },
-  "projectFilter": {
+  "projectConfig": {
     "*": {
       "include": ".*",
       "exclude": null,

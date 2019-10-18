@@ -65,22 +65,22 @@
     }),
     computed: {
       showMerged() {
-        return this.filter.showMerged
+        return this.config.showMerged
       },
       showTags() {
-        return this.filter.showTags
+        return this.config.showTags
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly
       },
-      filter() {
-        let filter = Config.root.projectFilter['*']
+      config() {
+        let config = Config.root.projectConfig['*']
 
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          filter = merge(filter, Config.root.projectFilter[this.project.path_with_namespace])
+        if (Config.root.projectConfig.hasOwnProperty(this.project.path_with_namespace)) {
+          config = merge(config, Config.root.projectConfig[this.project.path_with_namespace])
         }
 
-        return filter
+        return config
       }
     },
     mounted() {
@@ -104,7 +104,7 @@
           }
 
           // Set project status
-          const configuredDefaultBranch = this.filter.default || this.project.default_branch
+          const configuredDefaultBranch = this.config.default || this.project.default_branch
 
           if (
             pipelines &&
@@ -128,10 +128,10 @@
           }
 
           // Process alert sounds
-          if (pipelines && this.project && this.filter.soundAlerts.soundUrl !== null) {
+          if (pipelines && this.project && this.config.soundAlerts.soundUrl !== null) {
             const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
-              return !!branchName.match(new RegExp(this.filter.soundAlerts.include)) &&
-                (!this.filter.soundAlerts.exclude || !branchName.match(new RegExp(this.filter.soundAlerts.exclude)))
+              return !!branchName.match(new RegExp(this.config.soundAlerts.include)) &&
+                (!this.config.soundAlerts.exclude || !branchName.match(new RegExp(this.config.soundAlerts.exclude)))
             })
 
             let alert = false
@@ -144,7 +144,7 @@
             }
 
             if (alert) {
-              this.playSound(this.filter.soundAlerts.soundUrl)
+              this.playSound(this.config.soundAlerts.soundUrl)
             }
           }
         }
@@ -197,8 +197,8 @@
           .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
           .map(branch => branch.name)
           .filter(branchName => {
-            return !!branchName.match(new RegExp(this.filter.include)) &&
-              (!this.filter.exclude || !branchName.match(new RegExp(this.filter.exclude)))
+            return !!branchName.match(new RegExp(this.config.include)) &&
+              (!this.config.exclude || !branchName.match(new RegExp(this.config.exclude)))
           })
         let tags = []
         if (showTags) {
@@ -211,9 +211,9 @@
         let count = 0
         const refNames = branchNames.concat(tagNames)
 
-        let hideSkippedPipelines = Config.root.projectFilter['*'].hideSkippedPipelines
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          hideSkippedPipelines = Config.root.projectFilter[this.project.path_with_namespace].hideSkippedPipelines
+        let hideSkippedPipelines = Config.root.projectConfig['*'].hideSkippedPipelines
+        if (Config.root.projectConfig.hasOwnProperty(this.project.path_with_namespace)) {
+          hideSkippedPipelines = Config.root.projectConfig[this.project.path_with_namespace].hideSkippedPipelines
         }
 
         refLoop:
@@ -276,13 +276,13 @@
                   count++
                 }
 
-                if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+                if (this.config.maxPipelines !== 0 && count >= this.config.maxPipelines) {
                   break refLoop
                 }
               }
             }
 
-            if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+            if (this.config.maxPipelines !== 0 && count >= this.config.maxPipelines) {
               break
             }
           }
