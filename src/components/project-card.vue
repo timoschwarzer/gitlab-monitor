@@ -112,7 +112,7 @@
             return
           }
 
-          let branchesList = Config.root.notifyFailureOn || this.project.default_branch
+          let branchesList = Config.root.projectFilter['*'].notifyFailureOn || this.project.default_branch
           
           if (branchesList === null) {
             branchesList = Config.root.projectFilter['*'].default || this.project.default_branch
