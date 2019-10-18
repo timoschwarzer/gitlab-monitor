@@ -28,21 +28,21 @@
       </div>
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
-      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1"></timeago>
+      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1" />
       <time v-else>...</time>
     </div>
   </div>
 </template>
 
 <script>
-  import Octicon      from 'vue-octicon/components/Octicon'
+  import Octicon from 'vue-octicon/components/Octicon'
   import 'vue-octicon/icons/clock'
   import 'vue-octicon/icons/git-branch'
   import 'vue-octicon/icons/sync'
-  import Config       from '../Config'
-  import GitlabIcon   from './gitlab-icon'
+  import Config from '../Config'
+  import GitlabIcon from './gitlab-icon'
   import PipelineView from './pipeline-view'
-  //let failedPipelines = []
+  import merge from 'deepmerge'
 
   export default {
     components: {
@@ -61,23 +61,14 @@
       status: '',
       loading: false,
       refreshInterval: null,
-      failedPipelines: [],
-      audio: Config.root.linkToFailureSound
+      alertSoundPlayedForPipelines: []
     }),
     computed: {
       showMerged() {
-        let configuredShowMerged = Config.root.projectFilter['*'].showMerged
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged
-        }
-        return configuredShowMerged
+        return this.filter.showMerged
       },
       showTags() {
-        let configuredShowTags = Config.root.projectFilter['*'].showTags
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowTags = Config.root.projectFilter[this.project.path_with_namespace].showTags
-        }
-        return configuredShowTags
+        return this.filter.showTags
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly
@@ -86,7 +77,7 @@
         let filter = Config.root.projectFilter['*']
 
         if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          filter = Config.root.projectFilter[this.project.path_with_namespace]
+          filter = merge(filter, Config.root.projectFilter[this.project.path_with_namespace])
         }
 
         return filter
@@ -112,49 +103,48 @@
             return
           }
 
-          let branchesList = Config.root.projectFilter['*'].notifyFailureOn || this.project.default_branch
-          
-          if (branchesList === null) {
-            branchesList = Config.root.projectFilter['*'].default || this.project.default_branch
+          // Set project status
+          const configuredDefaultBranch = this.filter.default || this.project.default_branch
+
+          if (
+            pipelines &&
+            this.project &&
+            !!pipelines[configuredDefaultBranch] &&
+            pipelines[configuredDefaultBranch].length > 0
+          ) {
+            this.status = pipelines[configuredDefaultBranch][0].status
+
+            switch (pipelines[configuredDefaultBranch][0].status) {
+              case 'pending':
+              case 'running':
+                this.refreshInterval = 5000
+                break
+              default:
+                this.refreshInterval = 15000
+            }
+          } else {
+            this.status = ''
+            this.refreshInterval = 60000
           }
-          if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-            branchesList = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch
-          }
 
-          let listenBranches = branchesList.split(',')
-          
-          for (let value of listenBranches) {
-            if (
-              pipelines &&
-              this.project &&
-              !!pipelines[value] &&
-              pipelines[value].length > 0
-            ) {
-              if (
-                Config.root.linkToFailureSound !== null &&
-                this.status !== 'failed' && !!this.status &&
-                pipelines[value][0].status === 'failed'
-              ) {
-                if (!this.failedPipelines.includes(pipelines[value][0].id)) {
-                  this.playSound(this.audio)
-                  return this.pushFailedPiplineId(pipelines[value][0].id)
-                }
-                console.log(this.failedPipelines)
+          // Process alert sounds
+          if (pipelines && this.project && this.filter.soundAlerts.soundUrl !== null) {
+            const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
+              return !!branchName.match(new RegExp(this.filter.soundAlerts.include)) &&
+                (!this.filter.soundAlerts.exclude || !branchName.match(new RegExp(this.filter.soundAlerts.exclude)))
+            })
+
+            let alert = false
+            for (const branch of pipelinesWithSoundAlertsEnabled) {
+              const newFailedPipelines = pipelines[branch].filter(p => p.status === 'failed' && !this.alertSoundPlayedForPipelines.includes(p.id))
+              for (const pipeline of newFailedPipelines) {
+                this.alertSoundPlayedForPipelines.push(pipeline.id)
+                alert = true
               }
+            }
 
-              this.status = pipelines[value][0].status
-
-              switch (pipelines[value][0].status) {
-                case 'pending':
-                case 'running':
-                  this.refreshInterval = 5000
-                  break
-                default:
-                  this.refreshInterval = 15000
-              }
-            } else {
-              this.status = ''
-              this.refreshInterval = 6000
+            if (alert) {
+              this.playSound(this.filter.soundAlerts.soundUrl)
             }
           }
         }
@@ -171,10 +161,7 @@
       }
     },
     methods: {
-      async pushFailedPiplineId(id) {
-        await this.failedPipelines.push(id)
-      },
-      async playSound (sound) {
+      async playSound(sound) {
         let audio = await new Audio(sound)
         let playPromise = await audio.play();
         if (playPromise !== undefined) {
@@ -307,8 +294,7 @@
         this.loading = false
       },
       async fetchBadges() {
-        const badges = await this.$api(`/projects/${this.projectId}/badges`)
-        this.badges = badges
+        this.badges = await this.$api(`/projects/${this.projectId}/badges`)
       }
     }
   }
