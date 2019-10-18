@@ -69,13 +69,6 @@ pollingIntervalMultiplier: 1.0
 # Can be: 'any', 'public', 'internal' or 'private'
 projectVisibility: any
 
-# Play sound notification when default pipeline fails.
-# Replace null with URL to sound file.
-# IMPORTANT! Due to Chromes autoplay policy you need to set Autoplay
-# chrome://flags to "No user gesture is required" otherwise
-# autoplaying sound will be blocked without user input.
-linkToFailureSound: null
-
 # Limit by projects that the current user is a member of
 membership: false
 
@@ -89,49 +82,64 @@ filter:
 
   # Include projects that match this RegExp
   include: .*
-    
+
   # Include projects that have tags matching this RegExp
   includeTags: .*
-  
+
   # Exclude projects of included projects that match this RegExp
   exclude: null
-  
+
   # Exclude projects of included projects that have tags matching this RegExp
   excludeTags: null
-      
+
   # Exclude projects of included projects that don't have any tags
   excludeUntagged: false
 
-# Filter project branches
-projectFilter:
+# Configure projects
+projectConfig:
 
   # The asterisk selects all projects that
   # don't have their own configuration
   '*':
-    
+
     # Include branches that match this RegExp
     include: .*
-      
+
     # Exclude branches of included branches that match this RegExp
     exclude: null
-      
+
     # Override default branch (used for the card background color)
     # If null, it uses the default branch of the project
     default: null
-    
+
     # Whether to show pipelines of merged branches
     showMerged: true
-    
+
     # Whether to show pipelines of tags
     showTags: true
-      
+
     # Maximum number of pipelines to display for this filter.
     # 0 for infinite
     maxPipelines: 0
-      
+
     # Hide skipped pipelines
     hideSkippedPipelines: false
-    
+
+    soundAlerts:
+      # If set to a non-null value, sound alerts will be enabled.
+      # Replace null with URL to sound file.
+      # IMPORTANT: Due to some browsers blocking autoplaying audio
+      #            you may have to enable audio autoplay first!
+      #  Firefox:  https://support.mozilla.org/en-US/kb/block-autoplay
+      soundUrl: null
+
+      # Play alert sounds for all branches matching this regex
+      include: .*
+
+      # Play alert sounds for all included branches except for branches
+      # matching this regex. Set to null to exclude none.
+      exclude: null
+
   # Specific per-project filters
   my-project/my-group":
     # see above...

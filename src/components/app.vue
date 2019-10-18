@@ -18,6 +18,13 @@
         Configuration is done by supplying YAML formatted configuration.<br>
         Your configuration is being persisted in this browser.
       </p>
+      <div class="warning">
+        <h2>WARNING</h2>
+        There were some breaking changes recently (20191018). Please take
+        a look at the
+        <a href="https://github.com/timoschwarzer/gitlab-monitor/wiki/Update-20191018:-Upgrade-guide" target="_blank" rel="noopener noreferrer">Upgrade Guide</a>
+        and change your configuration accordingly.
+      </div>
       <textarea class="config" v-model="config"></textarea>
       <p class="error" v-if="!configIsValid">
         YAML is invalid!
@@ -311,6 +318,21 @@
     .error {
       color: red;
       font-weight: bold;
+    }
+
+    .warning {
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #C62828;
+      color: #fff;
+
+      a {
+        color: #fff;
+      }
+
+      h2 {
+        margin: 0 0 8px 0;
+      }
     }
   }
 </style>
