@@ -75,7 +75,8 @@
         tabSize: 2,
         minimap: {
           enabled: false
-        }
+        },
+        scrollBeyondLastLine: false
       }
     }),
     computed: {
