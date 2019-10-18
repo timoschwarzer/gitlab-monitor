@@ -25,11 +25,18 @@
         <a href="https://github.com/timoschwarzer/gitlab-monitor/wiki/Update-20191018:-Upgrade-guide" target="_blank" rel="noopener noreferrer">Upgrade Guide</a>
         and change your configuration accordingly.
       </div>
-      <textarea class="config" v-model="config"></textarea>
+      <monaco-editor v-model="config" language="yaml" class="config" :options="monacoOptions" />
       <p class="error" v-if="!configIsValid">
         YAML is invalid!
       </p>
+
+      <template v-if="editCustomStyles">
+        <h1>Custom styles</h1>
+        <monaco-editor v-model="styleOverride" language="css" class="config" :options="monacoOptions" />
+      </template>
+
       <button :disabled="!configIsValid" @click="saveConfig">Save</button>
+      <button v-if="!editCustomStyles" @click="editCustomStyles = true">Add custom styles</button>
     </div>
     <div v-else class="loader">
       <octicon name="sync" spin scale="3" />
@@ -46,11 +53,13 @@
   import { configureApi } from '../GitLabApi'
   import ProjectCard from './project-card'
   import YAML from 'yaml'
+  import MonacoEditor from 'vue-monaco'
 
   export default {
     components: {
       Octicon,
-      ProjectCard
+      ProjectCard,
+      MonacoEditor
     },
     name: 'app',
     data: () => ({
@@ -58,7 +67,16 @@
       zoom: 1,
       loaded: false,
       configured: false,
-      config: ''
+      config: '',
+      styleOverride: '',
+      editCustomStyles: false,
+      monacoOptions: {
+        theme: 'vs-dark',
+        tabSize: 2,
+        minimap: {
+          enabled: false
+        }
+      }
     }),
     computed: {
       sortedProjects() {
@@ -219,9 +237,21 @@
         } else {
           this.config = YAML.stringify(require('../config.template'), null, 2)
         }
+
+        this.styleOverride = Config.style
+        this.editCustomStyles = this.styleOverride.trim() !== '';
+
+        let styleOverrideElement = document.getElementById('style-override')
+        if (styleOverrideElement !== null) {
+          styleOverrideElement.remove()
+        }
+        styleOverrideElement = document.createElement('style')
+        styleOverrideElement.id = 'style-override'
+        styleOverrideElement.appendChild(document.createTextNode(Config.style))
+        document.head.appendChild(styleOverrideElement)
       },
       saveConfig() {
-        Config.load(YAML.parse(this.config))
+        Config.load(YAML.parse(this.config), this.styleOverride)
         this.reloadConfig()
       },
       getTitle() {
@@ -253,6 +283,16 @@
 
   .fade-enter, .fade-leave-to {
     opacity: 0
+  }
+
+  button {
+    padding: 8px;
+    margin-right: 4px;
+    background: #2e2e2e;
+    border: 2px solid #606060;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
   }
 </style>
 
@@ -288,14 +328,8 @@
     }
 
     .config {
-      font-family: "Fira Code", "Fira Mono", "DejaVu Sans Mono", "Consolas", monospace;
-      background: transparentize(black, 0.7);
-      color: white;
-      border: 1px solid gray;
-      width: 100%;
-      min-height: 300px;
-      flex-grow: 1;
       margin-bottom: 8px;
+      min-height: 300px;
     }
 
     .configure {

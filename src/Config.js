@@ -8,10 +8,15 @@ export default new class Config {
   constructor() {
     this.config = null
     this.localConfig = null
+    this.styleOverride = ''
   }
 
-  load(config = null) {
+  load(config = null, style = null) {
     const rawConfig = getQueryParameter('rawConfig')
+
+    if (style !== null) {
+      this.styleOverride = style
+    }
 
     if (config !== null) {
       this.localConfig = config
@@ -28,6 +33,7 @@ export default new class Config {
 
   loadFromLocalStorage() {
     const config = window.localStorage.getItem('config')
+    this.styleOverride = window.localStorage.getItem('styleOverride') || ''
 
     if (config !== null) {
       const localConfig = YAML.parse(config)
@@ -42,6 +48,7 @@ export default new class Config {
     }
 
     window.localStorage.setItem('config', YAML.stringify(this.localConfig, null, 2))
+    window.localStorage.setItem('styleOverride', this.styleOverride)
   }
 
   get isConfigured() {
@@ -54,5 +61,9 @@ export default new class Config {
 
   get local() {
     return this.localConfig
+  }
+
+  get style() {
+    return this.styleOverride
   }
 }
