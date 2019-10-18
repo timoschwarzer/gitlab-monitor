@@ -32,10 +32,10 @@
       "showMerged": true,
       "showTags": true,
       "maxPipelines": 0,
-      "hideSkippedPipelines":  false
+      "hideSkippedPipelines":  false,
+      "notifyFailureOn": null
     }
   },
-  "listenBranches": null,
   "projectScope": null,
   "projectScopeId": null
 }

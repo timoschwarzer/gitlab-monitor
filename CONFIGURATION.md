@@ -131,13 +131,14 @@ projectFilter:
       
     # Hide skipped pipelines
     hideSkippedPipelines: false
+
+    # Turn on audio alerts for listed branches instead of default branch
+    # e.g.: master,develop,feature
+    notifyFailureOn: null
     
   # Specific per-project filters
   my-project/my-group":
     # see above...
-
-# List of listening branches for failure sound
-listenBranches: null
 
 # Search projects from given API route.
 # Allowed values "groups" and "users"
