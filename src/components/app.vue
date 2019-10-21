@@ -122,6 +122,12 @@
           gitlabApiParams.membership = membership
         }
 
+        // Only add the starred flag if it has been defined and is a valid type.
+        const starred = Config.root.projectStarred
+        if (typeof starred === 'boolean') {
+          gitlabApiParams.starred = starred
+        }
+
         // Only use main level projects API if tighter scope not defined
         const scopeType = Config.root.projectScope
         // Reformat the variable as a flat list of Ids

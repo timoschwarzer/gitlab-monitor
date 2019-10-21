@@ -13,6 +13,7 @@
   "showUsers": false,
   "projectVisibility": "any",
   "membership": false,
+  "projectStarred": false,
   "title": null,
   "pollingIntervalMultiplier": 1.0,
   "badges": false,
