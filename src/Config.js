@@ -27,7 +27,7 @@ export default new class Config {
     } else {
       this.loadFromLocalStorage()
     }
-
+    console.log("config ", this.config)
     this.persist()
   }
 

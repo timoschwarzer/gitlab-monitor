@@ -51,7 +51,7 @@
       Octicon
     },
     name: 'project-card',
-    props: ['project-id'],
+    props: ['project-id', 'gitlabApi', 'privateToken'],
     data: () => ({
       project: null,
       pipelines: null,
@@ -177,7 +177,9 @@
       async fetchProject() {
         this.loading = true
 
-        this.project = await this.$api(`/projects/${this.projectId}`)
+        this.project = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`, `/projects/${this.projectId}`)
+        this.project.gitlabApi = this.gitlabApi;
+        this.project.privateToken = this.privateToken;
         this.$emit('input', this.project.last_activity_at)
 
         this.loading = false
@@ -190,7 +192,7 @@
         const showTags = this.showTags
         const fetchCount = Config.root.fetchCount
 
-        const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
+        const branches = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/repository/branches`, {
           per_page: fetchCount > 100 ? 100 : fetchCount
         }, { follow_next_page_links: fetchCount > 100 })
         const branchNames = branches.filter(branch => showMerged ? true : !branch.merged)
@@ -202,7 +204,7 @@
           })
         let tags = []
         if (showTags) {
-          tags = await this.$api(`/projects/${this.projectId}/repository/tags`, {
+          tags = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/repository/tags`, {
             per_page: fetchCount > 100 ? 100 : fetchCount
           }, { follow_next_page_links: fetchCount > 100 })
         }
@@ -218,7 +220,7 @@
 
         refLoop:
         for (const refName of refNames) {
-          const pipelines = await this.$api(`/projects/${this.projectId}/pipelines`, {
+          const pipelines = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/pipelines`, {
             ref: refName,
             per_page: fetchCount > 100 ? 100 : fetchCount
           }, { follow_next_page_links: fetchCount > 100 })
@@ -235,7 +237,7 @@
             }
 
             for (const pipeline of filteredPipelines) {
-              const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipeline.id}`)
+              const resolvedPipeline = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/pipelines/${pipeline.id}`)
               if (
                 (maxAge === 0 ||
                   ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge)
@@ -250,7 +252,7 @@
 
             if (pipelines.length >= 1 && filteredPipelines.length === 0) {
               for (let i = 0; i < pipelines.length; i++) {
-                const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[i].id}`)
+                const resolvedPipeline = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/pipelines/${pipelines[i].id}`)
                 if (
                   (maxAge === 0 ||
                     ((new Date() - new Date(resolvedPipeline.updated_at)) / 1000 / 60 / 60 <= maxAge)
@@ -294,7 +296,7 @@
         this.loading = false
       },
       async fetchBadges() {
-        this.badges = await this.$api(`/projects/${this.projectId}/badges`)
+        this.badges = await this.$api(`${this.gitlabApi}`, `${this.privateToken}`,`/projects/${this.projectId}/badges`)
       }
     }
   }

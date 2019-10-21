@@ -1,6 +1,5 @@
 {
-  "gitlabApi": "https://gitlab.example.com/api/v4",
-  "privateToken": "ABCDEF123456",
+  "servers": [],
   "maxAge": 168,
   "fetchCount": 20,
   "pipelinesOnly": false,

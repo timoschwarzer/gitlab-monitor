@@ -7,6 +7,8 @@
           v-for="project in sortedProjects"
           :key="project.id"
           :project-id="project.id"
+          :gitlabApi="project.gitlabApi"
+          :privateToken="project.privateToken"
           v-model="project.last_activity_at"
         />
       </div>
@@ -132,7 +134,7 @@
             urlPrefix = '/' + scopeType + '/' + scope
           }
 
-          apiPromises.push(this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
+          apiPromises.push(this.$api(Config.root.servers[0].gitlabApi, Config.root.servers[0].privateToken, urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
         }
 
         const projects = (await Promise.all(apiPromises)).flat()
@@ -141,6 +143,9 @@
         const maxAge = Config.root.maxAge
 
         this.projects = projects.filter(project => {
+          project.gitlabApi = Config.root.servers[0].gitlabApi;
+          project.privateToken = Config.root.servers[0].privateToken;
+
           return project.jobs_enabled &&
             (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
             (

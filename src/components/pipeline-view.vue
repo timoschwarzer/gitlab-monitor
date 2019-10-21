@@ -114,7 +114,7 @@
     },
     methods: {
       async fetchJobs() {
-        this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
+        this.jobs = await this.$api(this.project.gitlabApi, this.project.privateToken, `/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
         if (!Config.root.showRestartedJobs) {
           this.excludeRestartedJobs();
         }

@@ -5,12 +5,13 @@ import Config from './Config'
 
 const GitLabApi = {}
 
-GitLabApi.install = (Vue, options) => {
-  Vue.prototype.$api = async (path, params = {}, behaviour = {}) => {
+GitLabApi.install = (Vue) => {
+  Vue.prototype.$api = async (url, privateToken, path, params = {}, behaviour = {}) => {
+    console.log("api "+url+path);
     const response = await axios.get(path, {
-      baseURL: Config.root.gitlabApi,
+      baseURL: url,
       params,
-      headers: { 'Private-Token': Config.root.privateToken }
+      headers: { 'Private-Token': privateToken }
     })
     const result = response.data
     if (behaviour.follow_next_page_links) {
@@ -18,7 +19,7 @@ GitLabApi.install = (Vue, options) => {
       let parsedLinks = parse(response.headers.link)
       while (parsedLinks && parsedLinks.next) {
         const nextResponse = await axios.get(parsedLinks.next.url, {
-          headers: { 'Private-Token': Config.root.privateToken }
+          headers: { 'Private-Token': privateToken }
         })
         result.push(...nextResponse.data)
         parsedLinks = parse(nextResponse.headers.link)
@@ -31,8 +32,5 @@ GitLabApi.install = (Vue, options) => {
 export default GitLabApi
 
 export function configureApi() {
-  Vue.use(GitLabApi, {
-    gitlab_api_url: Config.root.gitlabApi,
-    private_token: Config.root.privateToken
-  })
+  Vue.use(GitLabApi)
 }
