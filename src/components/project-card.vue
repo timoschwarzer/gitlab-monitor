@@ -51,7 +51,7 @@
       Octicon
     },
     name: 'project-card',
-    props: ['project-id', 'gitlabApi', 'privateToken'],
+    props: ['project-id', 'gitlab-api', 'private-token'],
     data: () => ({
       project: null,
       pipelines: null,

@@ -7,8 +7,8 @@
           v-for="project in sortedProjects"
           :key="project.id"
           :project-id="project.id"
-          :gitlabApi="project.gitlabApi"
-          :privateToken="project.privateToken"
+          :gitlab-api="project.gitlabApi"
+          :private-token="project.privateToken"
           v-model="project.last_activity_at"
         />
       </div>
@@ -133,54 +133,58 @@
         // Reformat the variable as a flat list of Ids
         const scopeId = [Config.root.projectScopeId].flat()
 
-        const apiPromises = []
-        for (let scope of scopeId) {
-          let urlPrefix = ''
-          if ((scopeType === 'users' || scopeType === 'groups') && scope !== null) {
-            urlPrefix = '/' + scopeType + '/' + scope
+        this.projects = []
+        for(let server of Config.root.servers ) {
+          const apiPromises = []
+          for (let scope of scopeId) {
+            let urlPrefix = ''
+            if ((scopeType === 'users' || scopeType === 'groups') && scope !== null) {
+              urlPrefix = '/' + scopeType + '/' + scope
+            }
+
+            apiPromises.push(this.$api(server.gitlabApi, server.privateToken, urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
           }
 
-          apiPromises.push(this.$api(Config.root.servers[0].gitlabApi, Config.root.servers[0].privateToken, urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
-        }
+          const projects = (await Promise.all(apiPromises)).flat()
 
-        const projects = (await Promise.all(apiPromises)).flat()
+          // Only show projects that have jobs enabled
+          const maxAge = Config.root.maxAge
+          console.log("projects before filter", projects)
+          this.projects = this.projects.concat(projects.filter(project => {
+            project.gitlabApi = server.gitlabApi;
+            project.privateToken = server.privateToken;
 
-        // Only show projects that have jobs enabled
-        const maxAge = Config.root.maxAge
-
-        this.projects = projects.filter(project => {
-          project.gitlabApi = Config.root.servers[0].gitlabApi;
-          project.privateToken = Config.root.servers[0].privateToken;
-
-          return project.jobs_enabled &&
-            (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
-            (
-              // Include rules
+            return project.jobs_enabled &&
+              (maxAge === 0 || ((new Date() - new Date(project.last_activity_at)) / 1000 / 60 / 60 <= maxAge)) &&
               (
-                project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
-                  // "Exclude untagged" rule
+                // Include rules
+                (
+                  project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
+                    // "Exclude untagged" rule
+                    (
+                      project.tag_list.length > 0 ||
+                      !Config.root.filter.excludeUntagged
+                    ) && (
+                      project.tag_list.length === 0 ||
+                      project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                    )
+                  )
+                )
+
+                // Exclude rules
+                && (
                   (
-                    project.tag_list.length > 0 ||
-                    !Config.root.filter.excludeUntagged
+                    Config.root.filter.exclude === null ||
+                    !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
                   ) && (
-                    project.tag_list.length === 0 ||
-                    project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                    Config.root.filter.excludeTags === null ||
+                    project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.excludeTags)))
                   )
                 )
               )
-
-              // Exclude rules
-              && (
-                (
-                  Config.root.filter.exclude === null ||
-                  !project.path_with_namespace.match(new RegExp(Config.root.filter.exclude))
-                ) && (
-                  Config.root.filter.excludeTags === null ||
-                  project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.excludeTags)))
-                )
-              )
-            )
-        })
+          }))
+          console.log("projects after concat and filter", this.projects)
+        }
 
         if (Config.root.autoZoom) {
           this.$nextTick(() => this.autoZoom())
