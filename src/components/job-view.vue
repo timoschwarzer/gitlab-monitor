@@ -1,12 +1,17 @@
 <template>
   <a
+
     class="job-view"
     target="_blank"
     :title="job.name"
     rel="noopener noreferrer"
-    :href="project.web_url + '/-/jobs/' + job.id"
-  >
-    <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
+    :href="getJobUrl"
+    v-on="isJobPlayable() ? { click: () => playJob(project.id, job.id) } : {}"
+  > 
+    <div :class="[ 
+      'job-circle', 
+      job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}, 
+      isJobPlayable() ? 'play' : '' ]">
       <transition name="fade" mode="out-in">
         <svg v-if="showJobIcons" :key="statusIconName">
           <use
@@ -25,15 +30,20 @@
     </div>
     <div class="pipe"></div>
   </a>
+  
 </template>
 
 <script>
   import Config from '../Config'
-
   export default {
     name: 'job-view',
     props: ['job', 'project'],
-    computed: {
+    computed: {      
+      getJobUrl() {
+        return this.job.status === 'manual' && Config.root.playJobs
+          ? false
+          : `${this.project.web_url}/-/jobs/${this.job.id}`
+      },
       statusIconName() {
         switch (this.job.status) {
           case 'canceled':
@@ -67,6 +77,14 @@
       showJobIcons() {
         return Config.root.showJobs === 'icon' || Config.root.showJobs === 'iconAndName'
       }
+    },
+    methods: {
+     isJobPlayable() {
+       return this.job.status === 'manual' && Config.root.playJobs
+     },
+     playJob(project_id, job_id) {
+        this.$apiPost(`/projects/${project_id}/jobs/${job_id}/play` , {})
+      } 
     }
   }
 </script>
@@ -76,6 +94,7 @@
     display: inline-flex;
     align-items: center;
     text-decoration: none;
+    cursor: pointer;
     color: rgba(255, 255, 255, 0.8);
 
     &:last-child {
@@ -94,6 +113,10 @@
       padding: 0 9px 0 0;
       font-size: 12px;
       transition: background-color 200ms;
+
+      &.play:hover {
+        border-color : #4b4b4b;
+      }
 
       &.square {
         width: 24px;
