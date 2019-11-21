@@ -25,6 +25,12 @@ GitLabApi.install = (Vue, options) => {
       }
     }
     return result
+  },
+  Vue.prototype.$apiPost = async (path, params = {}) => {
+    const response = await axios.post(path, params, {
+      baseURL: Config.root.gitlabApi,   
+      headers: { 'Private-Token': Config.root.privateToken }
+    })
   }
 }
 
