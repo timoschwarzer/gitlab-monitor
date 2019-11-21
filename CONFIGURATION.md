@@ -31,6 +31,9 @@ autoZoom: false
 # Whether to show pipeline IDs or not
 showPipelineIds: true
 
+# If true, manual jobs can be triggered from the project's card
+playJobs: false
+
 # Control how to show job names and icons
 # Can be: 'icon', 'name', 'iconAndName'
 showJobs: icon
