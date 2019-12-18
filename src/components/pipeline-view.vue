@@ -120,7 +120,7 @@
         }
         this.stages = this.jobs.reduce(function(stages, job) {
           const stage_name = job["stage"]
-          var stage_id = stages.findIndex(s => s["name"] === stage_name)
+          let stage_id = stages.findIndex(s => s["name"] === stage_name)
           if (!~stage_id) {
             stage_id = stages.length;
             stages.push({"name": stage_name, "jobs": []});
@@ -134,10 +134,10 @@
         // Job restarts appear at the end of the list and break pipeline view.
         // We sort jobs to place restarts on the positions of the restarted ones.
         // This array contains list of jobs names as they was originally enqueued.
-        var jobs_order = [];
+        const jobs_order = [];
 
         // This dictionary contains id of the latest job for each job name
-        var jobs_id_by_name = {};
+        const jobs_id_by_name = {};
 
         for (let job of this.jobs) {
           jobs_id_by_name[job["name"]] = job["id"];

@@ -1,8 +1,9 @@
-import Vue              from 'vue'
-import VueTimeago       from 'vue-timeago'
-import App              from './components/app.vue'
-import Config           from './Config'
-import { configureApi } from './GitLabApi'
+import 'regenerator-runtime/runtime'
+import Vue from 'vue'
+import VueTimeago from 'vue-timeago'
+import App from './components/app.vue'
+import Config from './Config'
+import {configureApi} from './GitLabApi'
 import axios from 'axios'
 
 const finish = () => {
@@ -27,11 +28,10 @@ const finish = () => {
 // Load bundled config, if present.
 ;(async () => {
   try {
-    const { data } = await axios.get('/config.json')
+    const {data} = await axios.get('/config.json')
     Config.load(data)
   } catch (e) {
     Config.load()
-    finish()
   } finally {
     finish()
   }

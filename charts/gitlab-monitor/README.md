@@ -54,7 +54,8 @@ config: |
         "default": null,
         "showMerged": false,
         "showTags": true,
-        "maxPipelines": 10
+        "maxPipelines": 10,
+        "notifyFailureOn": null
       }
     }
   }

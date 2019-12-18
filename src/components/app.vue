@@ -15,14 +15,28 @@
       <h1>Configuration</h1>
       <p>
         Hi! Before you can use GitLab Monitor, it has to be configured.<br>
-        Configuration is done by supplying a JSON object containing the configuration.<br>
+        Configuration is done by supplying YAML formatted configuration.<br>
         Your configuration is being persisted in this browser.
       </p>
-      <textarea class="config" v-model="config"></textarea>
+      <div class="warning">
+        <h2>WARNING</h2>
+        There were some breaking changes recently (20191018). Please take
+        a look at the
+        <a href="https://github.com/timoschwarzer/gitlab-monitor/wiki/Update-20191018:-Upgrade-guide" target="_blank" rel="noopener noreferrer">Upgrade Guide</a>
+        and change your configuration accordingly.
+      </div>
+      <monaco-editor v-model="config" language="yaml" class="config" :options="monacoOptions" />
       <p class="error" v-if="!configIsValid">
-        JSON is invalid!
+        YAML is invalid!
       </p>
+
+      <template v-if="editCustomStyles">
+        <h1>Custom styles</h1>
+        <monaco-editor v-model="styleOverride" language="css" class="config" :options="monacoOptions" />
+      </template>
+
       <button :disabled="!configIsValid" @click="saveConfig">Save</button>
+      <button v-if="!editCustomStyles" @click="editCustomStyles = true">Add custom styles</button>
     </div>
     <div v-else class="loader">
       <octicon name="sync" spin scale="3" />
@@ -38,11 +52,14 @@
   import Config from '../Config'
   import { configureApi } from '../GitLabApi'
   import ProjectCard from './project-card'
+  import YAML from 'yaml'
+  import MonacoEditor from 'vue-monaco'
 
   export default {
     components: {
       Octicon,
-      ProjectCard
+      ProjectCard,
+      MonacoEditor
     },
     name: 'app',
     data: () => ({
@@ -50,7 +67,17 @@
       zoom: 1,
       loaded: false,
       configured: false,
-      config: ''
+      config: '',
+      styleOverride: '',
+      editCustomStyles: false,
+      monacoOptions: {
+        theme: 'vs-dark',
+        tabSize: 2,
+        minimap: {
+          enabled: false
+        },
+        scrollBeyondLastLine: false
+      }
     }),
     computed: {
       sortedProjects() {
@@ -58,7 +85,7 @@
       },
       configIsValid() {
         try {
-          JSON.parse(this.config)
+          YAML.parse(this.config)
         } catch (e) {
           return false
         }
@@ -94,14 +121,21 @@
         }
 
         // Only use main level projects API if tighter scope not defined
-        const scope = Config.root.projectScope
-        const scopeId = Config.root.projectScopeId
-        let urlPrefix = ''
-        if ((scope === 'users' || scope === 'groups') && scopeId !== null) {
-          urlPrefix = '/' + scope + '/' + scopeId
+        const scopeType = Config.root.projectScope
+        // Reformat the variable as a flat list of Ids
+        const scopeId = [Config.root.projectScopeId].flat()
+
+        const apiPromises = []
+        for (let scope of scopeId) {
+          let urlPrefix = ''
+          if ((scopeType === 'users' || scopeType === 'groups') && scope !== null) {
+            urlPrefix = '/' + scopeType + '/' + scope
+          }
+
+          apiPromises.push(this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 }))
         }
 
-        const projects = await this.$api(urlPrefix + '/projects', gitlabApiParams, { follow_next_page_links: fetchCount > 100 })
+        const projects = (await Promise.all(apiPromises)).flat()
 
         // Only show projects that have jobs enabled
         const maxAge = Config.root.maxAge
@@ -200,13 +234,25 @@
         this.configured = Config.isConfigured
 
         if (this.configured) {
-          this.config = JSON.stringify(Config.local, null, 2)
+          this.config = YAML.stringify(Config.local, null, 2)
         } else {
-          this.config = JSON.stringify(require('../config.template'), null, 2)
+          this.config = YAML.stringify(require('../config.template'), null, 2)
         }
+
+        this.styleOverride = Config.style
+        this.editCustomStyles = this.styleOverride.trim() !== '';
+
+        let styleOverrideElement = document.getElementById('style-override')
+        if (styleOverrideElement !== null) {
+          styleOverrideElement.remove()
+        }
+        styleOverrideElement = document.createElement('style')
+        styleOverrideElement.id = 'style-override'
+        styleOverrideElement.appendChild(document.createTextNode(Config.style))
+        document.head.appendChild(styleOverrideElement)
       },
       saveConfig() {
-        Config.load(JSON.parse(this.config))
+        Config.load(YAML.parse(this.config), this.styleOverride)
         this.reloadConfig()
       },
       getTitle() {
@@ -238,6 +284,16 @@
 
   .fade-enter, .fade-leave-to {
     opacity: 0
+  }
+
+  button {
+    padding: 8px;
+    margin-right: 4px;
+    background: #2e2e2e;
+    border: 2px solid #606060;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
   }
 </style>
 
@@ -273,14 +329,8 @@
     }
 
     .config {
-      font-family: "Fira Code", "Fira Mono", "DejaVu Sans Mono", "Consolas", monospace;
-      background: transparentize(black, 0.7);
-      color: white;
-      border: 1px solid gray;
-      width: 100%;
-      min-height: 300px;
-      flex-grow: 1;
       margin-bottom: 8px;
+      min-height: 300px;
     }
 
     .configure {
@@ -303,6 +353,21 @@
     .error {
       color: red;
       font-weight: bold;
+    }
+
+    .warning {
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #C62828;
+      color: #fff;
+
+      a {
+        color: #fff;
+      }
+
+      h2 {
+        margin: 0 0 8px 0;
+      }
     }
   }
 </style>

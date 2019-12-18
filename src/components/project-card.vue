@@ -28,25 +28,26 @@
     <div class="info">
       <div class="badge-container">
         <a target="_blank" rel="noopener noreferrer" v-for="badge in badges" :href="badge.link_url">
-          <img :key="badge.id" :src="badge.rendered_image_url" />
+          <img :key="badge.id" :src="badge.rendered_image_url" alt="badge image"/>
         </a>
       </div>
       <div class="spacer"></div>
       <gitlab-icon class="calendar-icon" name="calendar" size="12" />
-      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1"></timeago>
+      <timeago v-if="project !== null" :datetime="project.last_activity_at" :auto-update="1" />
       <time v-else>...</time>
     </div>
   </div>
 </template>
 
 <script>
-  import Octicon      from 'vue-octicon/components/Octicon'
+  import Octicon from 'vue-octicon/components/Octicon'
   import 'vue-octicon/icons/clock'
   import 'vue-octicon/icons/git-branch'
   import 'vue-octicon/icons/sync'
-  import Config       from '../Config'
-  import GitlabIcon   from './gitlab-icon'
+  import Config from '../Config'
+  import GitlabIcon from './gitlab-icon'
   import PipelineView from './pipeline-view'
+  import merge from 'deepmerge'
 
   export default {
     components: {
@@ -65,22 +66,15 @@
       badges: [],
       status: '',
       loading: false,
-      refreshInterval: null
+      refreshInterval: null,
+      alertSoundPlayedForPipelines: []
     }),
     computed: {
       showMerged() {
-        let configuredShowMerged = Config.root.projectFilter['*'].showMerged
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowMerged = Config.root.projectFilter[this.project.path_with_namespace].showMerged
-        }
-        return configuredShowMerged
+        return this.config.showMerged
       },
       showTags() {
-        let configuredShowTags = Config.root.projectFilter['*'].showTags
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          configuredShowTags = Config.root.projectFilter[this.project.path_with_namespace].showTags
-        }
-        return configuredShowTags
+        return this.config.showTags
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly
@@ -88,14 +82,14 @@
       showOpenMergeRequestCount() {
         return Config.root.showOpenMergeRequestCount
       },
-      filter() {
-        let filter = Config.root.projectFilter['*']
+      config() {
+        let config = Config.root.projectConfig['*']
 
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          filter = Config.root.projectFilter[this.project.path_with_namespace]
+        if (Config.root.projectConfig.hasOwnProperty(this.project.path_with_namespace)) {
+          config = merge(config, Config.root.projectConfig[this.project.path_with_namespace])
         }
 
-        return filter
+        return config
       }
     },
     mounted() {
@@ -118,11 +112,8 @@
             return
           }
 
-          let configuredDefaultBranch = Config.root.projectFilter['*'].default || this.project.default_branch
-
-          if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-            configuredDefaultBranch = Config.root.projectFilter[this.project.path_with_namespace].default || this.project.default_branch
-          }
+          // Set project status
+          const configuredDefaultBranch = this.config.default || this.project.default_branch
 
           if (
             pipelines &&
@@ -130,16 +121,6 @@
             !!pipelines[configuredDefaultBranch] &&
             pipelines[configuredDefaultBranch].length > 0
           ) {
-
-            if ( // Play sound alert if default branch status changes to failed
-              Config.root.linkToFailureSound != null &&
-              this.status !== 'failed' && !!this.status &&
-              pipelines[configuredDefaultBranch][0].status === 'failed'
-            ) {
-              const alarmSound = new Audio(Config.root.linkToFailureSound)
-              alarmSound.play()
-            }
-
             this.status = pipelines[configuredDefaultBranch][0].status
 
             switch (pipelines[configuredDefaultBranch][0].status) {
@@ -153,6 +134,27 @@
           } else {
             this.status = ''
             this.refreshInterval = 60000
+          }
+
+          // Process alert sounds
+          if (pipelines && this.project && this.config.soundAlerts.soundUrl !== null) {
+            const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
+              return !!branchName.match(new RegExp(this.config.soundAlerts.include)) &&
+                (!this.config.soundAlerts.exclude || !branchName.match(new RegExp(this.config.soundAlerts.exclude)))
+            })
+
+            let alert = false
+            for (const branch of pipelinesWithSoundAlertsEnabled) {
+              const newFailedPipelines = pipelines[branch].filter(p => p.status === 'failed' && !this.alertSoundPlayedForPipelines.includes(p.id))
+              for (const pipeline of newFailedPipelines) {
+                this.alertSoundPlayedForPipelines.push(pipeline.id)
+                alert = true
+              }
+            }
+
+            if (alert) {
+              this.playSound(this.config.soundAlerts.soundUrl)
+            }
           }
         }
       },
@@ -168,6 +170,19 @@
       }
     },
     methods: {
+      async playSound(sound) {
+        let audio = await new Audio(sound)
+        let playPromise = await audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(async _ => {
+            await audio.pause();
+            await audio.play();
+          })
+          .catch(error => {
+            console.log(error)
+          });
+        }
+      },
       async fetchProject() {
         this.loading = true
 
@@ -199,8 +214,8 @@
           .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
           .map(branch => branch.name)
           .filter(branchName => {
-            return !!branchName.match(new RegExp(this.filter.include)) &&
-              (!this.filter.exclude || !branchName.match(new RegExp(this.filter.exclude)))
+            return !!branchName.match(new RegExp(this.config.include)) &&
+              (!this.config.exclude || !branchName.match(new RegExp(this.config.exclude)))
           })
         let tags = []
         if (showTags) {
@@ -213,9 +228,9 @@
         let count = 0
         const refNames = branchNames.concat(tagNames)
 
-        let hideSkippedPipelines = Config.root.projectFilter['*'].hideSkippedPipelines
-        if (Config.root.projectFilter.hasOwnProperty(this.project.path_with_namespace)) {
-          hideSkippedPipelines = Config.root.projectFilter[this.project.path_with_namespace].hideSkippedPipelines
+        let hideSkippedPipelines = Config.root.projectConfig['*'].hideSkippedPipelines
+        if (Config.root.projectConfig.hasOwnProperty(this.project.path_with_namespace)) {
+          hideSkippedPipelines = Config.root.projectConfig[this.project.path_with_namespace].hideSkippedPipelines
         }
 
         refLoop:
@@ -278,13 +293,13 @@
                   count++
                 }
 
-                if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+                if (this.config.maxPipelines !== 0 && count >= this.config.maxPipelines) {
                   break refLoop
                 }
               }
             }
 
-            if (this.filter.maxPipelines !== 0 && count >= this.filter.maxPipelines) {
+            if (this.config.maxPipelines !== 0 && count >= this.config.maxPipelines) {
               break
             }
           }
@@ -296,8 +311,7 @@
         this.loading = false
       },
       async fetchBadges() {
-        const badges = await this.$api(`/projects/${this.projectId}/badges`)
-        this.badges = badges
+        this.badges = await this.$api(`/projects/${this.projectId}/badges`)
       }
     }
   }

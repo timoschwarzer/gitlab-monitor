@@ -2,21 +2,27 @@ import { getQueryParameter } from './util'
 import merge                 from 'deepmerge'
 import defaultConfig         from './config.default'
 import base64Url             from 'base64url'
+import YAML                  from 'yaml'
 
 export default new class Config {
   constructor() {
     this.config = null
     this.localConfig = null
+    this.styleOverride = ''
   }
 
-  load(config = null) {
+  load(config = null, style = null) {
     const rawConfig = getQueryParameter('rawConfig')
+
+    if (style !== null) {
+      this.styleOverride = style
+    }
 
     if (config !== null) {
       this.localConfig = config
       this.config = merge(defaultConfig, config)
     } else if (rawConfig !== null) {
-      this.localConfig = JSON.parse(base64Url.decode(rawConfig))
+      this.localConfig = YAML.parse(base64Url.decode(rawConfig))
       this.config = merge(defaultConfig, this.localConfig)
     } else {
       this.loadFromLocalStorage()
@@ -27,9 +33,10 @@ export default new class Config {
 
   loadFromLocalStorage() {
     const config = window.localStorage.getItem('config')
+    this.styleOverride = window.localStorage.getItem('styleOverride') || ''
 
     if (config !== null) {
-      const localConfig = JSON.parse(config)
+      const localConfig = YAML.parse(config)
       this.config = merge(defaultConfig, localConfig)
       this.localConfig = localConfig
     }
@@ -40,7 +47,8 @@ export default new class Config {
       return
     }
 
-    window.localStorage.setItem('config', JSON.stringify(this.localConfig, null, 2))
+    window.localStorage.setItem('config', YAML.stringify(this.localConfig, null, 2))
+    window.localStorage.setItem('styleOverride', this.styleOverride)
   }
 
   get isConfigured() {
@@ -53,5 +61,9 @@ export default new class Config {
 
   get local() {
     return this.localConfig
+  }
+
+  get style() {
+    return this.styleOverride
   }
 }
