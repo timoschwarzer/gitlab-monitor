@@ -152,7 +152,7 @@
                     project.tag_list.length > 0 ||
                     !Config.root.filter.excludeUntagged
                   ) && (
-                    project.tag_list.length === 0 ||
+                    !Config.root.filter.includeTags) ||
                     project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
                   )
                 )
