@@ -7,7 +7,6 @@
           v-for="project in sortedProjects"
           :key="project.id"
           :project-id="project.id"
-          v-model="project.last_activity_at"
         />
       </div>
     </div>
@@ -149,11 +148,11 @@
                 project.path_with_namespace.match(new RegExp(Config.root.filter.include)) && (
                   // "Exclude untagged" rule
                   (
-                    project.tag_list.length > 0 ||
-                    !Config.root.filter.excludeUntagged
-                  ) && (
-                    !Config.root.filter.includeTags ||
+                    project.tag_list.length > 0 &&
                     project.tag_list.some(tag => tag.match(new RegExp(Config.root.filter.includeTags)))
+                  ) || (
+                    project.tag_list.length === 0 &&
+                    !Config.root.filter.excludeUntagged
                   )
                 )
               )
