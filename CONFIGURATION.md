@@ -118,9 +118,8 @@ projectConfig:
     # Whether to show pipelines of tags
     showTags: true
 
-    # Maximum number of pipelines to display for this filter.
-    # 0 for infinite
-    maxPipelines: 0
+    # Minimum number of pipelines to display for this filter.
+    historyCount: 1
 
     # Hide skipped pipelines
     hideSkippedPipelines: false

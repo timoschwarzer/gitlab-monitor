@@ -30,7 +30,7 @@
       "default": null,
       "showMerged": true,
       "showTags": true,
-      "maxPipelines": 0,
+      "historyCount": 1,
       "hideSkippedPipelines":  false,
       "soundAlerts": {
         "soundUrl": null,
