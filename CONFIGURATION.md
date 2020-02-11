@@ -136,7 +136,7 @@ projectConfig:
 
       # Uses the SpeechSynthesis API to speak a message when a pipeline fails.
       # Supports replacing the string NAME with the name of the user who triggered a pipeline.
-      # Replace null with a string like 'A pipeline triggered by NAME failed!'.
+      # Replace null with a string like 'NAME broke the build!'.
       # You might have to enable auto autoplay or interact with the page at least once first.
       # Not compatible with all browsers! See https://caniuse.com/#feat=mdn-api_speechsynthesis
       speechTemplate: null
