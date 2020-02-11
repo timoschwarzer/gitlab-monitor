@@ -125,12 +125,21 @@ projectConfig:
     hideSkippedPipelines: false
 
     soundAlerts:
-      # If set to a non-null value, sound alerts will be enabled.
+      # If either soundUrl or speechTemplate is set to a non-null value, sound alerts will be enabled.
+      # speechTemplate takes precedence over soundUrl if both are set.
+
       # Replace null with URL to sound file.
       # IMPORTANT: Due to some browsers blocking autoplaying audio
       #            you may have to enable audio autoplay first!
       #  Firefox:  https://support.mozilla.org/en-US/kb/block-autoplay
       soundUrl: null
+
+      # Uses the SpeechSynthesis API to speak a message when a pipeline fails.
+      # Supports replacing the string NAME with the name of the user who triggered a pipeline.
+      # Replace null with a string like 'A pipeline triggered by NAME failed!'.
+      # You might have to enable auto autoplay or interact with the page at least once first.
+      # Not compatible with all browsers! See https://caniuse.com/#feat=mdn-api_speechsynthesis
+      speechTemplate: null
 
       # Play alert sounds for all branches matching this regex
       include: .*

@@ -128,23 +128,32 @@
           }
 
           // Process alert sounds
-          if (pipelines && this.project && this.config.soundAlerts.soundUrl !== null) {
+          const soundAlertsEnabled = (this.config.soundAlerts.soundUrl !== null || this.config.soundAlerts.speechTemplate !== null)
+          if (pipelines && this.project && soundAlertsEnabled) {
             const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
               return !!branchName.match(new RegExp(this.config.soundAlerts.include)) &&
                 (!this.config.soundAlerts.exclude || !branchName.match(new RegExp(this.config.soundAlerts.exclude)))
             })
 
-            let alert = false
+            let newFailedPipelines = []
             for (const branch of pipelinesWithSoundAlertsEnabled) {
-              const newFailedPipelines = pipelines[branch].filter(p => p.status === 'failed' && !this.alertSoundPlayedForPipelines.includes(p.id))
+              const failedPipelinesForBranch = pipelines[branch].filter(p => p.status === 'failed' && !this.alertSoundPlayedForPipelines.includes(p.id));
+              newFailedPipelines = newFailedPipelines.concat(failedPipelinesForBranch)
               for (const pipeline of newFailedPipelines) {
                 this.alertSoundPlayedForPipelines.push(pipeline.id)
-                alert = true
               }
             }
 
-            if (alert) {
-              this.playSound(this.config.soundAlerts.soundUrl)
+            if (newFailedPipelines.length > 0) {
+              if (this.config.soundAlerts.speechTemplate !== null && window.speechSynthesis) {
+                const template = this.config.soundAlerts.speechTemplate;
+                for (const pipeline of newFailedPipelines) {
+                  const message = template.replace('NAME', pipeline.user.name)
+                  window.speechSynthesis.speak(new SpeechSynthesisUtterance(message))
+                }
+              } else {
+                this.playSound(this.config.soundAlerts.soundUrl)
+              }
             }
           }
         }
