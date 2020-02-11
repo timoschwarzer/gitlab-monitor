@@ -128,7 +128,8 @@
           }
 
           // Process alert sounds
-          const soundAlertsEnabled = (this.config.soundAlerts.soundUrl !== null || this.config.soundAlerts.speechTemplate !== null)
+          const spokenAlertsEnabled = window.speechSynthesis && this.config.soundAlerts.speechTemplate !== null
+          const soundAlertsEnabled = spokenAlertsEnabled || this.config.soundAlerts.soundUrl !== null
           if (pipelines && this.project && soundAlertsEnabled) {
             const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
               return !!branchName.match(new RegExp(this.config.soundAlerts.include)) &&
@@ -145,7 +146,7 @@
             }
 
             if (newFailedPipelines.length > 0) {
-              if (this.config.soundAlerts.speechTemplate !== null && window.speechSynthesis) {
+              if (spokenAlertsEnabled) {
                 const template = this.config.soundAlerts.speechTemplate;
                 for (const pipeline of newFailedPipelines) {
                   const message = template.replace('NAME', pipeline.user.name)
