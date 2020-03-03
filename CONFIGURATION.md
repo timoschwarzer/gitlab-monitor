@@ -6,7 +6,7 @@ Your configuration overrides the default configuration, which can be found
 
 **To change the existing configuration, hover the bottom left corner of the viewport!**
 
-```json
+```jsonc
 {
   // Required
   "gitlabApi": "https://gitlab.example.com/api/v4",
