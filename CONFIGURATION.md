@@ -1,8 +1,7 @@
 # Configuration
 
 GitLab Monitor is configured with a YAML-encoded configuration file.
-Your configuration overrides the default configuration, which can be found
-[here](./src/config.default.json)
+Your configuration overrides the default configuration.
 
 **To change the existing configuration, hover the bottom left corner of the viewport!**
 
