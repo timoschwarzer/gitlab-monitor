@@ -73,7 +73,7 @@
       showProjectOnlyOn() {
         const showProjectOnlyOn = Config.root.showProjectOnlyOn
         if (showProjectOnlyOn && showProjectOnlyOn.length) {
-            return showProjectOnlyOn.indexOf(this.status) > -1
+            return showProjectOnlyOn.includes(this.status)
         }
         return true
       },
