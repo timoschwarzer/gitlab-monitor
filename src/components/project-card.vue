@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showPipelinesOnly ? (pipelineCount > 0) : true" :class="['project-card', status]">
+  <div v-if="(showPipelinesOnly ? (pipelineCount > 0) : true) && (hideSucceed && status !== 'success')" :class="['project-card', status]">
     <div class="content">
       <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
       <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url : '#'">
@@ -69,6 +69,9 @@
       },
       showTags() {
         return this.config.showTags
+      },
+      hideSucceed() {
+        return Config.root.hideSucceed;
       },
       showPipelinesOnly() {
         return Config.root.pipelinesOnly

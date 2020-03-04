@@ -31,6 +31,9 @@ autoZoom: false
 # Whether to show pipeline IDs or not
 showPipelineIds: true
 
+# Wheter to show only projects in another status than 'success'
+hideSucceed: false
+
 # Control how to show job names and icons
 # Can be: 'icon', 'name', 'iconAndName'
 showJobs: icon
