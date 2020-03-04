@@ -8,6 +8,7 @@
   "showPipelineIds": true,
   "showJobs": "icon",
   "showJobsNameOnlyOn": [],
+  "showProjectOnlyOn": [],
   "showRestartedJobs": true,
   "showStagesNames": false,
   "showDurations": true,
@@ -31,7 +32,7 @@
       "showMerged": true,
       "showTags": true,
       "historyCount": 1,
-      "hideSkippedPipelines":  false,
+      "hideSkippedPipelines": false,
       "soundAlerts": {
         "soundUrl": null,
         "include": ".*",

@@ -31,6 +31,16 @@ autoZoom: false
 # Whether to show pipeline IDs or not
 showPipelineIds: true
 
+# Only show project for specific job statuses.
+# Valid values are: 'created', 'pending', 'running', 'failed', 'success', 'canceled', 'skipped' or 'manual'.
+showProjectOnlyOn:
+  - canceled
+  - failed
+  - pending
+  - running
+  - skipped
+  - manual
+
 # Control how to show job names and icons
 # Can be: 'icon', 'name', 'iconAndName'
 showJobs: icon
