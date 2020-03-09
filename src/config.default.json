@@ -9,6 +9,7 @@
   "showJobs": "icon",
   "playJobs": false,
   "showJobsNameOnlyOn": [],
+  "showProjectOnlyOn": [],
   "showRestartedJobs": true,
   "showStagesNames": false,
   "showDurations": true,
@@ -31,8 +32,8 @@
       "default": null,
       "showMerged": true,
       "showTags": true,
-      "maxPipelines": 0,
-      "hideSkippedPipelines":  false,
+      "historyCount": 1,
+      "hideSkippedPipelines": false,
       "soundAlerts": {
         "soundUrl": null,
         "include": ".*",

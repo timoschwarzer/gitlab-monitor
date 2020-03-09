@@ -66,4 +66,12 @@ export default new class Config {
   get style() {
     return this.styleOverride
   }
+
+  getProjectProperty(property, pathWithNamespace = '*') {
+    if (this.root.projectConfig.hasOwnProperty(pathWithNamespace)) {
+      return this.root.projectConfig[pathWithNamespace][property]
+    } else {
+      return this.root.projectConfig['*'][property]
+    }
+  }
 }
