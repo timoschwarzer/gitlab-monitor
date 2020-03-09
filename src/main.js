@@ -28,7 +28,7 @@ const finish = () => {
 // Load bundled config, if present.
 ;(async () => {
   try {
-    const {data} = await axios.get('/config.json')
+    const {data} = await axios.get('./config.json')
     Config.load(data)
   } catch (e) {
     Config.load()
