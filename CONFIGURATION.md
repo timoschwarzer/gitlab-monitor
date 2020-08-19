@@ -17,6 +17,10 @@ privateToken: ABCDEF123456
 # If set to 0, no filter will be applied
 maxAge: 168
 
+#How many projects will be fetched from GitLab. Usually you want all projects under a user/group.
+#If set to greater than 100, then all available projects will be retrieved (in batches of 100)
+fetchCountProjects: 101,
+
 # How many projects will be fetched from GitLab.
 # If set to greater than 100, then all available projects will be retrieved (in batches of 100)
 fetchCount: 20
@@ -161,6 +165,10 @@ projectScope: null
 # For example 123 with "projectScope": "groups" would query /groups/123/projects
 # Specify an array if you with to include multiple scope IDs.
 projectScopeId: null
+
+# If projectScope is "groups" you might be interested in using includeSubgroups to include
+# projects from all subgroups within the group specified in projectScopeId.
+includeSubgroups:  false
 ```
 
 ## Headless configuration

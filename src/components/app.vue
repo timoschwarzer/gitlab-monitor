@@ -99,7 +99,7 @@
     },
     methods: {
       async fetchProjects() {
-        const fetchCount = Config.root.fetchCount
+        const fetchCount = Config.root.fetchCountProjects
         const gitlabApiParams = {
           order_by: 'last_activity_at',
           // GitLab per_page max is 100. We use > 100 values as next page follow trigger
@@ -117,6 +117,10 @@
         const membership = Config.root.membership
         if (typeof membership === 'boolean') {
           gitlabApiParams.membership = membership
+        }
+        const includeSubgroups = Config.root.includeSubgroups
+        if (typeof includeSubgroups === 'boolean') {
+          gitlabApiParams.include_subgroups = includeSubgroups
         }
 
         // Only use main level projects API if tighter scope not defined
