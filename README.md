@@ -1,6 +1,4 @@
-# GitLab Monitor
-
-![Logo](/logo.svg)
+<h1> <img src="./logo.svg" alt="An abstract representation of an eye" width="24" height="24" /> GitLab Monitor</h1>
 
 > A browser-based monitor dashboard for GitLab CI
 
