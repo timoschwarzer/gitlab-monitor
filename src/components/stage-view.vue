@@ -32,7 +32,7 @@
 <style lang="scss" scoped>
   .stage-view {
     display: inline-block;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--job-stage-names-color ,rgba(255, 255, 255, 0.8));
 
     &:not(.with-name) {
       .pipe.before {
@@ -82,7 +82,7 @@
 
     .pipe {
       height: 2px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: var(--job-connector-color, rgba(255, 255, 255, 0.8));
       width: 6px;
       flex-grow: 1;
       min-width: 18px;

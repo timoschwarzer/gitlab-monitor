@@ -11,6 +11,7 @@ Your configuration overrides the default configuration, which can be found
 gitlabApi: https://gitlab.example.com/api/v4
 
 # Required
+# Can be generated here: https://gitlab.com/profile/personal_access_tokens At least api_read scope is needed
 privateToken: ABCDEF123456
 
 # In hours. Projects with last activity older than this age won't be displayed.
@@ -179,6 +180,12 @@ projectScopeId: null
 # If projectScope is "groups" you might be interested in using includeSubgroups to include
 # projects from all subgroups within the group specified in projectScopeId.
 includeSubgroups:  false
+
+# Predefined Theme to use, if not set, the default theme will be used.
+# Available themes: nord-dark, nord-light
+# Heads-up: Remember that you can always add your custom styles on top
+# but please feel free to submit your own theme as 'src/themes/<your-theme-name>.theme.scss'!
+theme: null
 ```
 
 ## Headless configuration

@@ -271,6 +271,16 @@
               }
             }
           )
+
+          // https://webpack.js.org/loaders/style-loader/#lazystyletag
+          this.themeStyles?.unuse()
+
+          if (Config.root.theme) {
+            document.documentElement.classList.value = Config.root.theme
+            this.themeStyles =
+              require('!!style-loader?injectType=lazyStyleTag!css-loader!sass-loader!../themes/' + Config.root.theme + '.theme.scss')
+            this.themeStyles.use()
+          }
         }
 
         this.configured = Config.isConfigured
@@ -305,15 +315,26 @@
 </script>
 
 <style lang="scss">
+  :root {
+    --background-color: #212121;
+    --color: #dddddd;
+    --font-family: Roboto, sans-serif;
+    --background: url('../assets/backdrop.svg') no-repeat bottom;
+  }
+
   html {
-    background-color: #212121;
-    color: #dddddd;
-    font-family: Roboto, sans-serif;
+    background-color: var(--background-color);
+    color: var(--color);
+    font-family: var(--font-family);
   }
 
   body {
     margin: 0;
     padding: 4px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    background: url('../assets/backdrop.svg') no-repeat bottom;
+    background-size: contain;
   }
 
   svg {
@@ -362,7 +383,8 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: transparentize(#212121, 0.5);
+      background-color: var(--loading-overlay-color, rgba(#212121, 0.5));
+      color: var(--loading-indicator-color, inherit);
     }
 
     .container {
@@ -401,7 +423,9 @@
       padding: 16px;
       margin-bottom: 16px;
       background: #C62828;
+      line-height: 1.5;
       color: #fff;
+      border-radius: 2px;
 
       a {
         color: #fff;
