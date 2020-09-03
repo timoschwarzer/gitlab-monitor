@@ -80,7 +80,25 @@
     }),
     computed: {
       sortedProjects() {
-        return this.projects.sort((a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime())
+        const sortMethods = {
+          // Register new order/sorting methods here
+          lastActivity: (a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime(),
+          created: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          name: (a, b) => a.name.localeCompare(b.name),
+          nameWithNamespace: (a, b) => a.name_with_namespace.localeCompare(b.name_with_namespace),
+        }
+
+        let byMethod = sortMethods[Config.root.orderBy]
+
+        if (byMethod == null) {
+          console.warn(
+            `Config.orderBy: Could not resolve sort method, using 'lastActivity' instead.`,
+            `Available methods are ${Object.keys(sortMethods).join(', ')}`
+          )
+          byMethod = sortMethods.lastActivity
+        }
+
+        return this.projects.sort(byMethod)
       },
       configIsValid() {
         try {
@@ -88,6 +106,7 @@
         } catch (e) {
           return false
         }
+
         return true
       }
     },

@@ -15,6 +15,7 @@
   "showUsers": false,
   "projectVisibility": "any",
   "title": null,
+  "orderBy": "lastActivity",
   "pollingIntervalMultiplier": 1.0,
   "badges": false,
   "filter": {

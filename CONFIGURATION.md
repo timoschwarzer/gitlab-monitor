@@ -75,6 +75,9 @@ showUsers: false
 # The page title, or null to hide
 title: null
 
+# How to order the displayed projects. Accepts: lastActivity, created, name, nameWithNamespace
+orderBy: lastActivity
+
 # Multiply all polling intervals by this amount
 # (e.g. 0.5 will make gitlab-monitor poll twice as often)
 pollingIntervalMultiplier: 1.0
