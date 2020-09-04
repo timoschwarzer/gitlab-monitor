@@ -52,6 +52,7 @@
   import { configureApi } from '../GitLabApi'
   import ProjectCard from './project-card'
   import YAML from 'yaml'
+  import Visibilty from 'visibilityjs'
   import MonacoEditor from 'vue-monaco'
 
   export default {
@@ -95,7 +96,7 @@
       this.reloadConfig()
     },
     beforeDestroy() {
-      clearInterval(this.refreshIntervalId)
+      Visibilty.stop(this.refreshIntervalId)
     },
     methods: {
       async fetchProjects() {
@@ -224,14 +225,19 @@
           }
 
           if (this.refreshIntervalId) {
-            clearInterval(this.refreshIntervalId)
+            Visibilty.stop(this.refreshIntervalId)
           }
 
-          this.refreshIntervalId = setInterval(async () => {
-            if (!this.loading) {
-              await this.fetchProjects()
+          const twoMinutes = 2 * 60 * 1000
+
+          this.refreshIntervalId = Visibilty.every(
+            twoMinutes * Config.root.pollingIntervalMultiplier,
+            async () => {
+              if (!this.loading) {
+                await this.fetchProjects()
+              }
             }
-          }, 120000 * Config.root.pollingIntervalMultiplier)
+          )
         }
 
         this.configured = Config.isConfigured

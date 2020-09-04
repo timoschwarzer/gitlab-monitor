@@ -21,6 +21,7 @@
     "parse-link-header": "^1.0.1",
     "query-string": "^6.2.0",
     "regenerator-runtime": "^0.13.3",
+    "visibilityjs": "^2.0.2",
     "vue": "^2.6.10",
     "vue-monaco": "1.2.1",
     "vue-octicon": "^2.1.1",
