@@ -75,8 +75,12 @@ showUsers: false
 # The page title, or null to hide
 title: null
 
-# How to order the displayed projects. Accepts: lastActivity, created, name, nameWithNamespace
+# Project display order. Possible values: lastActivity, created, name, nameWithNamespace
+# Note that this only changes the displayed order and not the order in which they will be fetched.
 orderBy: lastActivity
+
+# Wether to order displayed projects descending
+orderByDesc: false
 
 # Multiply all polling intervals by this amount
 # (e.g. 0.5 will make gitlab-monitor poll twice as often)

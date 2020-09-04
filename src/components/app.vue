@@ -81,7 +81,7 @@
     computed: {
       sortedProjects() {
         const sortMethods = {
-          // Register new order/sorting methods here
+          // Register new order/sorting methods here in ascending order here
           lastActivity: (a, b) => new Date(b.last_activity_at).getTime() - new Date(a.last_activity_at).getTime(),
           created: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
           name: (a, b) => a.name.localeCompare(b.name),
@@ -92,10 +92,15 @@
 
         if (byMethod == null) {
           console.warn(
-            `Config.orderBy: Could not resolve sort method, using 'lastActivity' instead.`,
-            `Available methods are ${Object.keys(sortMethods).join(', ')}`
+            `Config.orderBy: Invalid configuration value "${Config.root.orderBy}", falling back to lastActivity`,
+            `Possible values: ${Object.keys(sortMethods).join(', ')}`
           )
           byMethod = sortMethods.lastActivity
+        }
+
+        if (Config.root.orderByDesc) {
+          const currentMethod = byMethod
+          byMethod = (a, b) => currentMethod(b, a)
         }
 
         return this.projects.sort(byMethod)
@@ -137,6 +142,7 @@
         if (typeof membership === 'boolean') {
           gitlabApiParams.membership = membership
         }
+
         const includeSubgroups = Config.root.includeSubgroups
         if (typeof includeSubgroups === 'boolean') {
           gitlabApiParams.include_subgroups = includeSubgroups
