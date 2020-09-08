@@ -16,6 +16,7 @@
   "projectVisibility": "any",
   "title": null,
   "pollingIntervalMultiplier": 1.0,
+  "backgroundRefresh": true,
   "badges": false,
   "filter": {
     "include": ".*",

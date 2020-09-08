@@ -79,6 +79,9 @@ title: null
 # (e.g. 0.5 will make gitlab-monitor poll twice as often)
 pollingIntervalMultiplier: 1.0
 
+# Disable to prevent refreshes while the browser tab is inactive.
+backgroundRefresh: true
+
 # Limit projects by visibility
 # Can be: 'any', 'public', 'internal' or 'private'
 projectVisibility: any

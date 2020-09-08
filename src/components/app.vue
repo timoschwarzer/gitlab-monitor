@@ -96,7 +96,7 @@
       this.reloadConfig()
     },
     beforeDestroy() {
-      Visibilty.stop(this.refreshIntervalId)
+      this.stopInterval(this.refreshIntervalId)
     },
     methods: {
       async fetchProjects() {
@@ -225,12 +225,20 @@
           }
 
           if (this.refreshIntervalId) {
-            Visibilty.stop(this.refreshIntervalId)
+            this.stopInterval(this.refreshIntervalId)
           }
 
           const twoMinutes = 2 * 60 * 1000
 
-          this.refreshIntervalId = Visibilty.every(
+          if (Config.root.backgroundRefresh) {
+            this.enableInterval = (t, f) => setInterval(f, t)
+            this.stopInterval = clearInterval
+          } else {
+            this.enableInterval = Visibilty.every
+            this.stopInterval = Visibilty.stop
+          }
+
+          this.refreshIntervalId = this.enableInterval(
             twoMinutes * Config.root.pollingIntervalMultiplier,
             async () => {
               if (!this.loading) {
