@@ -79,7 +79,7 @@ title: null
 # Note that this only changes the displayed order and not the order in which they will be fetched.
 orderBy: lastActivity
 
-# Wether to order displayed projects descending
+# Display projects in descending order
 orderByDesc: false
 
 # Multiply all polling intervals by this amount
