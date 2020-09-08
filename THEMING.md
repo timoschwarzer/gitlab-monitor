@@ -15,7 +15,7 @@ and add a global class selector named after your theme.
 }
 ```
 
-To use your theme simply add the name of your theme in the config:
+Enable your theme in your configuration to see your changes:
 
 ```yaml
 theme: my-theme
@@ -23,8 +23,8 @@ theme: my-theme
 
 ## Variables
 
-We are using [css-custom-properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) for variables.
+Themes use [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) for variables.
 
-There are quite a few variables out there to make your life easier.
+There are quite a few variables out there to make theme development easier.
 Take a look at existing themes for a list of variables or check out
 your browser's dev tools.

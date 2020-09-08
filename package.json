@@ -11,6 +11,8 @@
     "serve": "http-server ./dist"
   },
   "dependencies": {
+    "@openfonts/roboto-condensed_all": "^1.44.1",
+    "@openfonts/roboto_all": "^1.44.1",
     "axios": "^0.18.1",
     "base64url": "^3.0.0",
     "core-js": "^3.3.2",

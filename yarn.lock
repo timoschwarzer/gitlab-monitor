@@ -934,6 +934,16 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
+"@openfonts/roboto-condensed_all@^1.44.1":
+  version "1.44.1"
+  resolved "https://registry.yarnpkg.com/@openfonts/roboto-condensed_all/-/roboto-condensed_all-1.44.1.tgz#e625bdd1966517f786e1f070ec10ac1cb2606981"
+  integrity sha512-AMBze9/xbhHQ/0PC0h/BVmwIAJnppIKNYZWIFZpOySpQPBABQijAo0sy60HvoIRk3qC33+h/xHu2xQQ/+8uABA==
+
+"@openfonts/roboto_all@^1.44.1":
+  version "1.44.1"
+  resolved "https://registry.yarnpkg.com/@openfonts/roboto_all/-/roboto_all-1.44.1.tgz#426ac935ebcfb2b16898ed44ff3140eb9396e89d"
+  integrity sha512-umsCiLle25RqxRzarTy0y6ovAabgGM9p8/dOxy/iwvlIZa/oBluH2gvyyrgS6o3kmb/dHroznJbWzH1xj/n0UQ==
+
 "@soda/friendly-errors-webpack-plugin@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@soda/friendly-errors-webpack-plugin/-/friendly-errors-webpack-plugin-1.7.1.tgz#706f64bcb4a8b9642b48ae3ace444c70334d615d"

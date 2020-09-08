@@ -20,7 +20,8 @@ $aurora-yellow: $nord13;
 $aurora-green: $nord14;
 $aurora-purple: $nord15;
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:ital@0;1&display=swap');
+@import '~@openfonts/roboto-condensed_all/index.css';
+@import '~@openfonts/roboto_all/index.css';
 
 .nord-light {
   --background-color: #{$snow-light};
