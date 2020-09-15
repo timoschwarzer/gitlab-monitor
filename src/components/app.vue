@@ -257,7 +257,7 @@
 
           if (Config.root.backgroundRefresh) {
             this.enableInterval = (t, f) => setInterval(f, t)
-            this.stopInterval = clearInterval
+            this.stopInterval = (i) => clearInterval(i)
           } else {
             this.enableInterval = Visibilty.every
             this.stopInterval = Visibilty.stop
