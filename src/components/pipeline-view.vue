@@ -1,6 +1,6 @@
 <template>
   <div class="pipeline-view">
-    <octicon v-if="loading" name="sync" scale="1.4" spin />
+    <octicon v-if="loading" class="spinner-icon" name="sync" scale="1.4" spin />
 
     <div v-else>
       <a
@@ -14,7 +14,7 @@
         {{ pipeline.ref }}
       </a>
 
-      <div :class="['pipeline', {'with-stages-names': showStagesNames}]">
+      <div :class="['pipeline', {'with-stages-names': showStagesNames, 'is-skipped': pipeline.status === 'skipped'}]">
         <a
           class="pipeline-id-link"
           target="_blank"
@@ -25,11 +25,11 @@
           <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
         </a>
         <div class="stages">
-          <stage-view v-for="stage in stages" :key="stage.name" :stage="stage" :project="project" />
           <div class="skipped" v-if="pipeline.status === 'skipped'">
             <gitlab-icon class="pipeline-icon" name="status_skipped_borderless" size="24" />
             Pipeline skipped
           </div>
+          <stage-view v-else v-for="stage in stages" :key="stage.name" :stage="stage" :project="project" />
         </div>
         <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
         <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
@@ -190,8 +190,12 @@
       margin-bottom: 4px;
     }
 
+    .spinner-icon {
+      color: var(--project-spinner-color, inherit);
+    }
+
     .branch {
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--pipeline-branch, rgba(255, 255, 255, 0.5));
       display: flex;
       align-items: center;
       font-size: 14px;
@@ -220,15 +224,15 @@
       }
 
       .pipeline-icon {
-        width: 16px;
-        height: 16px;
+        width: var(--job-icon-size, 16px);
+        height: var(--job-icon-size, 16px);
         margin-right: 1px;
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--pipeline-hashtag, rgba(255, 255, 255, 0.8));
       }
 
       .pipeline-id {
         margin-right: 8px;
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--pipeline-id, rgba(255, 255, 255, 0.8));
       }
 
       .stages {
@@ -239,11 +243,11 @@
 
       .clock-icon {
         margin-right: 3px;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--pipeline-clock-icon, rgba(255, 255, 255, 0.5));
       }
 
       .duration {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--pipeline-duration, rgba(255, 255, 255, 0.8));
         line-height: 1;
         font-size: 14px;
         margin-right: 6px;
@@ -251,22 +255,24 @@
 
       .user-icon {
         margin-right: 3px;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--pipeline-user-icon, rgba(255, 255, 255, 0.5));
       }
 
       .user {
-        color: rgba(255, 255, 255, 0.8);
+        color: var(--pipeline-user, rgba(255, 255, 255, 0.8));
         line-height: 1;
         font-size: 12px;
       }
 
       .skipped {
+        color: inherit;
         display: flex;
         align-items: center;
-        border: 2px solid white;
+        border: 2px solid var(--job-border-color, white);
         padding: 1px 9px 1px 1px;
         border-radius: 8px;
         font-size: smaller;
+        line-height: var(--job-icon-size, inherit);
       }
     }
   }

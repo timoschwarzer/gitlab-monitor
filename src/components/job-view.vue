@@ -6,7 +6,7 @@
     rel="noopener noreferrer"
     :href="project.web_url + '/-/jobs/' + job.id"
   >
-    <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames}]">
+    <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames, hasIcon: showJobIcons}]">
       <transition name="fade" mode="out-in">
         <svg v-if="showJobIcons" :key="statusIconName">
           <use
@@ -19,7 +19,7 @@
         </svg>
       </transition>
 
-      <span v-if="showJobNames" :key="job.name">
+      <span v-if="showJobNames" class="job-name" :key="job.name">
         {{ job.name }}
       </span>
     </div>
@@ -85,55 +85,79 @@
     }
 
     .job-circle {
+      --job-status-color: inherit;
+
       width: auto;
       display: inline-flex;
-      height: 24px;
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      border-radius: 24px;
-      line-height: 24px;
-      padding: 0 9px 0 0;
+      height: var(--jop-icon-size, 24px);
+      border: 2px solid var(--job-border-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--job-status-color);
+      border-radius: 999px;
+      line-height: var(--jop-icon-size, 24px);
       font-size: 12px;
       transition: background-color 200ms;
 
+      .job-name {
+        margin-left: 9px;
+        margin-right: 9px;
+      }
+
+      &.hasIcon {
+        .job-name {
+          margin-left: 1px;
+        }
+      }
+
       &.square {
-        width: 24px;
-        padding: 0;
+        width: var(--jop-icon-size, 24px);
+      }
+
+      &.created {
+        --job-status-color: var(--job-created, inherit);
       }
 
       &.success {
-        background-color: #2E7D32;
+        --job-status-color: var(--job-success, #2E7D32);
       }
 
       &.running {
-        background-color: #1565C0;
+        --job-status-color: var(--job-running, #1565C0);
       }
 
-      &.pending, &.warning {
-        background-color: #EF6C00;
+      &.pending {
+        --job-status-color: var(--job-pending, #EF6C00);
+      }
+
+      &.warning {
+        --job-status-color: var(--job-warning, #EF6C00);
       }
 
       &.failed {
-        background-color: #C62828;
+        --job-status-color: var(--job-failed, #C62828);
       }
 
       &.canceled {
-        background-color: #010101;
+        --job-status-color: var(--job-canceled, #010101);
       }
 
-      &.skipped, &.manual {
-        background-color: #4b4b4b;
+      &.skipped {
+        --job-status-color: var(--job-skipped, #4b4b4b);
+      }
+
+      &.manual {
+        --job-status-color: var(--job-manual, #4b4b4b);
       }
 
       svg {
-        width: 24px;
-        height: 24px;
-        fill: rgba(255, 255, 255, 0.8);
+        width: var(--jop-icon-size, 24px);
+        height: var(--jop-icon-size, 24px);
+        fill: var(--job-icon-fill-color, rgba(255, 255, 255, 0.8));
       }
     }
 
     .pipe {
       height: 2px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: var(--job-connector-color, rgba(255, 255, 255, 0.8));
       width: 6px;
     }
   }

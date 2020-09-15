@@ -1,0 +1,161 @@
+@import "~nord/src/sass/nord.scss";
+
+$night-darkest: $nord0;
+$night-dark: $nord1;
+$night-light: $nord2;
+$night-lightest: $nord3;
+
+$snow-dark: $nord4;
+$snow: $nord5;
+$snow-light: $nord6;
+
+$frost-green: $nord7;
+$frost-teal: $nord8;
+$frost-light-blue: $nord9;
+$frost-dark-blue: $nord10;
+
+$aurora-red: $nord11;
+$aurora-orange: $nord12;
+$aurora-yellow: $nord13;
+$aurora-green: $nord14;
+$aurora-purple: $nord15;
+
+@import '~@openfonts/roboto-condensed_all/index.css';
+@import '~@openfonts/roboto_all/index.css';
+
+.nord-dark {
+  --background-color: #{$night-darkest};
+  --color: #{$snow-light};
+  --font-family: system-ui, sans-serif;
+  --background: none;
+
+  --project-default: #{$night-light};
+  --project-success: #{$aurora-green};
+  --project-running: #{$frost-dark-blue};
+  --project-pending: #{$aurora-orange};
+  --project-failed: #{$aurora-red};
+  --project-canceled: #{$night-dark};
+  --project-skipped: #{$night-lightest};
+
+  --project-spinner-color: #{$snow-dark};
+  --project-no-pipelines: #{$snow-dark};
+  --project-info-color: #{$snow-dark};
+
+  $pipeline-text-color: $snow-light;
+  $pipeline-icons-color: $snow-dark;
+
+  --pipeline-hashtag: #{$pipeline-text-color};
+  --pipeline-id: #{$pipeline-text-color};
+  --pipeline-branch: #{$pipeline-text-color};
+  --pipeline-clock-icon: #{$pipeline-icons-color};
+  --pipeline-duration: #{$pipeline-text-color};
+  --pipeline-user-icon: #{$pipeline-icons-color};
+  --pipeline-user: #{$pipeline-text-color};
+
+  --job-border-color: #{$snow-dark};
+  --job-connector-color: #{$snow-dark};
+  --job-icon-fill-color: #{$snow-dark};
+  --job-stage-names-color: #{$snow-dark};
+  --jop-icon-size: 18px;
+
+  --job-success: #{$aurora-green};
+  --job-running: #{$frost-dark-blue};
+  --job-pending: #{$aurora-orange};
+  --job-warning: #{$aurora-yellow};
+  --job-failed: #{$aurora-red};
+  --job-canceled: #{$night-darkest};
+  --job-skipped: #{$night-light};
+  --job-manual: #{$night-light};
+
+  body {
+    background: none;
+  }
+
+  .pipeline-container {
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+
+    .spinner-icon {
+      align-self: center;
+      justify-self: center;
+      margin-bottom: 8px;
+    }
+  }
+
+  .pipeline-view {
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+
+    .pipeline {
+      height: 22px;
+      font-size: 12px;
+
+      .duration {
+        font-size: 12px;
+      }
+
+      .pipeline-icon {
+        width: 10px !important;
+        margin-right: 4px;
+      }
+    }
+
+    .branch {
+      font-size: 12px;
+
+      svg {
+        height: 12px !important;
+        margin-right: 6px !important;
+      }
+    }
+  }
+
+  .job-view .job-circle {
+    font-size: 10px;
+
+    &.created {
+      color: $night-lightest;
+    }
+  }
+
+  .project-card {
+    color: var(--pipeline-status-color) !important;
+
+    //&.success {
+    //  color: $night-darkest;
+    //
+    //  --pipeline-hashtag: #{$night-darkest};
+    //  --pipeline-id: #{$night-darkest};
+    //  --pipeline-branch: #{$night-darkest};
+    //  --pipeline-clock-icon: #{$night-dark};
+    //  --pipeline-duration: #{$night-darkest};
+    //  --pipeline-user-icon: #{$night-dark};
+    //  --pipeline-user: #{$night-darkest};
+    //}
+
+    .info {
+      padding: 0.3rem;
+      font-size: 0.5rem !important;
+    }
+
+    .content {
+      padding-bottom: 0;
+
+      .title {
+        text-shadow: 0 0 0.5px rgba(0, 0, 0, 0.4);
+
+        &:not(.small) {
+          font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        &.small {
+          line-height: 1;
+          font-weight: 400;
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}

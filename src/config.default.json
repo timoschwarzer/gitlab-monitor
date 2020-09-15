@@ -44,5 +44,6 @@
     }
   },
   "projectScope": null,
-  "projectScopeId": null
+  "projectScopeId": null,
+  "theme": null
 }

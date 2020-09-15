@@ -16,7 +16,7 @@
             </div>
           </template>
         </div>
-        <octicon v-else name="sync" scale="1.4" spin />
+        <octicon v-else class="spinner-icon" name="sync" scale="1.4" spin />
       </div>
     </div>
     <div class="spacer"></div>
@@ -309,36 +309,38 @@
 
 <style lang="scss" scoped>
   .project-card {
+    --project-card-status-color: var(--project-default, #424242);
+
     margin: 4px;
     border-radius: 3px;
-    background-color: #424242;
+    background-color: var(--project-card-status-color, rgba(#424242, var(--project-card-opacity)));
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     transition: background-color 200ms;
 
     &.success {
-      background-color: #2E7D32;
+      --project-card-status-color: var(--project-success, #2E7D32);
     }
 
     &.running {
-      background-color: #1565C0;
+      --project-card-status-color: var(--project-running, #1565C0);
     }
 
     &.pending {
-      background-color: #A93F00;
+      --project-card-status-color: var(--project-pending, #A93F00);
     }
 
     &.failed {
-      background-color: #C62828;
+      --project-card-status-color: var(--project-failed, #C62828);
     }
 
     &.canceled {
-      background-color: #010101;
+      --project-card-status-color: var(--project-canceled, #010101);
     }
 
     &.skipped {
-      background-color: #4b4b4b;
+      --project-card-status-color: var(--project-skipped, #4b4b4b);
     }
 
     .content {
@@ -362,8 +364,12 @@
         padding: 8px 0 0 0;
       }
 
+      .spinner-icon {
+        color: var(--project-spinner-color, inherit);
+      }
+
       .no-pipelines {
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--project-no-pipelines, rgba(255, 255, 255, 0.5));
         font-size: 10px;
       }
     }
@@ -378,7 +384,7 @@
       display: flex;
       align-items: center;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--project-info-color, rgba(255, 255, 255, 0.3));
 
       time {
         line-height: 1;
