@@ -124,7 +124,8 @@
     },
     methods: {
       async fetchProjects() {
-        const fetchCount = Config.root.fetchCountProjects
+        const fetchCount = Config.root.fetchCount
+
         const gitlabApiParams = {
           order_by: 'last_activity_at',
           // GitLab per_page max is 100. We use > 100 values as next page follow trigger
