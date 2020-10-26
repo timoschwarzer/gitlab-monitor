@@ -1,0 +1,18 @@
+FROM ruby:2.6.3-alpine
+
+LABEL maintainer="PowTeam"
+
+WORKDIR /integration-tests
+
+USER root
+
+#install native extension packages
+RUN apk update && apk add build-base mariadb-dev bash
+
+ENV LANG="en_US.utf8"
+
+COPY Gemfile ./
+
+RUN bundle install && rm Gemfile.lock && rm Gemfile
+
+COPY . ./
