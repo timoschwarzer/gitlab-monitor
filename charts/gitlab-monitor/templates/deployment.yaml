@@ -1,28 +1,185 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" . }}
+  namespace: sequoia
   labels:
     draft: {{ default "draft-app" .Values.draft }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       annotations:
         buildID: {{ .Values.buildID }}
       labels:
-        draft: {{ default "draft-app" .Values.draft }}
         app: {{ template "fullname" . }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        env:
-        - name: GITLAB_MONITOR_CONFIG
-          value: | {{ .Values.config | trim | nindent 12 }}
-        ports:
-        - containerPort: {{ .Values.service.internalPort }}
-        resources:
-{{ toYaml .Values.resources | indent 12 }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: GITLAB_MONITOR_CONFIG
+              value: | {{ .Values.config | trim | nindent 13 }}
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: environment
+            - name: PORT
+              value: "80"
+          ports:
+            - containerPort: {{ .Values.internalPort }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+        - name: sidecar
+          image: artifactory.acorn.cirrostratus.org/cypress/sidecar-light:latest
+          imagePullPolicy: Always
+          command: ["/opt/start.sh"]
+          args: [$(REGISTRATION)]
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          ports:
+            - containerPort: 8888
+          env:
+            - name: REGISTRATION
+              value: "{% if serviceLocatable %}--registration-enabled{% endif %}"
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: APP_CONT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: EKS_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: environment
+            - name: SGK_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: environment
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SGK_DEPLOY_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: SGK_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HOST_IP_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SGK_BASE_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: basedomain
+            - name: SGK_HEALTHCHECK_URI
+              value: "/healthcheck"
+            - name: DEBUG
+              value: "False"
+            - name: SGK_EUREKA_NON_SECURE_PORT
+              value: "8080"
+            - name: SGK_APP
+              value: {{ .Values.eurekaName | default (.Values.app.name) }}
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+        - name: eureka-mark-up
+          image: artifactory.acorn.cirrostratus.org/cypress/uppy:latest
+          imagePullPolicy: Always
+          command: ["/usr/bin/startup.sh"]
+          args: []
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "500Mi"
+            requests:
+              cpu: "0.25"
+              memory: "180Mi"
+          env:
+            - name: SGK_DEPLOY_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: SGK_INSTANCE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: APP_CONT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: EKS_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: environment
+            - name: SGK_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: environment
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HOST_IP_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SGK_BASE_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: sequoia
+                  key: basedomain
+            - name: SGK_APP
+              value: {{ .Values.eurekaName | default (.Values.app.name) }}
+            - name: SGK_HEALTHCHECK_URI
+              value: "/healthcheck"
+            - name: SGK_EUREKA_NON_SECURE_PORT
+              value: "8080"
+            - name: SIDECAR_PORT
+              value: "8888"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"

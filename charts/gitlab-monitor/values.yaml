@@ -1,17 +1,17 @@
 # Default values for node.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+app:
+  name: "gitlab-monitor"
+eurekaName: "gitlab-monitor"
+namespace: sequoia
+owner: "PowTeam"
 replicaCount: 1
 image:
   pullPolicy: Always
   repository: timoschwarzer/gitlab-monitor
   tag: latest
-service:
-  name: node
-  type: LoadBalancer
-  externalPort: 80
-  internalPort: 80
-  nodePort: 31148
+internalPort: 80
 resources:
   limits:
     cpu: 100m
@@ -19,13 +19,9 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-ingress:
-  enabled: false
-  domain: gitlab-monitor.example.com
-  tls: {}
 config: |
   {
-    "gitlabApi": "https://gitlab.example.com/api/v4",
+    "gitlabApi": "https://gitlab.com/api/v4",
     "privateToken": "ABCDEF123456",
     "maxAge": 168,
     "fetchCount": 20,
@@ -36,7 +32,7 @@ config: |
     "showDurations": true,
     "showUsers": false,
     "projectVisibility": "any",
-    "linkToFailureSound": null ,
+    "linkToFailureSound": null,
     "title": null,
     "pollingIntervalMultiplier": 10,
     "filter": {
