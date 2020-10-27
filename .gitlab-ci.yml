@@ -15,6 +15,7 @@ default:
     - test-runner # default gitlab runner/environment for jobs in this pipeline
 
 variables:
+  # TEST - REMOVE
   # Temporary app name. This should also be the same name as the app name in the Chart.yml file.
   # In case we want to continue to use APP_SERVICE_NAME instead of CI_PROJECT_NAME, we should keep this
   # as well as any references to this variable in this pipeline file. If we do proceed to remove
