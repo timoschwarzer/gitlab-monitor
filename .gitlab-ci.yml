@@ -72,3 +72,11 @@ build test image:
     - export IMAGE_TAG=$TESTS_IMAGE
   except:
     - schedules
+
+render ephemeral charts:
+  extends: .render-charts
+  stage: build-prerequisites
+  variables:
+    EUREKA_SERVICE_NAME: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+  except:
+    - schedules
