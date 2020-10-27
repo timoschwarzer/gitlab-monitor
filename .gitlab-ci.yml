@@ -15,7 +15,6 @@ default:
     - test-runner # default gitlab runner/environment for jobs in this pipeline
 
 variables:
-  # TEST - REMOVE
   # Temporary app name. This should also be the same name as the app name in the Chart.yml file.
   # In case we want to continue to use APP_SERVICE_NAME instead of CI_PROJECT_NAME, we should keep this
   # as well as any references to this variable in this pipeline file. If we do proceed to remove
@@ -26,7 +25,7 @@ variables:
   APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA
   APP_DOCKERFILE: Dockerfile
   TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-tests:$CI_COMMIT_SHA
-  TESTS_DOCKERFILE: $CI_PROJECT_DIR/k8s/Dockerfile.tests
+  TESTS_DOCKERFILE: $CI_PROJECT_DIR/integration-tests/Dockerfile-tests
   MANIFEST_OUTPUT_DIRECTORY: manifest-output
 
 include:
@@ -58,8 +57,18 @@ build app image:
   variables:
     CONTEXT: $CI_PROJECT_DIR
   before_script:
-    - echo $APP_IMAGE
     - export DOCKERFILE=$APP_DOCKERFILE
     - export IMAGE_TAG=$APP_IMAGE
+  except:
+    - schedules
+
+build test image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR
+  before_script:
+    - export DOCKERFILE=$TESTS_DOCKERFILE
+    - export IMAGE_TAG=$TESTS_IMAGE
   except:
     - schedules
