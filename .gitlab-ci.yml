@@ -23,7 +23,7 @@ variables:
   # which, at least in this case, is the same as the service name.
   APP_SERVICE_NAME: gitlab-monitor
   ARTIFACTORY_REPO: docker.artifactory.acorn.cirrostratus.org
-  APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA # TODO - fix
+  APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA
   APP_DOCKERFILE: Dockerfile
   TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-tests:$CI_COMMIT_SHA
   TESTS_DOCKERFILE: $CI_PROJECT_DIR/k8s/Dockerfile.tests
@@ -58,6 +58,7 @@ build app image:
   variables:
     CONTEXT: $CI_PROJECT_DIR
   before_script:
+    - echo $APP_IMAGE
     - export DOCKERFILE=$APP_DOCKERFILE
     - export IMAGE_TAG=$APP_IMAGE
   except:
