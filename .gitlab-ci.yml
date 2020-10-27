@@ -1,6 +1,6 @@
 stages:
   - open-pr
-#  - build-prerequisites
+  - build-prerequisites
 #  - test
 #  - deploy-to-ephemeral
 #  - ephemeral-integration-tests
@@ -52,3 +52,13 @@ open pr:
   except:
     - schedules
 
+build app image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR
+  before_script:
+    - export DOCKERFILE=$APP_DOCKERFILE
+    - export IMAGE_TAG=$APP_IMAGE
+  except:
+    - schedules
