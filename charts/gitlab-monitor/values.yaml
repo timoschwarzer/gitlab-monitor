@@ -21,7 +21,7 @@ resources:
     memory: 128Mi
 config: |
   {
-    "gitlabApi": "https://gitlab.com/api/v4",
+    "gitlabApi": "https://gitlab.example.com/api/v4",
     "privateToken": "ABCDEF123456",
     "maxAge": 168,
     "fetchCount": 20,
@@ -32,7 +32,7 @@ config: |
     "showDurations": true,
     "showUsers": false,
     "projectVisibility": "any",
-    "linkToFailureSound": null,
+    "linkToFailureSound": null ,
     "title": null,
     "pollingIntervalMultiplier": 10,
     "filter": {
@@ -53,4 +53,3 @@ config: |
       }
     }
   }
-
