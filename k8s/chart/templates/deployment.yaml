@@ -1,28 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ .Values.eurekaName | default (include "app.name" .) }}
   namespace: sequoia
-  labels:
-    draft: {{ default "draft-app" .Values.draft }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  annotations:
+    deploymentExpirationTime: "0"
 spec:
   selector:
     matchLabels:
-      app: {{ template "fullname" . }}
+      app: {{ .Values.eurekaName | default (include "app.name" .) }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       annotations:
         buildID: {{ .Values.buildID }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
       labels:
-        app: {{ template "fullname" . }}
+        app: {{ .Values.eurekaName | default (include "app.name" .) }}
+        owner: {{ .Values.owner }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}
-        image: "docker.artifactory.acorn.cirrostratus.org/pow/gitlab-monitor:1.0.0"
+      - name: {{ .Values.eurekaName | default (include "app.name" .) }}
+        image: {{required "Image tag is required:  helm template --set image.tag=" .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
+        - name: COMMIT_HASH
+          value: {{ .Values.commitHash }}
+        - name: SGK_APP
+          value: {{ .Values.eurekaName | default (include "app.name" .) }}
+        - name: PORT
+          value: "80"
         - name: GITLAB_MONITOR_CONFIG
           value: | {{ .Values.config | trim | nindent 12 }}
         - name: ENVIRONMENT
@@ -30,10 +38,8 @@ spec:
             configMapKeyRef:
               name: sequoia
               key: environment
-        - name: PORT
-          value: "80"
         ports:
-            - containerPort: {{ .Values.internalPort }}
+        - containerPort: {{ .Values.internalPort }}
         livenessProbe:
           httpGet:
             path: /
