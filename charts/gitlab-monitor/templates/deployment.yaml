@@ -54,11 +54,11 @@ spec:
         args: [$(REGISTRATION)]
         resources:
           limits:
-            cpu: {{ .Values.resources.limits.cpu }}
-            memory: {{ .Values.resources.limits.memory }}
+            cpu: 1500m
+            memory: 1.5Gi
           requests:
-            cpu: {{ .Values.resources.requests.cpu }}
-            memory: {{ .Values.resources.requests.memory }}
+            cpu: .5
+            memory: 1.5Gi
         ports:
           - containerPort: 8888
         env:
