@@ -20,11 +20,11 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "docker.artifactory.acorn.cirrostratus.org/pow/gitlab-monitor:1.0.0"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-          - name: GITLAB_MONITOR_CONFIG
-            value: | {{ .Values.config | trim | nindent 16 }}
+        - name: GITLAB_MONITOR_CONFIG
+          value: | {{ .Values.config | trim | nindent 12 }}
         - name: ENVIRONMENT
           valueFrom:
             configMapKeyRef:
@@ -37,7 +37,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 80
           initialDelaySeconds: 120
           timeoutSeconds: 1
         resources:
@@ -108,11 +108,11 @@ spec:
                 name: sequoia
                 key: basedomain
           - name: SGK_HEALTHCHECK_URI
-            value: "/healthcheck"
+            value: "/"
           - name: DEBUG
             value: "False"
           - name: SGK_EUREKA_NON_SECURE_PORT
-            value: "8080"
+            value: "80"
           - name: SGK_APP
             value: {{ .Values.eurekaName | default (.Values.app.name) }}
           - name: AWS_DEFAULT_REGION
@@ -176,9 +176,9 @@ spec:
           - name: SGK_APP
             value: {{ .Values.eurekaName | default (.Values.app.name) }}
           - name: SGK_HEALTHCHECK_URI
-            value: "/healthcheck"
+            value: "/"
           - name: SGK_EUREKA_NON_SECURE_PORT
-            value: "8080"
+            value: "80"
           - name: SIDECAR_PORT
             value: "8888"
           - name: AWS_DEFAULT_REGION
