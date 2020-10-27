@@ -1,19 +1,53 @@
-image: node:12-alpine
-
-cache:
-  paths:
-    - node_modules/
-
 stages:
-- build
+  - open-pr
+#  - build-prerequisites
+#  - test
+#  - deploy-to-ephemeral
+#  - ephemeral-integration-tests
+#  - post-test
+#  - deploy-to-test
+#  - wait-for-test-deployment
+#  - post-deploy-integration-tests - undeploy-from-test
+#  - nightly
 
-build:
-  stage: build
-  only:
-    - master
-  artifacts:
-    paths:
-      - dist
-  script:
-  - yarn install --check-files --non-interactive
-  - yarn run build
+default:
+  tags:
+    - test-runner # default gitlab runner/environment for jobs in this pipeline
+
+variables:
+  # Temporary app name. This should also be the same name as the app name in the Chart.yml file.
+  # In case we want to continue to use APP_SERVICE_NAME instead of CI_PROJECT_NAME, we should keep this
+  # as well as any references to this variable in this pipeline file. If we do proceed to remove
+  # this variable, we should replace any references to this variable in this file with $CI_PROJECT_NAME
+  # which, at least in this case, is the same as the service name.
+  APP_SERVICE_NAME: gitlab-monitor
+  ARTIFACTORY_REPO: docker.artifactory.acorn.cirrostratus.org
+  APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA # TODO - fix
+  APP_DOCKERFILE: Dockerfile
+  TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-tests:$CI_COMMIT_SHA
+  TESTS_DOCKERFILE: $CI_PROJECT_DIR/k8s/Dockerfile.tests
+  MANIFEST_OUTPUT_DIRECTORY: manifest-output
+
+include:
+  # template repo: https://gitlab.com/capstan/pow/gitlab-templates/
+  - project: capstan/pow/gitlab-templates
+    file: /create-pr/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /build-image/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /render-charts/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-app-builder-deployer/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /check-healthy-deployment/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-integration-tests/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-argo-deployer/template.yml
+
+open pr:
+  stage: open-pr
+  extends: .create-pr
+  except:
+    - schedules
+
