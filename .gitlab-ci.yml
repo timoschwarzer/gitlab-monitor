@@ -154,7 +154,7 @@ stage 1 integration tests:
   extends: .integration-tests
   variables:
     APP_URL: $CI_PROJECT_NAME-$CI_COMMIT_SHA
-    RAKE_TASK: gitlab-monitor:pipeline_rspec
+    RAKE_TASK: gitlab-monitor:integration
   except:
     - schedules
 
