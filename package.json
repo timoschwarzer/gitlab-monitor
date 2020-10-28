@@ -9,6 +9,7 @@
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "serve": "http-server ./dist",
+    "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner",
     "test": "jest"
   },
   "dependencies": {
