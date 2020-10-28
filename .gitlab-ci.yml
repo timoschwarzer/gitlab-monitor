@@ -129,6 +129,7 @@ unit tests:
   stage: test
   image: $UNIT_TESTS_IMAGE
   script:
+    - cd /usr/src/app
     - npm test
   artifacts:
     reports:
