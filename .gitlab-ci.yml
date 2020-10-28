@@ -174,10 +174,9 @@ undeploy from ephemeral:
 deploy to test:
   extends: .run-argo-deployer
   stage: deploy-to-test
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
-      when: always
-    - when: never
+  only:
+    refs:
+      - pow-1472
   variables:
     ACTION: deploy
     INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
