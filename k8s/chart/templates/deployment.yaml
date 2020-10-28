@@ -13,7 +13,6 @@ spec:
   template:
     metadata:
       annotations:
-        buildID: {{ .Values.buildID }}
         prometheus.io/scrape: "true"
         prometheus.io/port: "80"
       labels:
