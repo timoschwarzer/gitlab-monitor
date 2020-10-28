@@ -184,6 +184,8 @@ deploy to test:
     GROUP_NAME: pow
     APP_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: test
+  before_script:
+    - ls $MANIFEST_OUTPUT_DIRECTORY
   dependencies:
     - render final charts
 
