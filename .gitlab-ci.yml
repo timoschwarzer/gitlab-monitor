@@ -5,9 +5,10 @@ stages:
   - deploy-to-ephemeral
   - ephemeral-integration-tests
   - post-test
-#  - deploy-to-test
-#  - wait-for-test-deployment
-#  - post-deploy-integration-tests - undeploy-from-test
+  - deploy-to-test
+  - wait-for-test-deployment
+  - post-deploy-integration-tests
+  - undeploy-from-test
 #  - nightly
 
 default:
@@ -155,3 +156,53 @@ undeploy from ephemeral:
     - render ephemeral charts
   except:
     - schedules
+
+deploy to test:
+  extends: .run-argo-deployer
+  stage: deploy-to-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    ACTION: deploy
+    INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: test
+  dependencies:
+    - render final charts
+
+wait for deployment to test:
+  extends: .check-healthy-deployment
+  stage: wait-for-test-deployment
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+
+stage 2 integration tests:
+  extends: .integration-tests
+  stage: post-deploy-integration-tests
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+
+undeploy from test:
+  extends: .run-argo-deployer
+  stage: undeploy-from-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    ACTION: undeploy
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: test
