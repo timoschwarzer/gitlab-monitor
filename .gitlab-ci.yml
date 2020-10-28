@@ -7,7 +7,9 @@ stages:
   - post-test
   - deploy-to-test
   - wait-for-test-deployment
-  - post-deploy-integration-tests
+  - post-deploy-to-test-integration-tests
+  - deploy-to-prod
+  - wait-for-prod-deployment
   - undeploy-from-test
 #  - nightly
 
@@ -198,10 +200,36 @@ wait for deployment to test:
     - when: never
   variables:
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: "test"
+
+deploy to prod:
+  extends: .run-argo-deployer
+  stage: deploy-to-prod
+  only:
+    refs:
+      - pow-1472
+  variables:
+    ACTION: deploy
+    INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
+  dependencies:
+    - render final charts
+
+wait for deployment to prod:
+  extends: .check-healthy-deployment
+  stage: wait-for-prod-deployment
+  only:
+    refs:
+      - pow-1472
+  variables:
+    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: "prod"
 
 stage 2 integration tests:
   extends: .integration-tests
-  stage: post-deploy-integration-tests
+  stage: post-deploy-to-test-integration-tests
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
       when: always
