@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "serve": "http-server ./dist"
+    "serve": "http-server ./dist",
+    "test": "jest"
   },
   "dependencies": {
     "@openfonts/roboto-condensed_all": "^1.44.1",
@@ -37,6 +38,8 @@
     "not ie <= 8"
   ],
   "devDependencies": {
+    "@vue/cli-plugin-unit-jest": "^4.5.8",
+    "@vue/test-utils": "^1.1.0",
     "@vue/cli-plugin-babel": "^4.0.4",
     "@vue/cli-service": "^4.0.4",
     "file-loader": "^3.0.1",
