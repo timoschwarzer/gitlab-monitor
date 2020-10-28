@@ -98,8 +98,9 @@ render ephemeral charts:
 render final charts:
   extends: .render-charts
   stage: build-prerequisites
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+  only:
+    refs:
+      - pow-1472
 
 sonar qube:
   allow_failure: true
