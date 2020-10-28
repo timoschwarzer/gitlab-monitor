@@ -82,7 +82,7 @@ build unit-test image:
   variables:
     CONTEXT: $CI_PROJECT_DIR
   before_script:
-    - export DOCKERFILE=$UNIT_TEST_DOCKERFILE
+    - export DOCKERFILE=$UNIT_TESTS_DOCKERFILE
     - export IMAGE_TAG=$UNIT_TESTS_IMAGE
   except:
     - schedules
@@ -127,7 +127,7 @@ deploy to ephemeral:
 unit tests:
   allow_failure: false
   stage: test
-  image: $UNIT_TEST_IMAGE
+  image: $UNIT_TESTS_IMAGE
   script:
     - npm test
   artifacts:
