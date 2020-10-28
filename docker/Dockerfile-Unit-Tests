@@ -1,0 +1,6 @@
+FROM node:12-alpine as build
+
+WORKDIR /usr/src/app
+COPY .. ./
+RUN yarn install \
+ && yarn build
