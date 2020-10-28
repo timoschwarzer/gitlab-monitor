@@ -7,4 +7,5 @@ module.exports = {
     '<rootDir>/src/**/*.spec.pact.ts',
   ],
   'verbose': true,
+  "reporters": [ "default", "jest-junit" ]
 }

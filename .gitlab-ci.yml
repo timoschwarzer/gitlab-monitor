@@ -116,13 +116,11 @@ unit tests:
   stage: test
   image: $APP_IMAGE
   script:
-    - mvn clean test
+    - npm test
   artifacts:
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
-    paths:
-      - target/pacts
   except:
     - schedules
 
