@@ -80,3 +80,9 @@ render ephemeral charts:
     EUREKA_SERVICE_NAME: $CI_PROJECT_NAME-$CI_COMMIT_SHA
   except:
     - schedules
+
+render final charts:
+  extends: .render-charts
+  stage: build-prerequisites
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
