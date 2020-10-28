@@ -134,6 +134,7 @@ unit tests:
     - ls target
     - ls target/surefire-reports
     - ls target/surefire-reports/TEST-junit.xml
+    - pwd
   artifacts:
     reports:
       junit:
