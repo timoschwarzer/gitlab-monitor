@@ -108,8 +108,6 @@ sonar qube:
   script:
     - if [ "$CI_COMMIT_BRANCH" == "master" ]; then TARGET="-Dsonar.branch.target=master"; else TARGET=""; fi
     - cd /usr/src/app
-    - pwd
-    - ls node_modules/sonar-scanner/bin/sonar-scanner
     - npm run sonar-scanner -- -Dsonar.host.url=http://sonarqube.apps.test.cirrostratus.org/ -Dsonar.projectKey=${CI_PROJECT_NAME} -Dsonar.branch.name=${CI_COMMIT_BRANCH} ${TARGET}
   except:
     - schedules
