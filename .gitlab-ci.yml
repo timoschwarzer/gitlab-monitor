@@ -131,6 +131,9 @@ unit tests:
   script:
     - cd /usr/src/app
     - npm test
+    - ls target
+    - ls target/surefire-reports
+    - ls target/surefire-reports/TEST-junit.xml
   artifacts:
     reports:
       junit:
