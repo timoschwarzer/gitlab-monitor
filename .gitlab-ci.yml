@@ -104,7 +104,7 @@ render final charts:
 sonar qube:
   allow_failure: true
   stage: test
-  image: $APP_IMAGE
+  image: $UNIT_TESTS_IMAGE
   script:
     - if [ "$CI_COMMIT_BRANCH" == "master" ]; then TARGET="-Dsonar.branch.target=master"; else TARGET=""; fi
     - SONAR="mvn clean compile org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar -Dsonar.host.url=http://sonarqube.apps.test.cirrostratus.org/ -Dsonar.projectKey=${CI_PROJECT_NAME} -Dsonar.branch.name=${CI_COMMIT_BRANCH} ${TARGET}"

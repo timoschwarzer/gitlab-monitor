@@ -1,4 +1,4 @@
-FROM node:12-alpine as build
+FROM timbru31/java-node:11-jre
 
 WORKDIR /usr/src/app
 COPY . ./
