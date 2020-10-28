@@ -10,7 +10,7 @@ stages:
   - post-deploy-to-test-integration-tests
   - deploy-to-prod
   - wait-for-prod-deployment
-  - post-deploy-to-test-integration-tests
+  - post-deploy-to-prod-integration-tests
   - undeploy-from-test
   - undeploy-from-prod
 #  - nightly
