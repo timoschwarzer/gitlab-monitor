@@ -1,7 +1,7 @@
 stages:
   - open-pr
   - build-prerequisites
-#  - test
+  - test
   - deploy-to-ephemeral
   - ephemeral-integration-tests
   - post-test
@@ -96,6 +96,20 @@ deploy to ephemeral:
     MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml
   dependencies:
     - render ephemeral charts
+  except:
+    - schedules
+
+unit tests:
+  stage: test
+  image: $APP_IMAGE
+  script:
+    - mvn clean test
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+    paths:
+      - target/pacts
   except:
     - schedules
 
