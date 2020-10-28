@@ -24,7 +24,6 @@ variables:
   APP_SERVICE_NAME: gitlab-monitor
   ARTIFACTORY_REPO: docker.artifactory.acorn.cirrostratus.org
   APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA
-  UNIT_TEST_APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-unit-tests:$CI_COMMIT_SHA
   APP_DOCKERFILE: docker/Dockerfile
   UNIT_TESTS_DOCKERFILE: docker/Dockerfile-Unit-Tests
   TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-tests:$CI_COMMIT_SHA
@@ -81,7 +80,7 @@ build unit-test image:
   extends: .build-image
   stage: build-prerequisites
   variables:
-    CONTEXT: $CI_PROJECT_DIR/integration-tests
+    CONTEXT: $CI_PROJECT_DIR
   before_script:
     - export DOCKERFILE=$UNIT_TEST_DOCKERFILE
     - export IMAGE_TAG=$UNIT_TESTS_IMAGE
@@ -128,7 +127,7 @@ deploy to ephemeral:
 unit tests:
   allow_failure: false
   stage: test
-  image: $UNIT_TEST_APP_IMAGE
+  image: $UNIT_TEST_IMAGE
   script:
     - npm test
   artifacts:
