@@ -10,7 +10,9 @@ stages:
   - post-deploy-to-test-integration-tests
   - deploy-to-prod
   - wait-for-prod-deployment
+  - post-deploy-to-test-integration-tests
   - undeploy-from-test
+  - undeploy-from-prod
 #  - nightly
 
 default:
@@ -227,16 +229,29 @@ wait for deployment to prod:
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: "prod"
 
-stage 2 integration tests:
+integration tests for test environment:
   extends: .integration-tests
   stage: post-deploy-to-test-integration-tests
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
-      when: always
-    - when: never
+  only:
+    refs:
+      - pow-1472
   variables:
     APP_URL: $APP_SERVICE_NAME
     RAKE_TASK: $APP_SERVICE_NAME:integration
+  dependencies:
+    - wait for deployment to test
+
+integration tests for prod environment:
+  extends: .integration-tests
+  stage: post-deploy-to-prod-integration-tests
+  only:
+    refs:
+      - pow-1472
+  variables:
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+  dependencies:
+    - wait for deployment to prod
 
 undeploy from test:
   extends: .run-argo-deployer
@@ -250,3 +265,16 @@ undeploy from test:
     GROUP_NAME: pow
     APP_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: test
+
+undeploy from prod:
+  extends: .run-argo-deployer
+  stage: undeploy-from-prod
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    ACTION: undeploy
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
