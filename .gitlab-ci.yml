@@ -134,7 +134,7 @@ unit tests:
   artifacts:
     reports:
       junit:
-        - /usr/src/app/target/surefire-reports/TEST-*.xml
+        - /usr/src/app/target/surefire-reports/TEST-junit.xml
   except:
     - schedules
 
