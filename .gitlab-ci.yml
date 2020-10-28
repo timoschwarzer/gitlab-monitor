@@ -131,14 +131,12 @@ unit tests:
   script:
     - cd /usr/src/app
     - npm test
-    - ls target
-    - ls target/surefire-reports
-    - ls target/surefire-reports/TEST-junit.xml
-    - pwd
+  after_script:
+    - cp -r /usr/src/app "$CI_PROJECT_DIR"
   artifacts:
     reports:
       junit:
-        - /usr/src/app/target/surefire-reports/TEST-junit.xml
+        - target/surefire-reports/TEST-*.xml
   except:
     - schedules
 
