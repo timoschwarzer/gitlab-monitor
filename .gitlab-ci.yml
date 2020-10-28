@@ -2,9 +2,9 @@ stages:
   - open-pr
   - build-prerequisites
 #  - test
-#  - deploy-to-ephemeral
-#  - ephemeral-integration-tests
-#  - post-test
+  - deploy-to-ephemeral
+  - ephemeral-integration-tests
+  - post-test
 #  - deploy-to-test
 #  - wait-for-test-deployment
 #  - post-deploy-integration-tests - undeploy-from-test
@@ -86,3 +86,45 @@ render final charts:
   stage: build-prerequisites
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+
+deploy to ephemeral:
+  stage: deploy-to-ephemeral
+  extends: .run-app-builder-deployer
+  variables:
+    EKS_CLUSTER: ephemeral
+    K8S_ACTION: apply
+    MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml
+  dependencies:
+    - render ephemeral charts
+  except:
+    - schedules
+
+wait for deployment to ephemeral:
+  extends: .check-healthy-deployment
+  stage: deploy-to-ephemeral
+  variables:
+    EUREKA_SERVICE_NAME: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+  except:
+    - schedules
+
+stage 1 integration tests:
+  stage: ephemeral-integration-tests
+  extends: .integration-tests
+  variables:
+    APP_URL: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+    RAKE_TASK: gitlab-monitor:pipeline_rspec
+  except:
+    - schedules
+
+undeploy from ephemeral:
+  stage: post-test
+  extends: .run-app-builder-deployer
+  when: always
+  variables:
+    EKS_CLUSTER: ephemeral
+    K8S_ACTION: delete
+    MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml
+  dependencies:
+    - render ephemeral charts
+  except:
+    - schedules
