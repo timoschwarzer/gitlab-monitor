@@ -197,10 +197,9 @@ deploy to test:
 wait for deployment to test:
   extends: .check-healthy-deployment
   stage: wait-for-test-deployment
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
-      when: always
-    - when: never
+  only:
+    refs:
+      - master
   variables:
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: "test"
