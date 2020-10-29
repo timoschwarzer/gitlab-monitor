@@ -265,6 +265,7 @@ integration tests for prod environment:
       - pow-1472
   variables:
     APP_URL: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
     RAKE_TASK: $APP_SERVICE_NAME:integration
   dependencies:
     - wait for deployment to prod
