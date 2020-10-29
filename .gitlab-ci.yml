@@ -104,9 +104,12 @@ render ephemeral charts:
 render final charts:
   extends: .render-charts
   stage: build-prerequisites
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
 
 sonar qube:
   allow_failure: true
@@ -180,17 +183,18 @@ undeploy from ephemeral:
 deploy to test:
   extends: .run-argo-deployer
   stage: deploy-to-test
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
   variables:
     ACTION: deploy
     INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
     GROUP_NAME: pow
     APP_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: test
-  before_script:
-    - ls $MANIFEST_OUTPUT_DIRECTORY
   dependencies:
     - render final charts
 
