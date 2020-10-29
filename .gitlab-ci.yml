@@ -107,6 +107,8 @@ render final charts:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
       when: always
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: always
     - when: never
@@ -218,16 +220,19 @@ deploy to prod:
     - prod-runner
   extends: .run-argo-deployer
   stage: deploy-to-prod
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
   variables:
     ACTION: deploy
     INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
     GROUP_NAME: pow
     APP_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: prod
-  dependencies:
+  needs:
     - render final charts
 
 wait for deployment to prod:
@@ -244,7 +249,7 @@ wait for deployment to prod:
   variables:
     ENVIRONMENT: prod
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
-  dependencies:
+  needs:
     - deploy to prod
 
 integration tests for test environment:
