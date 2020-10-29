@@ -25,7 +25,7 @@ variables:
   # as well as any references to this variable in this pipeline file. If we do proceed to remove
   # this variable, we should replace any references to this variable in this file with $CI_PROJECT_NAME
   # which, at least in this case, is the same as the service name.
-  APP_SERVICE_NAME: gitlab-monitor
+  APP_SERVICE_NAME: $CI_PROJECT_NAME
   ARTIFACTORY_REPO: docker.artifactory.acorn.cirrostratus.org
   APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA
   APP_DOCKERFILE: docker/Dockerfile
