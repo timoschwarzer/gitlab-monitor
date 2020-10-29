@@ -197,12 +197,17 @@ deploy to test:
 wait for deployment to test:
   extends: .check-healthy-deployment
   stage: wait-for-test-deployment
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
   variables:
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
     ENVIRONMENT: "test"
+  dependencies:
+    - deploy to test
 
 deploy to prod:
   tags:
@@ -226,12 +231,17 @@ wait for deployment to prod:
     - prod-runner
   extends: .check-healthy-deployment
   stage: wait-for-prod-deployment
-  only:
-    refs:
-      - master
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
+    - if: '$CI_BRANCH_NAME == "master"'
+      when: always
+    - when: never
   variables:
     ENVIRONMENT: prod
     EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+  dependencies:
+    - deploy to prod
 
 integration tests for test environment:
   extends: .integration-tests
@@ -279,7 +289,7 @@ undeploy from prod:
   extends: .run-argo-deployer
   stage: undeploy-from-prod
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_PROD"'
       when: always
     - when: never
   variables:
