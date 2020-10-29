@@ -1,3 +1,4 @@
+# TODO - remove comments before merging!
 stages:
   - open-pr
   - build-prerequisites
@@ -69,17 +70,16 @@ build app image:
   except:
     - schedules
 
-# TODO - uncomment before merging!
-#build test image:
-#  extends: .build-image
-#  stage: build-prerequisites
-#  variables:
-#    CONTEXT: $CI_PROJECT_DIR/integration-tests
-#  before_script:
-#    - export DOCKERFILE=$TESTS_DOCKERFILE
-#    - export IMAGE_TAG=$TESTS_IMAGE
-#  except:
-#    - schedules
+build test image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR/integration-tests
+  before_script:
+    - export DOCKERFILE=$TESTS_DOCKERFILE
+    - export IMAGE_TAG=$TESTS_IMAGE
+  except:
+    - schedules
 
 # TODO - uncomment before merging!
 #build unit-test image:
