@@ -13,7 +13,8 @@ stages:
   - post-deploy-to-prod-integration-tests
   - undeploy-from-test
   - undeploy-from-prod
-  - nightly
+  - test-integration-test
+  - prod-integration-test
 
 default:
   tags:
