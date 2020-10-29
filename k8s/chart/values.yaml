@@ -9,7 +9,7 @@ replicaCount: 1
 image:
   pullPolicy: Always
   repository: docker.artifactory.acorn.cirrostratus.org/capstan/pow/gitlab-monitor
-  tag: latest
+  tag: ""
 internalPort: 80
 resources:
   limits:
