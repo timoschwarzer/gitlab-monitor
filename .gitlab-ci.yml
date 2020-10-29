@@ -4,7 +4,7 @@ stages:
   - test
   - deploy-to-ephemeral
   - ephemeral-integration-tests
-  - post-test
+  - post-branch-test
   - deploy-to-test
   - wait-for-test-deployment
   - post-deploy-to-test-integration-tests
@@ -170,7 +170,7 @@ stage 1 integration tests:
     - schedules
 
 undeploy from ephemeral:
-  stage: post-test
+  stage: post-branch-test
   extends: .run-app-builder-deployer
   when: always
   variables:
