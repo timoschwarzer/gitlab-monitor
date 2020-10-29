@@ -162,7 +162,6 @@ render final charts:
 
 # TODO - uncomment before merging!
 #stage 1 integration tests:
-#  allow_failure: true # TODO - remove before merging
 #  stage: ephemeral-integration-tests
 #  extends: .integration-tests
 #  variables:
