@@ -205,11 +205,15 @@ wait for deployment to test:
     ENVIRONMENT: "test"
 
 deploy to prod:
+  tags:
+    - prod-runner
   extends: .run-argo-deployer
   stage: deploy-to-prod
   only:
     refs:
       - pow-1472
+  script:
+      - echo $ENVIRONMENT
   variables:
     ACTION: deploy
     INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
@@ -220,6 +224,8 @@ deploy to prod:
     - render final charts
 
 wait for deployment to prod:
+  tags:
+    - prod-runner
   extends: .check-healthy-deployment
   stage: wait-for-prod-deployment
   only:
@@ -242,6 +248,8 @@ integration tests for test environment:
     - wait for deployment to test
 
 integration tests for prod environment:
+  tags:
+    - prod-runner
   extends: .integration-tests
   stage: post-deploy-to-prod-integration-tests
   only:
@@ -267,6 +275,8 @@ undeploy from test:
     ENVIRONMENT: test
 
 undeploy from prod:
+  tags:
+    - prod-runner
   extends: .run-argo-deployer
   stage: undeploy-from-prod
   rules:
