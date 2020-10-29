@@ -9,10 +9,10 @@ stages:
 #  - wait-for-test-deployment
 #  - post-deploy-to-test-integration-tests
   - deploy-to-prod
-#  - wait-for-prod-deployment
-#  - post-deploy-to-prod-integration-tests
+  - wait-for-prod-deployment
+  - post-deploy-to-prod-integration-tests
 #  - undeploy-from-test
-#  - undeploy-from-prod
+  - undeploy-from-prod
 #  - nightly
 
 default:
@@ -231,18 +231,17 @@ deploy to prod:
   dependencies:
     - render final charts
 
-# TODO - uncomment before merging!
-#wait for deployment to prod:
-#  tags:
-#    - prod-runner
-#  extends: .check-healthy-deployment
-#  stage: wait-for-prod-deployment
-#  only:
-#    refs:
-#      - pow-1472
-#  variables:
-#    ENVIRONMENT: prod
-#    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+wait for deployment to prod:
+  tags:
+    - prod-runner
+  extends: .check-healthy-deployment
+  stage: wait-for-prod-deployment
+  only:
+    refs:
+      - pow-1472
+  variables:
+    ENVIRONMENT: prod
+    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
 
 # TODO - uncomment before merging!
 #integration tests for test environment:
@@ -257,20 +256,19 @@ deploy to prod:
 #  dependencies:
 #    - wait for deployment to test
 
-# TODO - uncomment before merging!
-#integration tests for prod environment:
-#  tags:
-#    - prod-runner
-#  extends: .integration-tests
-#  stage: post-deploy-to-prod-integration-tests
-#  only:
-#    refs:
-#      - pow-1472
-#  variables:
-#    APP_URL: $APP_SERVICE_NAME
-#    RAKE_TASK: $APP_SERVICE_NAME:integration
-#  dependencies:
-#    - wait for deployment to prod
+integration tests for prod environment:
+  tags:
+    - prod-runner
+  extends: .integration-tests
+  stage: post-deploy-to-prod-integration-tests
+  only:
+    refs:
+      - pow-1472
+  variables:
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+  dependencies:
+    - wait for deployment to prod
 
 # TODO - uncomment before merging!
 #undeploy from test:
@@ -286,18 +284,17 @@ deploy to prod:
 #    APP_NAME: $APP_SERVICE_NAME
 #    ENVIRONMENT: test
 
-# TODO - uncomment before merging!
-#undeploy from prod:
-#  tags:
-#    - prod-runner
-#  extends: .run-argo-deployer
-#  stage: undeploy-from-prod
-#  rules:
-#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
-#      when: always
-#    - when: never
-#  variables:
-#    ACTION: undeploy
-#    GROUP_NAME: pow
-#    APP_NAME: $APP_SERVICE_NAME
-#    ENVIRONMENT: prod
+undeploy from prod:
+  tags:
+    - prod-runner
+  extends: .run-argo-deployer
+  stage: undeploy-from-prod
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    ACTION: undeploy
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
