@@ -1,0 +1,5 @@
+FROM timbru31/java-node:11-jre
+
+WORKDIR /usr/src/app
+COPY . ./
+RUN yarn install

@@ -1,19 +1,336 @@
-image: node:12-alpine
-
-cache:
-  paths:
-    - node_modules/
-
 stages:
-- build
+  - open-pr
+  - build-prerequisites
+  - test
+  - deploy-to-ephemeral
+  - ephemeral-integration-tests
+  - post-branch-test
+  - deploy-to-test
+  - wait-for-test-deployment
+  - post-deploy-to-test-integration-tests
+  - deploy-to-prod
+  - wait-for-prod-deployment
+  - post-deploy-to-prod-integration-tests
+  - undeploy-from-test
+  - undeploy-from-prod
+  - test-integration-test
+  - prod-integration-test
 
-build:
-  stage: build
-  only:
-    - master
-  artifacts:
-    paths:
-      - dist
+default:
+  tags:
+    - test-runner # default gitlab runner/environment for jobs in this pipeline
+
+variables:
+  # Temporary app name. This should also be the same name as the app name in the Chart.yml file.
+  # In case we want to continue to use APP_SERVICE_NAME instead of CI_PROJECT_NAME, we should keep this
+  # as well as any references to this variable in this pipeline file. If we do proceed to remove
+  # this variable, we should replace any references to this variable in this file with $CI_PROJECT_NAME
+  # which, at least in this case, is the same as the service name.
+  APP_SERVICE_NAME: gitlab-monitor
+  ARTIFACTORY_REPO: docker.artifactory.acorn.cirrostratus.org
+  APP_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH:$CI_COMMIT_SHA
+  APP_DOCKERFILE: docker/Dockerfile
+  UNIT_TESTS_DOCKERFILE: docker/Dockerfile-Unit-Tests
+  TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-tests:$CI_COMMIT_SHA
+  UNIT_TESTS_IMAGE: $ARTIFACTORY_REPO/$CI_PROJECT_PATH-unit-tests:$CI_COMMIT_SHA
+  TESTS_DOCKERFILE: $CI_PROJECT_DIR/integration-tests/Dockerfile-tests
+  MANIFEST_OUTPUT_DIRECTORY: manifest-output
+
+include:
+  - project: capstan/pow/gitlab-templates
+    file: /create-pr/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /build-image/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /render-charts/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-app-builder-deployer/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /check-healthy-deployment/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-integration-tests/template.yml
+  - project: capstan/pow/gitlab-templates
+    file: /run-argo-deployer/template.yml
+
+open pr:
+  stage: open-pr
+  extends: .create-pr
+  except:
+    refs:
+      - master
+      - schedules
+
+build app image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR
+  before_script:
+    - export DOCKERFILE=$APP_DOCKERFILE
+    - export IMAGE_TAG=$APP_IMAGE
+  except:
+    - schedules
+
+build test image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR/integration-tests
+  before_script:
+    - export DOCKERFILE=$TESTS_DOCKERFILE
+    - export IMAGE_TAG=$TESTS_IMAGE
+  except:
+    - schedules
+
+build unit-test image:
+  extends: .build-image
+  stage: build-prerequisites
+  variables:
+    CONTEXT: $CI_PROJECT_DIR
+  before_script:
+    - export DOCKERFILE=$UNIT_TESTS_DOCKERFILE
+    - export IMAGE_TAG=$UNIT_TESTS_IMAGE
+  except:
+    - schedules
+
+render ephemeral charts:
+  extends: .render-charts
+  stage: build-prerequisites
+  variables:
+    EUREKA_SERVICE_NAME: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+  except:
+    - schedules
+
+render final charts:
+  extends: .render-charts
+  stage: build-prerequisites
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
+
+sonar qube:
+  allow_failure: true
+  stage: test
+  image: $UNIT_TESTS_IMAGE
   script:
-  - yarn install --check-files --non-interactive
-  - yarn run build
+    - if [ "$CI_COMMIT_BRANCH" == "master" ]; then TARGET="-Dsonar.branch.target=master"; else TARGET=""; fi
+    - cd /usr/src/app
+    - npm run sonar-scanner -- -Dsonar.host.url=http://sonarqube.apps.test.cirrostratus.org/ -Dsonar.projectKey=${CI_PROJECT_NAME} -Dsonar.branch.name=${CI_COMMIT_BRANCH} ${TARGET}
+  except:
+    - schedules
+
+deploy to ephemeral:
+  stage: deploy-to-ephemeral
+  extends: .run-app-builder-deployer
+  variables:
+    EKS_CLUSTER: ephemeral
+    K8S_ACTION: apply
+    MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml
+  dependencies:
+    - render ephemeral charts
+  except:
+    - schedules
+
+unit tests:
+  allow_failure: false
+  stage: test
+  image: $UNIT_TESTS_IMAGE
+  script:
+    - cd /usr/src/app
+    - npm test
+  after_script:
+    - cp -r /usr/src/app "$CI_PROJECT_DIR"
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+  except:
+    - schedules
+
+wait for deployment to ephemeral:
+  extends: .check-healthy-deployment
+  stage: deploy-to-ephemeral
+  variables:
+    EUREKA_SERVICE_NAME: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+  except:
+    - schedules
+
+stage 1 integration tests:
+  stage: ephemeral-integration-tests
+  extends: .integration-tests
+  variables:
+    APP_URL: $CI_PROJECT_NAME-$CI_COMMIT_SHA
+    RAKE_TASK: gitlab-monitor:integration
+  except:
+    - schedules
+
+undeploy from ephemeral:
+  stage: post-branch-test
+  extends: .run-app-builder-deployer
+  when: always
+  variables:
+    EKS_CLUSTER: ephemeral
+    K8S_ACTION: delete
+    MANIFEST_FILE: $MANIFEST_OUTPUT_DIRECTORY/app-manifest.yml
+  dependencies:
+    - render ephemeral charts
+  except:
+    - schedules
+
+deploy to test:
+  extends: .run-argo-deployer
+  stage: deploy-to-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
+  variables:
+    ACTION: deploy
+    INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: test
+  dependencies:
+    - render final charts
+
+wait for deployment to test:
+  extends: .check-healthy-deployment
+  stage: wait-for-test-deployment
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_TEST"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - when: never
+  variables:
+    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: "test"
+  dependencies:
+    - deploy to test
+
+deploy to prod:
+  tags:
+    - prod-runner
+  extends: .run-argo-deployer
+  stage: deploy-to-prod
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+    - when: never
+  variables:
+    ACTION: deploy
+    INPUT_FILES_LOCATION: $MANIFEST_OUTPUT_DIRECTORY
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
+  needs:
+    - render final charts
+
+wait for deployment to prod:
+  tags:
+    - prod-runner
+  extends: .check-healthy-deployment
+  stage: wait-for-prod-deployment
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "DEPLOY_PROD"'
+      when: always
+    - if: '$CI_BRANCH_NAME == "master"'
+      when: always
+    - when: never
+  variables:
+    ENVIRONMENT: prod
+    EUREKA_SERVICE_NAME: $APP_SERVICE_NAME
+  needs:
+    - deploy to prod
+
+integration tests for test environment:
+  extends: .integration-tests
+  stage: test-integration-test
+  only:
+    refs:
+      - master
+  variables:
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+  dependencies:
+    - wait for deployment to test
+
+integration tests for prod environment:
+  tags:
+    - prod-runner
+  extends: .integration-tests
+  stage: prod-integration-test
+  only:
+    refs:
+      - master
+  variables:
+    APP_URL: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+  dependencies:
+    - wait for deployment to prod
+
+undeploy from test:
+  extends: .run-argo-deployer
+  stage: undeploy-from-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_TEST"'
+      when: always
+    - when: never
+  variables:
+    ACTION: undeploy
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: test
+
+undeploy from prod:
+  tags:
+    - prod-runner
+  extends: .run-argo-deployer
+  stage: undeploy-from-prod
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "UNDEPLOY_PROD"'
+      when: always
+    - when: never
+  variables:
+    ACTION: undeploy
+    GROUP_NAME: pow
+    APP_NAME: $APP_SERVICE_NAME
+    ENVIRONMENT: prod
+
+nightly integration tests for test environment:
+  extends: .integration-tests
+  stage: test-integration-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "NIGHTLY"'
+      when: always
+    - when: never
+  variables:
+    ENVIRONMENT: test
+    TESTS_IMAGE: artifactory.acorn.cirrostratus.org/pow/gitlab-monitor:1.0.0
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration
+
+nightly integration tests for prod environment:
+  tags:
+    - prod-runner
+  extends: .integration-tests
+  stage: prod-integration-test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $PIPELINE == "NIGHTLY"'
+      when: always
+    - when: never
+  variables:
+    ENVIRONMENT: prod
+    TESTS_IMAGE: artifactory.acorn.cirrostratus.org/pow/gitlab-monitor:1.0.0
+    APP_URL: $APP_SERVICE_NAME
+    RAKE_TASK: $APP_SERVICE_NAME:integration

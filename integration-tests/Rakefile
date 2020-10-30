@@ -1,0 +1,22 @@
+$LOAD_PATH.unshift File.expand_path('.')
+
+require './spec/support/rspec_config.rb'
+require 'rspec/core/rake_task'
+
+rspec_options = '-f JunitFormatter -o rspec_junit_results.xml -f d --color --tag ~wip'
+rspec_options << case ENVIRONMENT
+                 when 'prod'
+                   ' -t ~no_prod'
+                 when 'test'
+                   ' -t ~no_test'
+                 else
+                   '' # Don't add tags in this case
+                 end
+
+namespace :'gitlab-monitor' do
+
+  RSpec::Core::RakeTask.new(:integration, 'Starter') do |t|
+    t.pattern = Dir.glob('integration-tests/spec/starter_spec.rb')
+    t.rspec_opts = [rspec_options]
+  end
+end

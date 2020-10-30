@@ -1,0 +1,5 @@
+source 'https://artifactory.acorn.cirrostratus.org/artifactory/api/gems/gems'
+gem 'rake',                       '~> 12.0'
+gem 'rspec',                      '~> 3.5'
+
+gem 'ithaka_utilities',           '~> 6.0'

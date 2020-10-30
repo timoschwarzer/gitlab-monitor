@@ -1,7 +1,7 @@
 {
   "gitlabApi": "https://gitlab.example.com/api/v4",
-  "privateToken": "ABCDEF123456",
-  "maxAge": 168,
+  "privateToken": "ABCDEF123456in default",
+  "maxAge": 0,
   "fetchCount": 20,
   "pipelinesOnly": false,
   "autoZoom": false,
@@ -43,7 +43,8 @@
       }
     }
   },
-  "projectScope": null,
-  "projectScopeId": null,
-  "theme": null
+  "projectScope": "groups",
+  "projectScopeId": "8257378",
+  "theme": null,
+  "includeSubGroups": true
 }

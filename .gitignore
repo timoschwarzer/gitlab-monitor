@@ -3,6 +3,7 @@ node_modules/
 dist/
 npm-debug.log
 yarn-error.log
+.scannerwork
 
 # Editor directories and files
 *.todo
@@ -12,3 +13,4 @@ yarn-error.log
 *.njsproj
 *.sln
 *.sublime-*
+target/
