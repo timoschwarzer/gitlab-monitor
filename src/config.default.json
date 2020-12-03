@@ -11,6 +11,7 @@
   "showProjectOnlyOn": [],
   "showRestartedJobs": true,
   "showStagesNames": false,
+  "reverseStages": false,
   "showDurations": true,
   "showUsers": false,
   "projectVisibility": "any",

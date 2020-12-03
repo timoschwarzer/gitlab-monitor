@@ -67,6 +67,9 @@ showRestartedJobs: true
 # Whether to show stages names
 showStagesNames: false
 
+# Wether to reverse the order in which the stages are displayed
+reverseStages: false
+
 # Whether to show pipeline durations or not
 showDurations: true
 

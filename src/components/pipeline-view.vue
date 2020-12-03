@@ -29,6 +29,7 @@
             <gitlab-icon class="pipeline-icon" name="status_skipped_borderless" size="24" />
             Pipeline skipped
           </div>
+          <stage-view v-else-if="reverseStages" v-for="stage in stages.slice().reverse()" :key="stage.name" :stage="stage" :project="project" />
           <stage-view v-else v-for="stage in stages" :key="stage.name" :stage="stage" :project="project" />
         </div>
         <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
@@ -97,6 +98,9 @@
         timeString += secs
 
         return timeString
+      },
+      reverseStages() {
+        return Config.root.reverseStages
       }
     },
     mounted() {
