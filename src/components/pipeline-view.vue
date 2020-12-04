@@ -115,10 +115,7 @@
     methods: {
       async fetchJobs() {
         this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
-        this.jobs = this.jobs.sort((j1, j2) => {
-          if(j1.id < j2.id) return -1;
-          return 1
-        });
+        this.jobs.sort((j1, j2) => j1.id - j2.id);
 
         if (!Config.root.showRestartedJobs) {
           this.excludeRestartedJobs();
