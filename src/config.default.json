@@ -12,6 +12,7 @@
   "showRestartedJobs": true,
   "showStagesNames": false,
   "showDurations": true,
+  "showCoverage": false,
   "showUsers": false,
   "projectVisibility": "any",
   "title": null,

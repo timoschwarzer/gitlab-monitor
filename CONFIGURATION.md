@@ -73,6 +73,9 @@ showDurations: true
 # Whether to show the user that invoked the pipeline or not
 showUsers: false
 
+# Wether to show the pipelines test coverage if available
+showCoverage: false
+
 # The page title, or null to hide
 title: null
 
