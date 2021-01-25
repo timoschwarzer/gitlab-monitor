@@ -115,7 +115,7 @@
       },
       'pipeline.status'() {
         this.$nextTick(() => this.setupDurationCounter())
-      }
+      },
     },
     methods: {
       async fetchJobs() {
@@ -180,13 +180,11 @@
               this.duration++
             }, 1000)
           }
-        } else {
-          if (this.durationCounterIntervalId) {
-            clearInterval(this.durationCounterIntervalId)
-            this.durationCounterIntervalId = null
-          }
+        } else if (this.durationCounterIntervalId) {
+          clearInterval(this.durationCounterIntervalId)
+          this.durationCounterIntervalId = null
         }
-      }
+      },
     }
   }
 </script>
