@@ -102,7 +102,7 @@
         timeString += secs
 
         return timeString
-      }
+      },
     },
     mounted() {
       this.fetchJobs()
