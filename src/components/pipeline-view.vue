@@ -33,6 +33,8 @@
         </div>
         <gitlab-icon v-if="showDurations && duration !== null" class="clock-icon" name="clock" size="10" />
         <span v-if="showDurations && duration !== null" class="duration">{{ durationString }}</span>
+        <gitlab-icon v-if="showCoverage && pipeline.coverage !== null" class="chart-icon" name="chart" size="10" />
+        <span v-if="showCoverage && pipeline.coverage !== null" class="coverage">{{ pipeline.coverage + '%' }}</span>
         <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
@@ -74,6 +76,9 @@
             this.pipeline.status === 'success'
           )
       },
+      showCoverage() {
+        return Config.root.showCoverage
+      },
       showUsers() {
         return Config.root.showUsers
       },
@@ -110,7 +115,7 @@
       },
       'pipeline.status'() {
         this.$nextTick(() => this.setupDurationCounter())
-      }
+      },
     },
     methods: {
       async fetchJobs() {
@@ -175,13 +180,11 @@
               this.duration++
             }, 1000)
           }
-        } else {
-          if (this.durationCounterIntervalId) {
-            clearInterval(this.durationCounterIntervalId)
-            this.durationCounterIntervalId = null
-          }
+        } else if (this.durationCounterIntervalId) {
+          clearInterval(this.durationCounterIntervalId)
+          this.durationCounterIntervalId = null
         }
-      }
+      },
     }
   }
 </script>
@@ -264,6 +267,18 @@
         color: var(--pipeline-user, rgba(255, 255, 255, 0.8));
         line-height: 1;
         font-size: 12px;
+      }
+
+      .coverage {
+        color: var(--pipeline-duration, rgba(255, 255, 255, 0.8));
+        line-height: 1;
+        font-size: 14px;
+        margin-right: 6px;
+      }
+
+      .chart-icon {
+        margin-right: 3px;
+        color: var(--pipeline-chart-icon, rgba(255, 255, 255, 0.5));
       }
 
       .skipped {
