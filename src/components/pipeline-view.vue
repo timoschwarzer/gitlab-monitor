@@ -38,6 +38,13 @@
         <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
+      <div v-if="showTestReport && pipeline.test_report !== null" class="pipeline test-report">
+        <span class="test-summary">Total ({{ pipeline.test_report.total_count }})</span>
+        <span class="test-summary">Sucess ({{ pipeline.test_report.success_count }})</span>
+        <span class="test-summary">Failed ({{ pipeline.test_report.failed_count }})</span>
+        <span class="test-summary">Skipped ({{ pipeline.test_report.skipped_count }})</span>
+        <span class="test-summary">Error ({{ pipeline.test_report.error_count }})</span>
+      </div>
     </div>
   </div>
 </template>
@@ -85,6 +92,9 @@
       showStagesNames() {
         return Config.root.showStagesNames;
       },
+      showTestReport() {
+        return Config.root.showTestReport
+      },
       durationString() {
         const duration = this.duration
         const hrs = ~~(duration / 3600)
@@ -121,7 +131,7 @@
       async fetchJobs() {
         this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
         this.jobs.sort((j1, j2) => j1.id - j2.id);
-
+        
         if (!Config.root.showRestartedJobs) {
           this.excludeRestartedJobs();
         }
@@ -244,6 +254,19 @@
         white-space: nowrap;
         margin-right: 8px;
         align-self: start;
+      }
+
+      .test-report {
+        white-space: nowrap;
+        margin-right: 8px;
+        align-self: start;
+      }
+
+      .test-summary {
+        color: var(--pipeline-duration, rgba(255, 255, 255, 0.5));
+        line-height: 1;
+        font-size: 12px;
+        margin-right: 12px;
       }
 
       .clock-icon {

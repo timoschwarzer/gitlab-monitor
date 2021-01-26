@@ -76,6 +76,9 @@ showUsers: false
 # Wether to show the pipelines test coverage if available
 showCoverage: false
 
+# Wether to show the pipelines test report if available
+showTestReport: true
+
 # The page title, or null to hide
 title: null
 
