@@ -19,7 +19,7 @@
           class="pipeline-id-link"
           target="_blank"
           rel="noopener noreferrer"
-          :href="project.web_url + '/pipelines/' + pipeline.id"
+          :href="pipeline.web_url"
         >
           <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
           <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
@@ -38,14 +38,8 @@
         <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
-      <div v-if="showTestReport && pipeline.test_report !== null" class="pipeline test-report">
-        <span class="test-summary">Total ({{ pipeline.test_report.total_count }})</span>
-        <span class="test-summary">Sucess ({{ pipeline.test_report.success_count }})</span>
-        <span class="test-summary">Failed ({{ pipeline.test_report.failed_count }})</span>
-        <span class="test-summary">Skipped ({{ pipeline.test_report.skipped_count }})</span>
-        <span class="test-summary">Error ({{ pipeline.test_report.error_count }})</span>
-      </div>
     </div>
+    <test-report :pipeline="pipeline" />
   </div>
 </template>
 
@@ -55,12 +49,14 @@
   import Config from '../Config'
   import GitlabIcon from './gitlab-icon'
   import StageView from './stage-view'
+  import TestReport from './test-report'
 
   export default {
     components: {
       GitlabIcon,
       Octicon,
-      StageView
+      StageView,
+      TestReport
     },
     name: 'pipeline-view',
     props: ['pipeline', 'project', 'showBranch'],
@@ -131,7 +127,7 @@
       async fetchJobs() {
         this.jobs = await this.$api(`/projects/${this.project.id}/pipelines/${this.pipeline.id}/jobs?per_page=50`)
         this.jobs.sort((j1, j2) => j1.id - j2.id);
-        
+
         if (!Config.root.showRestartedJobs) {
           this.excludeRestartedJobs();
         }
@@ -227,6 +223,7 @@
       align-items: center;
       color: white;
       height: 30px;
+      margin-bottom: 4px;
 
       &.with-stages-names {
         padding-bottom: 20px;
@@ -254,19 +251,6 @@
         white-space: nowrap;
         margin-right: 8px;
         align-self: start;
-      }
-
-      .test-report {
-        white-space: nowrap;
-        margin-right: 8px;
-        align-self: start;
-      }
-
-      .test-summary {
-        color: var(--pipeline-duration, rgba(255, 255, 255, 0.5));
-        line-height: 1;
-        font-size: 12px;
-        margin-right: 12px;
       }
 
       .clock-icon {
