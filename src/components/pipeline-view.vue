@@ -39,7 +39,7 @@
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
     </div>
-    <test-report :pipeline="pipeline" />
+    <test-report v-if="showTestReport && pipeline.test_report !== null" :pipeline="pipeline" />
   </div>
 </template>
 

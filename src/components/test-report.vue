@@ -1,31 +1,28 @@
 <template>
-  <div v-if="showTestReport && pipeline.test_report !== null">
-    <div class="test-report">
-        <a
-            class="pipeline-id-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            :href="pipeline.web_url + '/test_report'"
-        >
-          <span class="test-summary">Test Report:</span>
-          <gitlab-icon class="test-icon" name="monitor" size="12" />
-          <span class="test-summary">{{ pipeline.test_report.total_count }}</span>
-          <gitlab-icon v-if="pipeline.test_report.success_count > 0" class="test-icon" name="status-success" size="12" />
-          <span v-if="pipeline.test_report.success_count > 0" class="test-summary">{{ pipeline.test_report.success_count }}</span>
-          <gitlab-icon v-if="pipeline.test_report.failed_count > 0" class="test-icon" name="status-failed" size="12" />
-          <span v-if="pipeline.test_report.failed_count > 0" class="test-summary">{{ pipeline.test_report.failed_count }}</span>
-          <gitlab-icon v-if="pipeline.test_report.skipped_count > 0" class="test-icon" name="status_skipped_borderless" size="12" />
-          <span v-if="pipeline.test_report.skipped_count > 0" class="test-summary">{{ pipeline.test_report.skipped_count }}</span>
-          <gitlab-icon v-if="pipeline.test_report.error_count > 0" class="test-icon" name="error" size="12" />
-          <span v-if="pipeline.test_report.error_count > 0" class="test-summary">{{ pipeline.test_report.error_count }}</span>
-        </a>
-    </div>
+  <div class="test-report">
+      <a
+          class="pipeline-id-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          :href="pipeline.web_url + '/test_report'"
+      >
+        <span class="test-summary">Test Report:</span>
+        <gitlab-icon class="test-icon" name="monitor" size="12" />
+        <span class="test-summary">{{ pipeline.test_report.total_count }}</span>
+        <gitlab-icon v-if="pipeline.test_report.success_count > 0" class="test-icon" name="status-success" size="12" />
+        <span v-if="pipeline.test_report.success_count > 0" class="test-summary">{{ pipeline.test_report.success_count }}</span>
+        <gitlab-icon v-if="pipeline.test_report.failed_count > 0" class="test-icon" name="status-failed" size="12" />
+        <span v-if="pipeline.test_report.failed_count > 0" class="test-summary">{{ pipeline.test_report.failed_count }}</span>
+        <gitlab-icon v-if="pipeline.test_report.skipped_count > 0" class="test-icon" name="status_skipped_borderless" size="12" />
+        <span v-if="pipeline.test_report.skipped_count > 0" class="test-summary">{{ pipeline.test_report.skipped_count }}</span>
+        <gitlab-icon v-if="pipeline.test_report.error_count > 0" class="test-icon" name="error" size="12" />
+        <span v-if="pipeline.test_report.error_count > 0" class="test-summary">{{ pipeline.test_report.error_count }}</span>
+      </a>
   </div>
 </template>
 
 
 <script>
-import Config from '../Config'
 import GitlabIcon from './gitlab-icon'
 
 export default {
@@ -33,12 +30,7 @@ export default {
       GitlabIcon
     },
     name: 'test-report',
-    props: ['pipeline'],
-    computed: {
-        showTestReport() {
-            return Config.root.showTestReport
-        },  
-    }
+    props: ['pipeline']
 };
 </script>
 
