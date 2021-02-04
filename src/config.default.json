@@ -13,6 +13,7 @@
   "showStagesNames": false,
   "showDurations": true,
   "showCoverage": false,
+  "showTestReport": false,
   "showUsers": false,
   "projectVisibility": "any",
   "title": null,

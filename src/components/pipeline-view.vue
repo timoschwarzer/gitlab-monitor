@@ -19,7 +19,7 @@
           class="pipeline-id-link"
           target="_blank"
           rel="noopener noreferrer"
-          :href="project.web_url + '/pipelines/' + pipeline.id"
+          :href="pipeline.web_url"
         >
           <gitlab-icon v-if="showPipelineIds" class="pipeline-icon" name="hashtag" size="12" />
           <div v-if="showPipelineIds" class="pipeline-id">{{ pipeline.id }}</div>
@@ -39,6 +39,7 @@
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
       </div>
     </div>
+    <test-report v-if="showTestReport && pipeline.test_report !== null" :pipeline="pipeline" />
   </div>
 </template>
 
@@ -48,12 +49,14 @@
   import Config from '../Config'
   import GitlabIcon from './gitlab-icon'
   import StageView from './stage-view'
+  import TestReport from './test-report'
 
   export default {
     components: {
       GitlabIcon,
       Octicon,
-      StageView
+      StageView,
+      TestReport
     },
     name: 'pipeline-view',
     props: ['pipeline', 'project', 'showBranch'],
@@ -84,6 +87,9 @@
       },
       showStagesNames() {
         return Config.root.showStagesNames;
+      },
+      showTestReport() {
+        return Config.root.showTestReport
       },
       durationString() {
         const duration = this.duration
@@ -217,6 +223,7 @@
       align-items: center;
       color: white;
       height: 30px;
+      margin-bottom: 4px;
 
       &.with-stages-names {
         padding-bottom: 20px;

@@ -193,6 +193,7 @@
         this.loading = true
 
         const maxAge = Config.root.maxAge
+        const showTestReport = Config.root.showTestReport
         const showMerged = this.showMerged
         const showTags = this.showTags
         const fetchCount = Config.root.fetchCount
@@ -280,6 +281,11 @@
                   resolvedPipeline.status !== 'skipped'
                 )
               ) {
+                resolvedPipeline['test_report'] = null
+                if (showTestReport) {
+                  const testReport = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[i].id}/test_report`)
+                  resolvedPipeline['test_report'] = testReport
+                }
                 newPipelines[refName].push(resolvedPipeline)
                 count++
 
