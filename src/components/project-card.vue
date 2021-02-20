@@ -220,7 +220,7 @@
           }, { follow_next_page_links: fetchCount > 100 })
         }
         const tagNames = tags.map((tag) => tag.name)
-        let detached = []
+        const detached = []
         if (showDetached) {
           const mergeRequests = await this.$api(`/projects/${this.projectId}/merge_requests`, {
             state: 'opened',
