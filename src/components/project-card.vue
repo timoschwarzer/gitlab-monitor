@@ -38,6 +38,7 @@
   import Octicon from 'vue-octicon/components/Octicon'
   import 'vue-octicon/icons/clock'
   import 'vue-octicon/icons/git-branch'
+  import 'vue-octicon/icons/git-pull-request'
   import 'vue-octicon/icons/sync'
   import Config from '../Config'
   import GitlabIcon from './gitlab-icon'
@@ -69,6 +70,9 @@
       },
       showTags() {
         return this.config.showTags
+      },
+      showDetached() {
+        return this.config.showDetached
       },
       showProjectOnlyOn() {
         const showProjectOnlyOn = Config.root.showProjectOnlyOn
@@ -196,6 +200,7 @@
         const showTestReport = Config.root.showTestReport
         const showMerged = this.showMerged
         const showTags = this.showTags
+        const showDetached = this.showDetached
         const fetchCount = Config.root.fetchCount
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
@@ -215,10 +220,22 @@
           }, { follow_next_page_links: fetchCount > 100 })
         }
         const tagNames = tags.map((tag) => tag.name)
+        let detached = []
+        if (showDetached) {
+          let mergeRequests = await this.$api(`/projects/${this.projectId}/merge_requests`, {
+            state: 'opened',
+            per_page: fetchCount > 100 ? 100 : fetchCount
+          }, { follow_next_page_links: fetchCount > 100 })
+          for (const mergeRequest of mergeRequests) {
+            let mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
+            if (mrPipelines.length > 0) {
+              detached = detached.concat(mrPipelines[0].ref)
+            }
+          }
+        }
         const newPipelines = {}
         let count = 0
-        const refNames = branchNames.concat(tagNames)
-
+        const refNames = branchNames.concat(tagNames, detached)
         let hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
 
         refLoop:

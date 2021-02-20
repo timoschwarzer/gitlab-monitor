@@ -36,6 +36,7 @@
       "default": null,
       "showMerged": true,
       "showTags": true,
+      "showDetached": false,
       "historyCount": 1,
       "hideSkippedPipelines": false,
       "soundAlerts": {

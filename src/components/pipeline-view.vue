@@ -8,9 +8,9 @@
         class="branch"
         target="_blank"
         rel="noopener noreferrer"
-        :href="project.web_url + '/tree/' + pipeline.ref"
+        :href="project.web_url + (!pipeline.ref.includes('merge-request') ?  '/tree/' + pipeline.ref : '/-/merge_requests' + '/' + pipeline.ref.match(/\d+/))"
       >
-        <octicon name="git-branch" scale="0.9" />
+        <octicon :name="!pipeline.ref.includes('merge-request') ? 'git-branch' : 'git-pull-request'" scale="0.9" />
         {{ pipeline.ref }}
       </a>
 
