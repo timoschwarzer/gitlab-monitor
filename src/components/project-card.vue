@@ -236,8 +236,8 @@
         const newPipelines = {}
         let count = 0
         const refNames = branchNames.concat(tagNames, detached)
-        let hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
-        let hideSuccessfulPipelines = Config.getProjectProperty('hideSuccessfulPipelines', this.project.path_with_namespace)
+        const hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
+        const hideSuccessfulPipelines = Config.getProjectProperty('hideSuccessfulPipelines', this.project.path_with_namespace)
 
         refLoop:
         for (const refName of refNames) {
