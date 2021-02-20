@@ -227,7 +227,7 @@
             per_page: fetchCount > 100 ? 100 : fetchCount
           }, { follow_next_page_links: fetchCount > 100 })
           for (const mergeRequest of mergeRequests) {
-            let mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
+            const mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
             if (mrPipelines.length > 0) {
               detached = detached.concat(mrPipelines[0].ref)
             }
