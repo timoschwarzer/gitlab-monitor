@@ -14,7 +14,7 @@ $ git clone https://github.com/timoschwarzer/gitlab-monitor
 $ cd gitlab-monitor/charts/gitlab-monitor/
 ```
 Helm install monitor
-> note name and namespace can be customized. 
+> note name and namespace can be customized.
 ```bash
 $ helm install . -n gitlab-monitor --namespace default
 ```
@@ -53,6 +53,7 @@ config: |
         "default": null,
         "showMerged": false,
         "showTags": true,
+        "showDetached": false,
         "maxPipelines": 10,
         "notifyFailureOn": null
       }

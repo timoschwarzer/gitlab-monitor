@@ -38,6 +38,7 @@
   import Octicon from 'vue-octicon/components/Octicon'
   import 'vue-octicon/icons/clock'
   import 'vue-octicon/icons/git-branch'
+  import 'vue-octicon/icons/git-pull-request'
   import 'vue-octicon/icons/sync'
   import Config from '../Config'
   import GitlabIcon from './gitlab-icon'
@@ -69,6 +70,9 @@
       },
       showTags() {
         return this.config.showTags
+      },
+      showDetached() {
+        return this.config.showDetached
       },
       showProjectOnlyOn() {
         const showProjectOnlyOn = Config.root.showProjectOnlyOn
@@ -196,6 +200,7 @@
         const showTestReport = Config.root.showTestReport
         const showMerged = this.showMerged
         const showTags = this.showTags
+        const showDetached = this.showDetached
         const fetchCount = Config.root.fetchCount
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
@@ -215,11 +220,24 @@
           }, { follow_next_page_links: fetchCount > 100 })
         }
         const tagNames = tags.map((tag) => tag.name)
+        const detached = []
+        if (showDetached) {
+          const mergeRequests = await this.$api(`/projects/${this.projectId}/merge_requests`, {
+            state: 'opened',
+            per_page: fetchCount > 100 ? 100 : fetchCount
+          }, { follow_next_page_links: fetchCount > 100 })
+          for (const mergeRequest of mergeRequests) {
+            const mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
+            if (mrPipelines.length > 0) {
+              detached.push(mrPipelines[0].ref)
+            }
+          }
+        }
         const newPipelines = {}
         let count = 0
-        const refNames = branchNames.concat(tagNames)
-
-        let hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
+        const refNames = branchNames.concat(tagNames, detached)
+        const hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
+        const hideSuccessfulPipelines = Config.getProjectProperty('hideSuccessfulPipelines', this.project.path_with_namespace)
 
         refLoop:
         for (const refName of refNames) {
@@ -247,6 +265,9 @@
                 ) && (
                   !hideSkippedPipelines ||
                   resolvedPipeline.status !== 'skipped'
+                ) && (
+                  !hideSuccessfulPipelines ||
+                  resolvedPipeline.status !== 'success'
                 )
               ) {
                 resolvedPipelines.push(resolvedPipeline)
@@ -259,8 +280,12 @@
 
             for (const resolvedPipeline of resolvedPipelines) {
               if (
-                !hideSkippedPipelines ||
+                (!hideSkippedPipelines ||
                 resolvedPipeline.status !== 'skipped'
+                ) && (
+                !hideSuccessfulPipelines ||
+                resolvedPipeline.status !== 'success'
+                )
               ) {
                 newPipelines[refName].push(resolvedPipeline)
                 count++
@@ -279,6 +304,9 @@
                 ) && (
                   !hideSkippedPipelines ||
                   resolvedPipeline.status !== 'skipped'
+                ) && (
+                  !hideSuccessfulPipelines ||
+                  resolvedPipeline.status !== 'success'
                 )
               ) {
                 resolvedPipeline['test_report'] = null

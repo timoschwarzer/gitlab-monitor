@@ -149,11 +149,17 @@ projectConfig:
     # Whether to show pipelines of tags
     showTags: true
 
-    # Minimum number of pipelines to display for this filter.
+    # Whether to show detached pipelines of merge requests
+    showDetached: false
+
+    # Minimum number of pipelines to display for this filter
     historyCount: 1
 
     # Hide skipped pipelines
     hideSkippedPipelines: false
+
+    # Hide successful pipelines
+    hideSuccessfulPipelines: false
 
     soundAlerts:
       # If set to a non-null value, sound alerts will be enabled.
