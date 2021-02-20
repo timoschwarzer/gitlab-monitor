@@ -229,7 +229,7 @@
           for (const mergeRequest of mergeRequests) {
             const mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
             if (mrPipelines.length > 0) {
-              detached = detached.concat(mrPipelines[0].ref)
+              detached.push(mrPipelines[0].ref)
             }
           }
         }
