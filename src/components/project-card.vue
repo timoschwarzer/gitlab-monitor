@@ -237,6 +237,7 @@
         let count = 0
         const refNames = branchNames.concat(tagNames, detached)
         let hideSkippedPipelines = Config.getProjectProperty('hideSkippedPipelines', this.project.path_with_namespace)
+        let hideSuccessfulPipelines = Config.getProjectProperty('hideSuccessfulPipelines', this.project.path_with_namespace)
 
         refLoop:
         for (const refName of refNames) {
@@ -264,6 +265,9 @@
                 ) && (
                   !hideSkippedPipelines ||
                   resolvedPipeline.status !== 'skipped'
+                ) && (
+                  !hideSuccessfulPipelines ||
+                  resolvedPipeline.status !== 'success'
                 )
               ) {
                 resolvedPipelines.push(resolvedPipeline)
@@ -276,8 +280,12 @@
 
             for (const resolvedPipeline of resolvedPipelines) {
               if (
-                !hideSkippedPipelines ||
+                (!hideSkippedPipelines ||
                 resolvedPipeline.status !== 'skipped'
+                ) && (
+                !hideSuccessfulPipelines ||
+                resolvedPipeline.status !== 'success'
+                )
               ) {
                 newPipelines[refName].push(resolvedPipeline)
                 count++
@@ -296,6 +304,9 @@
                 ) && (
                   !hideSkippedPipelines ||
                   resolvedPipeline.status !== 'skipped'
+                ) && (
+                  !hideSuccessfulPipelines ||
+                  resolvedPipeline.status !== 'success'
                 )
               ) {
                 resolvedPipeline['test_report'] = null

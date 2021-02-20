@@ -39,6 +39,7 @@
       "showDetached": false,
       "historyCount": 1,
       "hideSkippedPipelines": false,
+      "hideSuccessfulPipelines": false,
       "soundAlerts": {
         "soundUrl": null,
         "include": ".*",

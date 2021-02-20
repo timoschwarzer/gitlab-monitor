@@ -158,6 +158,9 @@ projectConfig:
     # Hide skipped pipelines
     hideSkippedPipelines: false
 
+    # Hide successful pipelines
+    hideSuccessfulPipelines: false
+
     soundAlerts:
       # If set to a non-null value, sound alerts will be enabled.
       # Replace null with URL to sound file.
