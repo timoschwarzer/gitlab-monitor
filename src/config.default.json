@@ -5,6 +5,7 @@
   "fetchCount": 20,
   "pipelinesOnly": false,
   "autoZoom": false,
+  "membership": false,
   "showPipelineIds": true,
   "showJobs": "icon",
   "showJobsNameOnlyOn": [],
