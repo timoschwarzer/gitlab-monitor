@@ -1,10 +1,43 @@
 # Configuration
 
 GitLab Monitor is configured with a YAML-encoded configuration file.
-Your configuration overrides the default configuration, which can be found
-[here](./src/config.default.json)
 
-**To change the existing configuration, hover the bottom left corner of the viewport!**
+Your configuration overrides the default configuration, which can be here: [/src/config.default.json](./src/config.default.json)
+
+The configuration can be loaded statically or dynamically.
+
+
+## Dynamic configuration
+
+- Start the server in dev or production mode (see [README.md](./README.md)).
+- Open the application URL
+- On the home page, you'll be asked to enter your configuration (basically you gitlab API endpoint and your private token)
+- Once configured, to change the existing configuration, hover the bottom left corner of the viewport!
+
+
+## Static configuration
+
+To add your configuration, copy [/src/config.template.json](./src/config.template.json) file into `/public/config.json` and update value.
+
+```json
+{
+  "gitlabApi": "https://gitlab.example.com/api/v4",
+  "privateToken": "ABCDEF1234"
+}
+```
+
+Your can also use "Headless configuration" or "Environment variable configuration" ask detailed below:
+
+### Headless configuration
+If you can't access the browser directly for some reason, you can pass
+your configuration YAML encoded with base64url as `rawConfig` query parameter.
+
+### Injecting configuration when starting the container
+You can also inject your configuration at runtime by setting an environment variable, `GITLAB_MONITOR_CONFIG`.
+
+## Configuration options
+
+Here you'll find documentation about each configration option:
 
 ```yaml
 # Required
@@ -199,9 +232,3 @@ includeSubgroups:  false
 theme: null
 ```
 
-## Headless configuration
-If you can't access the browser directly for some reason, you can pass
-your configuration YAML encoded with base64url as `rawConfig` query parameter.
-
-## Injecting configuration when starting the container
-You can also inject your configuration at runtime by setting an environment variable, `GITLAB_MONITOR_CONFIG`.
