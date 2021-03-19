@@ -296,7 +296,7 @@
               }
             }
 
-            for (let i = newPipelines[refName].length; i < historyCount; i++) {
+            for (let i = newPipelines[refName].length; (i < historyCount) && (i < pipelines.length); i++) {
               const resolvedPipeline = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[i].id}`)
               if (
                 (maxAge === 0 ||
