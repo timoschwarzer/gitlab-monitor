@@ -182,6 +182,9 @@ projectConfig:
     # Whether to show pipelines of tags
     showTags: true
 
+    # Whether to show only the latest tag
+    showLatestTagOnly: false
+
     # Whether to show detached pipelines of merge requests
     showDetached: false
 

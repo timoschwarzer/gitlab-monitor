@@ -71,6 +71,9 @@
       showTags() {
         return this.config.showTags
       },
+      showLatestTagOnly() {
+        return this.config.showLatestTagOnly
+      },
       showDetached() {
         return this.config.showDetached
       },
@@ -200,6 +203,7 @@
         const showTestReport = Config.root.showTestReport
         const showMerged = this.showMerged
         const showTags = this.showTags
+        const showLatestTagOnly = this.showLatestTagOnly
         const showDetached = this.showDetached
         const fetchCount = Config.root.fetchCount
 
@@ -215,9 +219,14 @@
           })
         let tags = []
         if (showTags) {
-          tags = await this.$api(`/projects/${this.projectId}/repository/tags`, {
-            per_page: fetchCount > 100 ? 100 : fetchCount
-          }, { follow_next_page_links: fetchCount > 100 })
+          if (showLatestTagOnly) {
+            tags = await this.$api(`/projects/${this.projectId}/repository/tags`)
+            tags = tags.slice(0, 1)
+          } else {
+            tags = await this.$api(`/projects/${this.projectId}/repository/tags`, {
+              per_page: fetchCount > 100 ? 100 : fetchCount
+            }, { follow_next_page_links: fetchCount > 100 })
+          }
         }
         const tagNames = tags.map((tag) => tag.name)
         const detached = []
