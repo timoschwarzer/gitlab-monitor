@@ -37,6 +37,7 @@
       "default": null,
       "showMerged": true,
       "showTags": true,
+      "showLatestTagOnly": false,
       "showDetached": false,
       "historyCount": 1,
       "hideSkippedPipelines": false,

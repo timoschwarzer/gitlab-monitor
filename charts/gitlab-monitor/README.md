@@ -53,6 +53,7 @@ config: |
         "default": null,
         "showMerged": false,
         "showTags": true,
+        "showLatestTagOnly": false,
         "showDetached": false,
         "maxPipelines": 10,
         "notifyFailureOn": null
