@@ -207,6 +207,8 @@
         const showDetached = this.showDetached
         const fetchCount = Config.root.fetchCount
 
+        let refNamesAdditional = {}
+
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
           per_page: fetchCount > 100 ? 100 : fetchCount
         }, { follow_next_page_links: fetchCount > 100 })
@@ -238,7 +240,9 @@
           for (const mergeRequest of mergeRequests) {
             const mrPipelines = await this.$api(`/projects/${this.projectId}/merge_requests/${mergeRequest.iid}/pipelines`)
             if (mrPipelines.length > 0) {
-              detached.push(mrPipelines[0].ref)
+              const mrPipelineRef = mrPipelines[0].ref
+              detached.push(mrPipelineRef)
+              refNamesAdditional[mrPipelineRef] = {title: mergeRequest.title}
             }
           }
         }
@@ -296,6 +300,8 @@
                 resolvedPipeline.status !== 'success'
                 )
               ) {
+                resolvedPipeline.additional = refNamesAdditional[refName]
+
                 newPipelines[refName].push(resolvedPipeline)
                 count++
               }
@@ -323,6 +329,9 @@
                   const testReport = await this.$api(`/projects/${this.projectId}/pipelines/${pipelines[i].id}/test_report`)
                   resolvedPipeline['test_report'] = testReport
                 }
+
+                resolvedPipeline.additional = refNamesAdditional[refName]
+
                 newPipelines[refName].push(resolvedPipeline)
                 count++
 
