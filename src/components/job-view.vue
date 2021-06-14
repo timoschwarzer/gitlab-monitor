@@ -68,12 +68,9 @@
         return Config.root.showJobs === 'icon' || Config.root.showJobs === 'iconAndName'
       },
       urlForJob() {
-        var isTriggerForAnotherPipeline = this.job.downstream_pipeline !== 'undefined' && this.job.downstream_pipeline != null
-        if (isTriggerForAnotherPipeline) {
-          return this.job.downstream_pipeline.web_url
-        } else {
-          return this.job.web_url
-        }
+        return this.job.downstream_pipeline
+          ? this.job.downstream_pipeline.web_url
+          : this.job.web_url
       }
     }
   }
