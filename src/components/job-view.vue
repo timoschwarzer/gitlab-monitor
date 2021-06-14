@@ -4,7 +4,7 @@
     target="_blank"
     :title="job.name"
     rel="noopener noreferrer"
-    :href="project.web_url + '/-/jobs/' + job.id"
+    :href="urlForJob"
   >
     <div :class="['job-circle', job.status === 'failed' ? (job.allow_failure ? 'warning' : 'failed') : job.status, {square: !showJobNames, hasIcon: showJobIcons}]">
       <transition name="fade" mode="out-in">
@@ -66,6 +66,11 @@
       },
       showJobIcons() {
         return Config.root.showJobs === 'icon' || Config.root.showJobs === 'iconAndName'
+      },
+      urlForJob() {
+        return this.job.downstream_pipeline
+          ? this.job.downstream_pipeline.web_url
+          : this.job.web_url
       }
     }
   }
