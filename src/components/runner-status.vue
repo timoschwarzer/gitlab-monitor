@@ -47,6 +47,7 @@ export default {
     async fetchRunners() {
       const runners = await this.$api('/runners')
       this.runners_online = runners.filter(runner => runner.status === 'online').map(runner => runner.description)
+      this.runners_active = runners.filter(runner => runner.status === 'active').map(runner => runner.description)
       this.runners_offline = runners.filter(runner => runner.status === 'offline').map(runner => runner.description)
       this.runners_paused = runners.filter(runner => runner.status === 'paused').map(runner => runner.description)
     },
