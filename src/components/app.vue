@@ -1,15 +1,23 @@
 <template>
   <div class="app">
-    <div v-if="loaded && configured" :style="{zoom}">
-      <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
-      <div class="projects">
-        <project-card
-          v-for="project in sortedProjects"
-          :key="project.id"
-          :project-id="project.id"
-        />
+    <template v-if="loaded && configured" :style="{zoom}">
+      <div class="content">
+        <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
+        <div class="projects">
+          <project-card
+            v-for="project in sortedProjects"
+            :key="project.id"
+            :project-id="project.id"
+          />
+        </div>
+        <div v-if="configured" class="configure" @click.prevent.stop="configured = false">
+          Configure
+        </div>
       </div>
-    </div>
+      <div v-if="showRunnerStatus()">
+        <runner-status/>
+      </div>
+    </template>
     <div v-else-if="!configured" class="container">
       <h1>Configuration</h1>
       <p>
@@ -40,17 +48,15 @@
     <div v-else class="loader">
       <octicon name="sync" spin scale="3" />
     </div>
-    <div v-if="configured" class="configure" @click.prevent.stop="configured = false">
-      Configure
-    </div>
   </div>
 </template>
 
 <script>
   import Octicon from 'vue-octicon/components/Octicon'
   import Config from '../Config'
-  import { configureApi } from '../GitLabApi'
+  import { configureApi } from '@/GitLabApi'
   import ProjectCard from './project-card'
+  import RunnerStatus from './runner-status'
   import YAML from 'yaml'
   import Visibilty from 'visibilityjs'
   import MonacoEditor from 'vue-monaco'
@@ -59,6 +65,7 @@
     components: {
       Octicon,
       ProjectCard,
+      RunnerStatus,
       MonacoEditor
     },
     name: 'app',
@@ -114,7 +121,7 @@
         }
 
         return true
-      }
+      },
     },
     beforeMount() {
       this.reloadConfig()
@@ -310,6 +317,9 @@
       },
       getTitle() {
         return Config.root.title || null
+      },
+      showRunnerStatus() {
+        return Config.root.showRunnerStatus
       }
     }
   }
@@ -331,7 +341,7 @@
 
   body {
     margin: 0;
-    padding: 4px;
+    padding: 0;
     box-sizing: border-box;
     min-height: 100vh;
     background: url('../assets/backdrop.svg') no-repeat bottom;
@@ -363,6 +373,16 @@
 
 <style lang="scss" scoped>
   .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    flex-grow: 0;
+
+    .content {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
     .title {
       text-align: center;
       margin-left: 8px;
@@ -389,8 +409,9 @@
     }
 
     .container {
-      padding: 0 16px;
       height: 100%;
+      overflow-y: auto;
+      padding: 0 16px 1em;
     }
 
     .config {
@@ -400,11 +421,12 @@
 
     .configure {
       position: fixed;
-      bottom: 0;
       left: 0;
+      bottom: 0;
       padding: 16px 16px;
       background-color: #161616;
       border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
       border-top: 2px solid white;
       border-right: 2px solid white;
       opacity: 0;
