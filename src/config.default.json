@@ -16,6 +16,7 @@
   "showCoverage": false,
   "showTestReport": false,
   "showUsers": false,
+  "showRunnerStatus": true,
   "projectVisibility": "any",
   "title": null,
   "orderBy": "lastActivity",
