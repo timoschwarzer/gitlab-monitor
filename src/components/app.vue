@@ -9,6 +9,9 @@
           :project-id="project.id"
         />
       </div>
+      <div>
+        <runner-status/>
+      </div>
     </div>
     <div v-else-if="!configured" class="container">
       <h1>Configuration</h1>
@@ -51,6 +54,7 @@
   import Config from '../Config'
   import { configureApi } from '../GitLabApi'
   import ProjectCard from './project-card'
+  import RunnerStatus from './runner-status'
   import YAML from 'yaml'
   import Visibilty from 'visibilityjs'
   import MonacoEditor from 'vue-monaco'
@@ -59,6 +63,7 @@
     components: {
       Octicon,
       ProjectCard,
+      RunnerStatus,
       MonacoEditor
     },
     name: 'app',
@@ -400,13 +405,15 @@
 
     .configure {
       position: fixed;
-      bottom: 0;
+      bottom: 22px;
       left: 0;
       padding: 16px 16px;
       background-color: #161616;
       border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
       border-top: 2px solid white;
       border-right: 2px solid white;
+      border-bottom: 2px solid white;
       opacity: 0;
       cursor: pointer;
 
