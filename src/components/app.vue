@@ -1,7 +1,7 @@
 <template>
   <div class="app">
-    <template v-if="loaded && configured" :style="{zoom}">
-      <div class="content">
+    <template v-if="loaded && configured">
+      <div ref="content" class="content" :style="{zoom}">
         <h1 class="title" v-if="!!getTitle()">{{ getTitle() }}</h1>
         <div class="projects">
           <project-card
@@ -210,14 +210,16 @@
       async autoZoom() {
         let step = 0.1
 
-        if (this.$el.clientHeight > window.innerHeight) {
+        const content = this.$refs.content
+
+        if (content.scrollHeight > content.clientHeight) {
           step = -0.1
         }
 
         while (
-          (step > 0 && this.$el.clientHeight <= window.innerHeight) ||
-          (step < 0 && this.$el.clientHeight > window.innerHeight)
-          ) {
+          (step > 0 && content.scrollHeight <= content.clientHeight) ||
+          (step < 0 && content.scrollHeight > content.clientHeight)
+        ) {
           this.zoom += step
           await this.$nextTick()
 
