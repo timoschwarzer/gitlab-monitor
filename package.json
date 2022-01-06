@@ -21,7 +21,7 @@
     "http-server": "^0.11.1",
     "monaco-editor-webpack-plugin": "1.9.0",
     "nord": "^0.2.1",
-    "parse-link-header": "^1.0.1",
+    "parse-link-header": "^2.0.0",
     "query-string": "^6.2.0",
     "regenerator-runtime": "^0.13.3",
     "visibilityjs": "^2.0.2",
