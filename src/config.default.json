@@ -40,6 +40,7 @@
       "showTags": true,
       "showLatestTagOnly": false,
       "showDetached": false,
+      "showLabels": true,
       "historyCount": 1,
       "hideSkippedPipelines": false,
       "hideSuccessfulPipelines": false,

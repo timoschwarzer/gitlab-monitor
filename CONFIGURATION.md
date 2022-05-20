@@ -188,6 +188,9 @@ projectConfig:
     # Whether to show detached pipelines of merge requests
     showDetached: false
 
+    # Whether to show the labels of the merge request for detached pipelines
+    showLabels: true
+
     # Minimum number of pipelines to display for this filter
     historyCount: 1
 

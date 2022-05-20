@@ -11,7 +11,7 @@
         :href="project.web_url + (!pipeline.ref.includes('merge-request') ?  '/tree/' + pipeline.ref : '/-/merge_requests' + '/' + pipeline.ref.match(/\d+/))"
       >
         <octicon :name="!pipeline.ref.includes('merge-request') ? 'git-branch' : 'git-pull-request'" scale="0.9" />
-        {{ pipeline.ref }} <span v-if="pipeline.additional"> – {{ pipeline.additional.title }}</span>
+        {{ pipeline.ref }} <span v-if="pipeline.additional">&nbsp;–&nbsp;{{ pipeline.additional.title }}<span class="mr-label" v-for="label in pipeline.additional.labels">{{label}}</span></span>
       </a>
 
       <div :class="['pipeline', {'with-stages-names': showStagesNames, 'is-skipped': pipeline.status === 'skipped'}]">
@@ -200,6 +200,7 @@
 
 <style lang="scss" scoped>
   .pipeline-view {
+    margin-top: 2px;
     &:not(:last-child) {
       margin-bottom: 4px;
     }
@@ -219,6 +220,16 @@
       .octicon {
         margin-right: 4px;
       }
+    }
+
+    .mr-label {
+      margin-left: 5px;
+      vertical-align: middle;
+      padding: 2px;
+      font-size: 8px;
+      border-radius: 0.75rem;
+      color:  var(--project-default, #424242);
+      background: var(--pipeline-id, rgba(255, 255, 255, 0.8));
     }
 
     .pipeline {
