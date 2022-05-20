@@ -11,7 +11,7 @@
         :href="project.web_url + (!pipeline.ref.includes('merge-request') ?  '/tree/' + pipeline.ref : '/-/merge_requests' + '/' + pipeline.ref.match(/\d+/))"
       >
         <octicon :name="!pipeline.ref.includes('merge-request') ? 'git-branch' : 'git-pull-request'" scale="0.9" />
-        {{ pipeline.ref }} <span v-if="pipeline.additional">&nbsp;–&nbsp;{{ pipeline.additional.title }}<span class="mr-label" v-for="label in pipeline.additional.labels">{{label}}</span></span>
+        {{ pipeline.ref }} <span v-if="pipeline.additional">&nbsp;–&nbsp;{{ pipeline.additional.title }}<span class="mr-label" v-for="label in pipeline.additional.labels">{{ label }}</span></span>
       </a>
 
       <div :class="['pipeline', {'with-stages-names': showStagesNames, 'is-skipped': pipeline.status === 'skipped'}]">
