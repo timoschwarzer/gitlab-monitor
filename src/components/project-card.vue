@@ -77,6 +77,9 @@
       showDetached() {
         return this.config.showDetached
       },
+      showLabels() {
+        return this.config.showLabels
+      },
       showProjectOnlyOn() {
         const showProjectOnlyOn = Config.root.showProjectOnlyOn
         if (showProjectOnlyOn && showProjectOnlyOn.length) {
@@ -205,6 +208,7 @@
         const showTags = this.showTags
         const showLatestTagOnly = this.showLatestTagOnly
         const showDetached = this.showDetached
+        const showLabels = this.showLabels
         const fetchCount = Config.root.fetchCount
 
         let refNamesAdditional = {}
@@ -243,6 +247,9 @@
               const mrPipelineRef = mrPipelines[0].ref
               detached.push(mrPipelineRef)
               refNamesAdditional[mrPipelineRef] = {title: mergeRequest.title}
+              if (showLabels && mergeRequest.labels.length) {
+                refNamesAdditional[mrPipelineRef].labels = mergeRequest.labels
+              }
             }
           }
         }
