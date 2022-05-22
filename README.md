@@ -6,10 +6,6 @@
 
 ### Hosted version
 
-**Note: I recently changed the address from timoschwarzer.com/gitlab-monitor to
-gitlab-monitor.timoschwarzer.com! Please update your config if you still use the
-old address. Sorry for the inconvenience!**
-
 If you don't want to setup your own server, you can always
 use the latest version of GitLab Monitor I upload here:
 
