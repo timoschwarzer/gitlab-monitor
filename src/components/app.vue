@@ -21,8 +21,9 @@
     <div v-else-if="!configured" class="container">
       <h1>Configuration</h1>
       <p>
-        Hi! Before you can use GitLab Monitor, it has to be configured.<br>
-        Configuration is done by supplying YAML formatted configuration.<br>
+        To use GitLab Monitor, it has to be configured.<br>
+        Configuration is done by supplying YAML formatted options,<br>
+        all configuration options are described <a href="https://github.com/timoschwarzer/gitlab-monitor/blob/main/CONFIGURATION.md#configuration-options" target="_blank">here</a>.<br>
         Your configuration is being persisted in this browser.
       </p>
       <monaco-editor v-model="config" language="yaml" class="config" :options="monacoOptions" />
@@ -359,7 +360,7 @@
     padding: 8px;
     margin-right: 4px;
     background: #2e2e2e;
-    border: 2px solid #606060;
+    border: 1px solid white;
     border-radius: 4px;
     color: #fff;
     cursor: pointer;
@@ -412,7 +413,7 @@
 
     .config {
       margin-bottom: 8px;
-      min-height: 300px;
+      min-height: 500px;
     }
 
     .configure {
@@ -421,8 +422,7 @@
       bottom: 0;
       padding: 16px 16px;
       background-color: #161616;
-      border-top-right-radius: 3px;
-      border-bottom-right-radius: 3px;
+      border-top-right-radius: 4px;
       border-top: 2px solid white;
       border-right: 2px solid white;
       opacity: 0;

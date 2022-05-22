@@ -21,7 +21,7 @@ $ helm install . -n gitlab-monitor --namespace default
 
 ## Configure
 
-Edit the `values.yaml` and set the config yaml string according.
+Edit the `values.yaml` and set the config yaml string accordingly.
 
 ```yaml
 config: |
@@ -55,6 +55,7 @@ config: |
         "showTags": true,
         "showLatestTagOnly": false,
         "showDetached": false,
+        "showLabels": true,
         "maxPipelines": 10,
         "notifyFailureOn": null
       }
