@@ -201,14 +201,13 @@
         }
       },
       async rerunPipeline() {
-        let path;
-        if (!this.pipeline.ref.includes('merge-request')) {
-          path = `/projects/${this.project.id}/pipeline?ref=${this.pipeline.ref}`;
-        }
-        else {
-          path = `/projects/${this.project.id}/merge_requests/${this.pipeline.ref.match(/\d+/)}/pipelines`;
-        }
-        await this.$api(path, {}, {}, 'POST');},
+        await this.$api(
+          !this.pipeline.ref.includes('merge-request')
+            ? `/projects/${this.project.id}/pipeline?ref=${this.pipeline.ref}`
+            : `/projects/${this.project.id}/merge_requests/${this.pipeline.ref.match(/\d+/)}/pipelines`,
+          {}, {}, 'POST',
+        );
+      },
     }
   }
 </script>
