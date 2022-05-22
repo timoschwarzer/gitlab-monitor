@@ -6,9 +6,10 @@ import Config from './Config'
 const GitLabApi = {}
 
 GitLabApi.install = (Vue, options) => {
-  Vue.prototype.$api = async (path, params = {}, behaviour = {}) => {
-    const response = await axios.get(path, {
+  Vue.prototype.$api = async (path, params = {}, behaviour = {}, method = 'GET') => {
+    const response = await axios(path, {
       baseURL: Config.root.gitlabApi,
+      method: method,
       params,
       headers: { 'Private-Token': Config.root.privateToken }
     })

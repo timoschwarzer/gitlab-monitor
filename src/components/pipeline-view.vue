@@ -37,6 +37,9 @@
         <span v-if="showCoverage && pipeline.coverage !== null" class="coverage">{{ pipeline.coverage + '%' }}</span>
         <gitlab-icon v-if="showUsers && duration !== null" class="user-icon" name="user" size="10" />
         <span v-if="showUsers && pipeline.user !== null" class="user">{{ pipeline.user.name }}</span>
+        <button v-if="showRerunButton" class="rerun" @click="rerunPipeline">
+          <octicon name="sync" scale="0.9" />
+        </button>
       </div>
     </div>
     <test-report v-if="showTestReport && pipeline.test_report !== null" :pipeline="pipeline" />
@@ -90,6 +93,9 @@
       },
       showTestReport() {
         return Config.root.showTestReport
+      },
+      showRerunButton() {
+        return Config.root.showRerunButton
       },
       durationString() {
         const duration = this.duration
@@ -194,6 +200,15 @@
           this.durationCounterIntervalId = null
         }
       },
+      async rerunPipeline() {
+        let path;
+        if (!this.pipeline.ref.includes('merge-request')) {
+          path = `/projects/${this.project.id}/pipeline?ref=${this.pipeline.ref}`;
+        }
+        else {
+          path = `/projects/${this.project.id}/merge_requests/${this.pipeline.ref.match(/\d+/)}/pipelines`;
+        }
+        await this.$api(path, {}, {}, 'POST');},
     }
   }
 </script>
@@ -223,13 +238,15 @@
     }
 
     .mr-label {
+      //float: right;
+      display: inline-flex;
+      vertical-align: text-bottom;
       margin-left: 5px;
-      vertical-align: middle;
-      padding: 2px;
-      font-size: 8px;
+      padding: 3px;
+      font-size: 5px;
       border-radius: 0.75rem;
-      color:  var(--project-default, #424242);
-      background: var(--pipeline-id, rgba(255, 255, 255, 0.8));
+      box-sizing: border-box;
+      border: 0.5px solid var(--job-border-color, white);
     }
 
     .pipeline {
@@ -237,7 +254,7 @@
       align-items: center;
       color: white;
       height: 30px;
-      margin-bottom: 4px;
+      margin: 4px 0;
 
       &.with-stages-names {
         padding-bottom: 20px;
@@ -311,6 +328,14 @@
         border-radius: 8px;
         font-size: smaller;
         line-height: var(--job-icon-size, inherit);
+      }
+
+      button.rerun {
+        margin-left: 5px;
+        padding: 2px 8px;
+        background: inherit;
+        display: inline-flex;
+        border: 1px solid var(--job-border-color, white);
       }
     }
   }

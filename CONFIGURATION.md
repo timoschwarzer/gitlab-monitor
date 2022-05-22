@@ -44,16 +44,13 @@ Here you'll find documentation about each configration option:
 gitlabApi: https://gitlab.example.com/api/v4
 
 # Required
-# Can be generated here: https://gitlab.example.com/profile/personal_access_tokens At least api_read scope is needed
+# Can be generated here: https://gitlab.example.com/profile/personal_access_tokens
+# At least api_read scope is needed
 privateToken: ABCDEF123456
 
 # In hours. Projects with last activity older than this age won't be displayed.
 # If set to 0, no filter will be applied
 maxAge: 168
-
-#How many projects will be fetched from GitLab. Usually you want all projects under a user/group.
-#If set to greater than 100, then all available projects will be retrieved (in batches of 100)
-fetchCountProjects: 101,
 
 # How many projects will be fetched from GitLab.
 # If set to greater than 100, then all available projects will be retrieved (in batches of 100)
@@ -103,14 +100,17 @@ showStagesNames: false
 # Whether to show pipeline durations or not
 showDurations: true
 
+# Whether to show the pipelines test coverage if available
+showCoverage: false
+
+# Whether to show the pipelines test report if available
+showTestReport: true
+
 # Whether to show the user that invoked the pipeline or not
 showUsers: false
 
-# Wether to show the pipelines test coverage if available
-showCoverage: false
-
-# Wether to show the pipelines test report if available
-showTestReport: true
+# Whether to show a button to rerun pipelines
+showRerunButton: false
 
 # The page title, or null to hide
 title: null
@@ -138,6 +138,9 @@ membership: false
 
 # Whether to show project badges or not
 badges: true
+
+# Whether to show the amount and availability of runners
+showRunnerStatus: true
 
 # Filter projects
 # The filter is applied to the path with namespace
@@ -237,4 +240,3 @@ includeSubgroups:  false
 # You can override styles in the settings or submit your own theme here: https://git.io/JUOFb
 theme: null
 ```
-
