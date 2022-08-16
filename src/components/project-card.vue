@@ -1,9 +1,10 @@
 <template>
   <div v-if="(showPipelinesOnly ? (pipelineCount > 0) : true) && showProjectOnlyOn" :class="['project-card', status]">
     <div class="content">
-      <div class="title small">{{ project !== null ? project.namespace.name : '...' }} /</div>
+      <div class="title small">{{ project !== null ? project.name_with_namespace.replace(project.name, "") : '...' }}</div>
       <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url : '#'">
         {{ project !== null ? project.name : 'Loading project...' }}
+        <img :src="'http://11.1.1.140/api/v4/projects/' + project.id + '/repository/files/logo.png/raw?ref='+ project.default_branch +'&access_token=' + privateToken" alt="">
       </a>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelineCount === 0" class="no-pipelines">
@@ -145,23 +146,35 @@
           }
 
           // Process alert sounds
-          if (pipelines && this.project && this.config.soundAlerts.soundUrl !== null) {
+          if (pipelines && this.project && this.config.soundAlerts.soundUrlFail !== null && this.config.soundAlerts.soundUrlSuccess !== null) {
             const pipelinesWithSoundAlertsEnabled = Object.keys(pipelines).filter(branchName => {
               return !!branchName.match(new RegExp(this.config.soundAlerts.include)) &&
                 (!this.config.soundAlerts.exclude || !branchName.match(new RegExp(this.config.soundAlerts.exclude)))
             })
 
-            let alert = false
+            let alertFail = false
+            let alertSuccess = false
+
             for (const branch of pipelinesWithSoundAlertsEnabled) {
               const newFailedPipelines = pipelines[branch].filter(p => p.status === 'failed' && !this.alertSoundPlayedForPipelines.includes(p.id))
               for (const pipeline of newFailedPipelines) {
                 this.alertSoundPlayedForPipelines.push(pipeline.id)
-                alert = true
+                alertFail = true
+              }
+              //Add Success Alert
+              const newSuccedPipelines = pipelines[branch].filter(p => p.status === 'success' && !this.alertSoundPlayedForPipelines.includes(p.id))
+              for (const pipeline of newFailedPipelines) {
+                this.alertSoundPlayedForPipelines.push(pipeline.id)
+                alertSuccess = true
               }
             }
 
-            if (alert) {
-              this.playSound(this.config.soundAlerts.soundUrl)
+            if (alertFail) {
+              this.playSound(this.config.soundAlerts.soundUrlFail)
+            }
+
+            if (alertSuccess) {
+              this.playSound(this.config.soundAlerts.soundUrlSuccess)
             }
           }
         }
@@ -193,7 +206,7 @@
       },
       async fetchProject() {
         this.loading = true
-
+        this.privateToken = Config.root.privateToken
         this.project = await this.$api(`/projects/${this.projectId}`)
         this.$emit('input', this.project.last_activity_at)
 
@@ -214,13 +227,13 @@
         let refNamesAdditional = {}
 
         const branches = await this.$api(`/projects/${this.projectId}/repository/branches`, {
-          per_page: fetchCount > 100 ? 100 : fetchCount
+          per_page: 100
         }, { follow_next_page_links: fetchCount > 100 })
         const branchNames = branches.filter(branch => showMerged ? true : !branch.merged)
           .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
           .map(branch => branch.name)
           .filter(branchName => {
-            return !!branchName.match(new RegExp(this.config.include)) &&
+            return !!branchName.match(new RegExp(this.config.include)) || !!branchName.match(new RegExp(this.project.default_branch)) &&
               (!this.config.exclude || !branchName.match(new RegExp(this.config.exclude)))
           })
         let tags = []
@@ -407,15 +420,24 @@
 
       .title {
         white-space: nowrap;
-        font-size: 16px;
+        font-size: 25px;
         font-weight: bold;
         text-shadow: 1.5px 1.5px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         color: inherit;
+        //Add Logo's Project
+        display: flex;
+        align-items: center;
 
         &.small {
           font-size: 12px;
           line-height: 0.6;
+        }
+
+        //Add Logo's Project 
+        img {
+          height: 3rem;
+          margin-left: 2rem;
         }
       }
 
