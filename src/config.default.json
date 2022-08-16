@@ -46,7 +46,8 @@
       "hideSkippedPipelines": false,
       "hideSuccessfulPipelines": false,
       "soundAlerts": {
-        "soundUrl": null,
+        "soundUrlSuccess": null,  
+        "soundUrlFail": null,
         "include": ".*",
         "exclude": null
       }
