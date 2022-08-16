@@ -4,7 +4,7 @@
       <div class="title small">{{ project !== null ? project.name_with_namespace.replace(project.name, "") : '...' }}</div>
       <a class="title" target="_blank" rel="noopener noreferrer" :href="project !== null ? project.web_url : '#'">
         {{ project !== null ? project.name : 'Loading project...' }}
-        <img :src="'http://11.1.1.140/api/v4/projects/' + project.id + '/repository/files/logo.png/raw?ref='+ project.default_branch +'&access_token=' + privateToken" alt="">
+        <img :src="GitLabApi + '/projects/' + project.id + '/repository/files/logo.png/raw?ref='+ project.default_branch +'&access_token=' + privateToken" alt="">
       </a>
       <div class="pipeline-container">
         <em v-if="pipelines !== null && pipelineCount === 0" class="no-pipelines">
@@ -207,6 +207,7 @@
       async fetchProject() {
         this.loading = true
         this.privateToken = Config.root.privateToken
+        this.GitLabApi = Config.root.gitlabApi
         this.project = await this.$api(`/projects/${this.projectId}`)
         this.$emit('input', this.project.last_activity_at)
 
