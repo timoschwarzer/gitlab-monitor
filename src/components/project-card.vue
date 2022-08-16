@@ -233,7 +233,7 @@
           .sort((a, b) => new Date(b.commit.committed_date).getTime() - new Date(a.commit.committed_date).getTime()).reverse()
           .map(branch => branch.name)
           .filter(branchName => {
-            return !!branchName.match(new RegExp(this.config.include)) || !!branchName.match(new RegExp(this.project.default_branch)) &&
+            return !!branchName.match(new RegExp(this.config.include)) || !!branchName.match(this.project.default_branch) &&
               (!this.config.exclude || !branchName.match(new RegExp(this.config.exclude)))
           })
         let tags = []
