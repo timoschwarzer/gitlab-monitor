@@ -29,7 +29,7 @@
     "vue-monaco": "1.2.1",
     "vue-octicon": "^2.1.1",
     "vue-timeago": "^5.0.0",
-    "yaml": "^1.6.0"
+    "yaml": "^2.2.2"
   },
   "browserslist": [
     "> 1%",
