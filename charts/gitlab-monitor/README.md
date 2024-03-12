@@ -31,6 +31,7 @@ config: |
     "maxAge": 168,
     "fetchCount": 20,
     "pipelinesOnly": false,
+    "includeArchived": false,
     "autoZoom": false,
     "showPipelineIds": true,
     "showJobs": "iconAndName",

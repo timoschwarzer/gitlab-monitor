@@ -59,6 +59,9 @@ fetchCount: 20
 # Show only projects with recent pipelines
 pipelinesOnly: false
 
+# Whether to include archived projects
+includeArchived: false
+
 # Zooms the dashboard to fill the screen with all displayed projects.
 # Not compatible with all browsers! See https://caniuse.com/#feat=css-zoom
 autoZoom: false

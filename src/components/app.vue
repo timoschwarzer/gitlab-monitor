@@ -151,6 +151,11 @@
           gitlabApiParams.include_subgroups = includeSubgroups
         }
 
+        const includeArchived = Config.root.includeArchived
+        if (includeArchived === false) {
+          gitlabApiParams.archived = "false"
+        }
+
         // Only use main level projects API if tighter scope not defined
         const scopeType = Config.root.projectScope
         // Reformat the variable as a flat list of Ids
